@@ -293,8 +293,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
     <div class="metrics-chart" id="metricsChart"></div>
     <div style="font-size:10px;color:var(--muted2);text-align:right;margin-bottom:14px">Poslednjih 8 merenja</div>
     <div class="metrics-form">
-      <div class="mf-row"><label>Težina (kg)</label><input type="number" id="inWeight" placeholder="75.0" inputmode="decimal" step="0.1"></div>
-      <div class="mf-row"><label>% Masti</label><input type="number" id="inFat" placeholder="18.0" inputmode="decimal" step="0.1"></div>
+      <div class="mf-row"><label>Težina (kg)</label><input type="text" id="inWeight" placeholder="75.5" inputmode="decimal"></div>
+      <div class="mf-row"><label>% Masti</label><input type="text" id="inFat" placeholder="18.5" inputmode="decimal"></div>
     </div>
     <button class="btn-action btn-purple-grad" onclick="saveMetrics()">Sačuvaj merenje</button>
   </div>
@@ -565,9 +565,11 @@ function renderChart(){
   });
 }
 
+function parseNum(val){ return parseFloat(String(val).replace(',','.')); }
+
 function saveMetrics(){
-  var w=parseFloat(document.getElementById('inWeight').value);
-  var f=parseFloat(document.getElementById('inFat').value);
+  var w=parseNum(document.getElementById('inWeight').value);
+  var f=parseNum(document.getElementById('inFat').value);
   if(!w&&!f) return;
   var entry={date:todayStr(),weight:w||null,fat:f||null};
   var ex=bodyMetrics.findIndex(function(m){ return m.date===todayStr(); });
