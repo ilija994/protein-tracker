@@ -784,9 +784,12 @@ function showScanStatus(msg){
 
 function lookupBarcode(code){
   showScanStatus('Pretraga: '+code+'...');
-  fetch('https://world.openfoodfacts.org/api/v2/product/'+code+'?fields=product_name,product_name_en,brands,nutriments')
+  var apiUrl='https://world.openfoodfacts.org/api/v2/product/'+code+'?fields=product_name,product_name_en,brands,nutriments';
+  var proxyUrl='https://api.allorigins.win/get?url='+encodeURIComponent(apiUrl);
+  fetch(proxyUrl)
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(data){
+    .then(function(proxy){
+      var data=JSON.parse(proxy.contents);
       if(data.status!==1||!data.product){ showScanStatus('Proizvod nije u bazi. Unesi rucno.'); scanActive=false; Quagga.start(); return; }
       var p=data.product, n=p.nutriments||{};
       scannedProduct={
