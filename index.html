@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
@@ -173,6 +174,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .scanner-close svg{width:18px;height:18px;color:#fff}
 .scanner-title{font-size:17px;font-weight:700;color:#fff}
 #scannerVideo{width:100%;height:100%;object-fit:cover}
+#quagga-container{position:absolute;inset:0;overflow:hidden}
+#quagga-container video{width:100%;height:100%;object-fit:cover}
+#quagga-container canvas{display:none}
 .scanner-frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .scanner-box{width:240px;height:160px;position:relative}
 .scanner-box::before,.scanner-box::after{content:'';position:absolute;width:36px;height:36px;border-color:#a78bfa;border-style:solid}
@@ -361,8 +365,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
   <div class="log-list" id="logList"></div>
 </div>
 
+<!-- Scanner overlay -->
+
 <div class="scanner-overlay" id="scannerOverlay">
-  <video id="scannerVideo" autoplay playsinline muted></video>
+  <div id="quagga-container"></div>
   <div class="scanner-header">
     <button class="scanner-close" onclick="closeScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <span class="scanner-title">Skeniraj barkod</span>
@@ -401,7 +407,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.4/umd/index.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
 <script>
 var GOAL_KCAL=2130, GOAL_PROT=160;
 var BASE_DB=[
@@ -430,7 +437,7 @@ var BASE_DB=[
 ];
 
 var DB=[], foodLog=[], freq={}, history={}, bodyMetrics=[];
-var scanReader=null, scanStream=null, scannedProduct=null, scanActive=false;
+var scannedProduct=null, scanActive=false;
 var metricView='w', notifTimer=null;
 
 function todayStr(){ return new Date().toISOString().slice(0,10); }
@@ -723,14 +730,37 @@ function adj(e,idx,delta){
   if(card) card.className='food-card'+(cnt>0?' active':'');
 }
 
+// ---- QUAGGA SKENER ----
 function openScanner(){
   document.getElementById('scannerOverlay').classList.add('open');
   document.body.style.overflow='hidden';
-  startCamera();
+  scanActive=false;
+  showScanStatus('Pokretanje kamere…');
+  Quagga.init({
+    inputStream:{
+      name:'Live',
+      type:'LiveStream',
+      target:document.getElementById('quagga-container'),
+      constraints:{facingMode:'environment',width:{min:640},height:{min:480}}
+    },
+    decoder:{
+      readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader']
+    },
+    locate:true
+  }, function(err){
+    if(err){ showScanStatus('Kamera nije dostupna: '+err.message); return; }
+    document.getElementById('scannerStatus').classList.remove('show');
+    Quagga.start();
+  });
+  Quagga.onDetected(function(result){
+    if(scanActive) return;
+    var code=result.codeResult.code;
+    if(code){ scanActive=true; Quagga.stop(); lookupBarcode(code); }
+  });
 }
 
 function closeScanner(){
-  stopCamera();
+  try{ Quagga.stop(); }catch(e){}
   document.getElementById('scannerOverlay').classList.remove('open');
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
@@ -740,48 +770,22 @@ function closeScanner(){
 
 function resetScanner(){
   document.getElementById('scanResult').classList.remove('show');
-  document.getElementById('scannerStatus').textContent='';
   document.getElementById('scannerStatus').classList.remove('show');
   scannedProduct=null; scanActive=false;
+  Quagga.start();
 }
 
-function startCamera(){
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
-    .then(function(stream){
-      scanStream=stream;
-      var video=document.getElementById('scannerVideo');
-      video.srcObject=stream;
-      video.play().then(function(){ startDecoding(video); });
-    })
-    .catch(function(err){ showScanStatus('Kamera nije dostupna: '+err.message); });
+function showScanStatus(msg){
+  var el=document.getElementById('scannerStatus');
+  el.textContent=msg; el.classList.add('show');
 }
-
-function stopCamera(){
-  if(scanReader){ try{ scanReader.reset(); }catch(e){} scanReader=null; }
-  if(scanStream){ scanStream.getTracks().forEach(function(t){ t.stop(); }); scanStream=null; }
-}
-
-function startDecoding(video){
-  if(!window.ZXingBrowser){ showScanStatus('Učitavanje skenera…'); setTimeout(function(){ startDecoding(video); },800); return; }
-  try{
-    var hints=new Map();
-    hints.set(ZXingBrowser.DecodeHintType.POSSIBLE_FORMATS,[ZXingBrowser.BarcodeFormat.EAN_13,ZXingBrowser.BarcodeFormat.EAN_8,ZXingBrowser.BarcodeFormat.UPC_A,ZXingBrowser.BarcodeFormat.UPC_E,ZXingBrowser.BarcodeFormat.CODE_128]);
-    hints.set(ZXingBrowser.DecodeHintType.TRY_HARDER,true);
-    scanReader=new ZXingBrowser.BrowserMultiFormatReader(hints);
-    scanReader.decodeFromVideoElement(video,function(result){
-      if(result&&!scanActive){ scanActive=true; lookupBarcode(result.getText()); }
-    });
-  } catch(e){ showScanStatus('Greška skenera: '+e.message); }
-}
-
-function showScanStatus(msg){ var el=document.getElementById('scannerStatus'); el.textContent=msg; el.classList.add('show'); }
 
 function lookupBarcode(code){
   showScanStatus('Pretraživanje: '+code+'…');
   fetch('https://world.openfoodfacts.org/api/v0/product/'+code+'.json')
     .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data.status!==1||!data.product){ showScanStatus('Proizvod nije pronađen.'); scanActive=false; return; }
+      if(data.status!==1||!data.product){ showScanStatus('Proizvod nije pronađen.'); scanActive=false; Quagga.start(); return; }
       var p=data.product, n=p.nutriments||{};
       scannedProduct={
         name:p.product_name||p.product_name_en||'Nepoznat proizvod',
@@ -792,7 +796,7 @@ function lookupBarcode(code){
       };
       showProductCard(scannedProduct);
     })
-    .catch(function(){ showScanStatus('Greška pri pretrazi. Proveri internet.'); scanActive=false; });
+    .catch(function(){ showScanStatus('Greška pri pretrazi. Proveri internet.'); scanActive=false; Quagga.start(); });
 }
 
 function showProductCard(p){
@@ -876,5 +880,6 @@ document.getElementById('overlayConfirm').addEventListener('click',function(e){ 
 
 loadData(); loadGoals(); setDatum(); renderDashboard(); renderChart(); renderMetrics(); loadNotifSettings(); renderGrid(); renderLog();
 </script>
+
 </body>
 </html>
