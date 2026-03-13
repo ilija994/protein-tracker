@@ -784,24 +784,29 @@ function showScanStatus(msg){
 
 function lookupBarcode(code){
   showScanStatus('Pretraga: '+code+'...');
-  var apiUrl='https://world.openfoodfacts.org/api/v2/product/'+code+'?fields=product_name,product_name_en,brands,nutriments';
-  var proxyUrl='https://api.allorigins.win/get?url='+encodeURIComponent(apiUrl);
-  fetch(proxyUrl)
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(proxy){
-      var data=JSON.parse(proxy.contents);
-      if(data.status!==1||!data.product){ showScanStatus('Proizvod nije u bazi. Unesi rucno.'); scanActive=false; Quagga.start(); return; }
-      var p=data.product, n=p.nutriments||{};
-      scannedProduct={
-        name:p.product_name||p.product_name_en||'Nepoznat proizvod',
-        brand:p.brands||'',
-        kcalPer100:Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),
-        protPer100:Math.round((n.proteins_100g||0)*10)/10,
-        carbPer100:Math.round((n.carbohydrates_100g||0)*10)/10
-      };
-      showProductCard(scannedProduct);
-    })
-    .catch(function(e){ showScanStatus('Greska: '+e.message+'. Pokusaj ponovo.'); scanActive=false; Quagga.start(); });
+  var urls=[
+    'https://world.openfoodfacts.net/api/v2/product/'+code+'?fields=product_name,product_name_en,brands,nutriments',
+    'https://world.openfoodfacts.org/api/v0/product/'+code+'.json'
+  ];
+  function tryNext(i){
+    if(i>=urls.length){ showScanStatus('Proizvod nije nadjen. Unesi rucno.'); scanActive=false; Quagga.start(); return; }
+    fetch(urls[i],{method:'GET',headers:{'Accept':'application/json'}})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(function(data){
+        if(data.status!==1||!data.product){ tryNext(i+1); return; }
+        var p=data.product, n=p.nutriments||{};
+        scannedProduct={
+          name:p.product_name||p.product_name_en||'Nepoznat proizvod',
+          brand:p.brands||'',
+          kcalPer100:Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),
+          protPer100:Math.round((n.proteins_100g||0)*10)/10,
+          carbPer100:Math.round((n.carbohydrates_100g||0)*10)/10
+        };
+        showProductCard(scannedProduct);
+      })
+      .catch(function(){ tryNext(i+1); });
+  }
+  tryNext(0);
 }
 
 function showProductCard(p){
