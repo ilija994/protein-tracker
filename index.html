@@ -975,8 +975,7 @@ function lookupBarcode(code){
   showScanStatus('Pretraga: '+code+'…');
   fetch('https://world.openfoodfacts.org/api/v0/product/'+code+'.json',{
     method:'GET',
-    cache:'no-store',
-    headers:{'Accept':'application/json','User-Agent':'ProteinTracker/1.0'}
+    cache:'no-store'
   }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
   .then(function(data){
     if(data.status!==1||!data.product){
@@ -1000,7 +999,27 @@ function lookupBarcode(code){
       carbPer100:Math.round((n.carbohydrates_100g||0)*10)/10
     };
     showProductCard(scannedProduct);
-  }).catch(function(e){showScanStatus('Greška: '+e.message);scanLocked=false;});
+  }).catch(function(e){
+    // Pokušaj alternativni API endpoint
+    fetch('https://world.openfoodfacts.org/api/2/product/'+code+'?fields=product_name,brands,nutriments',{cache:'no-store'})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(data){
+        if(data.status!==1||!data.product) throw new Error('Nije u bazi');
+        var p=data.product,n=p.nutriments||{};
+        scannedProduct={
+          name:p.product_name||p.product_name_en||'Nepoznat proizvod',
+          brand:p.brands||'',
+          kcalPer100:Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),
+          protPer100:Math.round((n.proteins_100g||0)*10)/10,
+          carbPer100:Math.round((n.carbohydrates_100g||0)*10)/10
+        };
+        showProductCard(scannedProduct);
+      })
+      .catch(function(e2){
+        showScanStatus('Greška: '+e.message+' | '+e2.message+' (kod: '+code+')');
+        scanLocked=false;
+      });
+  });
 }
 function showProductCard(p){
   document.getElementById('scannerStatus').classList.remove('show');
