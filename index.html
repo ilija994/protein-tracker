@@ -270,10 +270,6 @@ body::-webkit-scrollbar{display:none}
 .qcount{flex:1;text-align:center;font-size:15px;font-weight:800;line-height:38px;color:var(--muted2)}
 .qcount.has-val{background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .no-results{text-align:center;color:var(--muted2);font-size:14px;padding:20px 0}
-.log-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px;animation:fadeIn .25s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@keyframes itemAdded{0%{transform:scale(0.96)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-.log-item.added .log-item-inner,.log-item-inner.added{animation:itemAdded 0.25s ease;}
 .log-info{flex:1;min-width:0}
 .log-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .log-macros{display:flex;gap:10px;margin-top:3px}
@@ -380,7 +376,7 @@ body::-webkit-scrollbar{display:none}
 .empty-state-sub{font-size:13px;color:var(--muted);line-height:1.5;max-width:220px}
 
 /* SWIPE TO DELETE */
-.log-item{position:relative;overflow:hidden;touch-action:pan-y}
+.log-item{position:relative;overflow:hidden;touch-action:pan-y;margin-bottom:8px}
 .log-item-inner{display:flex;align-items:center;gap:10px;padding:13px 15px;background:var(--surface);border-radius:16px;position:relative;z-index:1;transition:transform .25s cubic-bezier(.4,0,.2,1)}
 .log-item-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--red);border-radius:0 16px 16px 0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
 .log-item-bg svg{width:18px;height:18px;color:#fff}
@@ -1320,6 +1316,7 @@ function renderKcalChart(){
   });
 }
 function parseNum(val){
+  var n=parseFloat(String(val).replace(',','.').replace(/[^0-9.]/g,''));
   return isNaN(n)?0:n;
 }
 function parsePosNum(val){ var n=parseNum(val); return n>0?n:0; }
@@ -1453,7 +1450,10 @@ function renderMetrics(){
     var isLast=i===validPts.length-1;
     svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(isLast?5:4)+'" fill="'+(isLast?color:'var(--surface2)')+'" stroke="'+color+'" stroke-width="2" style="cursor:pointer" onclick="showMetricTooltip(this,\''+p.v+'\',\''+p.date+'\',\''+color+'\')" />';
     if(isLast){
-      svg+='<text x="'+(p.x>W-30?p.x-6:p.x+6)+'" y="'+(p.y-8)+'" text-anchor="'+(p.x>W-30?'end':'middle')+'" font-size="10" fill="'+color+'" font-weight="800">'+p.v+'</text>';
+      var tx=p.x>W-40?p.x-10:p.x+10;
+      var ty=p.y>H-20?p.y-14:p.y-10;
+      var anchor=p.x>W-40?'end':'start';
+      svg+='<text x="'+tx+'" y="'+ty+'" text-anchor="'+anchor+'" font-size="13" fill="'+color+'" font-weight="900" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6))">'+p.v+'</text>';
     }
   });
   svg+='</svg>';
@@ -1726,9 +1726,9 @@ function renderLog(){
         swiping=false;
         var dx=curX-startX;
         if(dx<-60){
-          // Potvrdi brisanje
-          inner.style.transform='translateX(-100%)';
-          setTimeout(function(){ delItem(idx); },220);
+          inner.style.transform='';
+          wrapEl.classList.remove('swiping');
+          delItem(idx);
         } else {
           inner.style.transform='';
           wrapEl.classList.remove('swiping');
@@ -1759,7 +1759,12 @@ function renderLogSummary(){
     +'<span class="log-sum-prot">'+tP+'g prot</span>'
     +'</div></div>';
 }
-function delItem(i){foodLog.splice(i,1);saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();renderGrid(document.getElementById('searchInput').value);}
+function delItem(i){
+  var item=foodLog[i];
+  openOverlay('Obrisati "'+item.name+'"?','Stavka će biti uklonjena iz današnjeg unosa.',function(){
+    foodLog.splice(i,1);saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();renderGrid(document.getElementById('searchInput').value);
+  });
+}
 
 // ===== DIALOGS =====
 function openOverlay(title,sub,action,label,danger){
