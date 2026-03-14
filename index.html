@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
@@ -10,6 +9,10 @@
 <meta name="theme-color" content="#0a0a0f">
 <link rel="icon" type="image/png" href="web-app-manifest-512x512.png">
 <link rel="apple-touch-icon" href="web-app-manifest-512x512.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <title>Protein Tracker</title>
 <style>
 :root{
@@ -19,23 +22,60 @@
   --grad-g:linear-gradient(135deg,#34d399,#60a5fa);--grad-r:linear-gradient(135deg,#f87171,#f97316);
   --green:#34d399;--orange:#f97316;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
 }
+body.light-mode{
+  --bg:#f0f0f5;--surface:#ffffff;--surface2:#e8e8f0;--surface3:#dcdce8;
+  --border:#00000010;--border2:#0000001a;--text:#0e0e16;--muted:#6b6b80;--muted2:#9898aa;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:56px;-webkit-font-smoothing:antialiased}
+body{font-family:'Geist',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:72px;-webkit-font-smoothing:antialiased;overflow-x:hidden;-ms-overflow-style:none;scrollbar-width:none}
+body::-webkit-scrollbar{display:none}
 .app{max-width:430px;margin:0 auto}
-.header{padding:52px 24px 20px;text-align:center}
-.header-inner{display:inline-flex;align-items:center;gap:10px}
-.header-icon{width:32px;height:32px;border-radius:9px;background:var(--grad-p);display:flex;align-items:center;justify-content:center}
-.header h1{font-size:22px;font-weight:700;letter-spacing:-.3px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-#pozdrav{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-top:16px;color:var(--text)}
-.datum{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* PAGE SYSTEM */
+.page{display:none;animation:pageIn .28s cubic-bezier(.4,0,.2,1)}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(14px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#0a0a0fee;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border2);padding-bottom:env(safe-area-inset-bottom,0)}
+.nav-inner{display:flex;align-items:stretch;height:60px;max-width:430px;margin:0 auto}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;padding:8px 4px;-webkit-tap-highlight-color:transparent;position:relative}
+.nav-btn svg{width:22px;height:22px;color:var(--muted2);transition:color .2s}
+.nav-btn span{font-size:10px;font-weight:600;color:var(--muted2);transition:color .2s;letter-spacing:.2px}
+.nav-btn.active svg{color:var(--purple)}
+.nav-btn.active span{color:var(--purple)}
+.nav-btn.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--grad-p);border-radius:2px 2px 0 0}
+
+/* HERO HEADER */
+.hero-header{padding:56px 24px 20px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:280px;height:200px;background:radial-gradient(ellipse,#a78bfa15 0%,transparent 70%);pointer-events:none}
+.hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hero-brand{display:flex;align-items:center;gap:10px}
+.hero-icon{width:34px;height:34px;border-radius:10px;background:var(--grad-p);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px #a78bfa30}
+.hero-icon svg{width:18px;height:18px}
+.hero-title{font-size:17px;font-weight:800;letter-spacing:-.3px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-greeting{font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-top:18px;line-height:1.1}
+.hero-date{font-size:14px;color:rgba(244,244,248,.6);margin-top:6px;font-weight:500;letter-spacing:-.1px}
+
+/* PAGE TITLES */
+.page-header{padding:56px 24px 20px;display:flex;align-items:center;gap:14px}
+.page-header h2{font-size:22px;font-weight:800;letter-spacing:-.4px}
+.page-header-icon{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phi-blue{background:linear-gradient(135deg,#60a5fa22,#3b82f622);border:1px solid #60a5fa30}
+.phi-green{background:linear-gradient(135deg,#34d39922,#10b98122);border:1px solid #34d39930}
+.phi-orange{background:linear-gradient(135deg,#f9731622,#f59e0b22);border:1px solid #f9731630}
+.phi-purple{background:linear-gradient(135deg,#a78bfa22,#8b5cf622);border:1px solid #a78bfa30}
+
+/* DASHBOARD */
 .dashboard{padding:0 20px 4px}
-.ring-section{display:flex;align-items:center;gap:20px;background:var(--surface);border-radius:24px;border:1px solid var(--border2);padding:24px;margin-bottom:14px}
+.ring-section{display:flex;align-items:center;gap:20px;background:rgba(19,19,26,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:24px;border:1px solid rgba(255,255,255,0.08);padding:24px;margin-bottom:14px;position:relative;overflow:hidden}
+.ring-section::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(ellipse,#a78bfa0d 0%,transparent 70%);pointer-events:none}
 .ring-container{position:relative;flex-shrink:0;width:130px;height:130px}
 .ring-svg{width:130px;height:130px;transform:rotate(-90deg)}
 .ring-track{fill:none;stroke:var(--surface3);stroke-width:11}
-.ring-fill{fill:none;stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)}
+.ring-fill{fill:none;stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 6px rgba(167,139,250,0.6))}
 .ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-.ring-g{font-size:26px;font-weight:800;line-height:1;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ring-g{font-size:34px;font-weight:900;line-height:1;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .ring-unit{font-size:11px;color:var(--muted);margin-top:1px;font-weight:500}
 .ring-goal-txt{font-size:11px;color:var(--muted2);margin-top:1px}
 .ring-stats{flex:1;min-width:0}
@@ -59,21 +99,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .btn-reset{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:transparent;border:1px solid var(--border2);border-radius:14px;padding:13px;color:var(--red);font-size:14px;font-weight:600;cursor:pointer;transition:background .18s;margin-bottom:14px}
 .btn-reset:active{background:#f8717114}
 .btn-reset svg{width:15px;height:15px;opacity:.8}
-/* SCAN BTN U DASHBOARDU */
-.btn-scan-top{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:13px 16px;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;transition:background .18s,border-color .18s;margin-bottom:14px}
-.btn-scan-top:active{background:var(--surface2);border-color:#a78bfa55}
-.btn-scan-top svg{width:18px;height:18px;color:var(--purple);flex-shrink:0}
-.scan-badge{background:var(--grad-p);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:#fff;margin-left:auto}
-/* DNEVNI UNOS - vizuelno jaci */
-.log-section-header{display:flex;justify-content:space-between;align-items:center;padding:0 20px;margin-bottom:12px}
-.log-section-title{font-size:17px;font-weight:800;letter-spacing:-.3px}
-.log-section-total{display:flex;gap:10px}
-.lst-pill{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:5px 12px;text-align:center}
-.lst-val{font-size:14px;font-weight:800}
-.lst-val.prot{background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.lst-val.kcal{background:var(--grad-k);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.lst-label{font-size:10px;color:var(--muted);margin-top:1px}
-.chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin:0 20px 6px}
+.chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin-bottom:6px}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .section-heading{font-size:15px;font-weight:700;letter-spacing:-.2px}
 .section-badge{font-size:11px;font-weight:600;color:var(--purple);background:#a78bfa18;border-radius:6px;padding:3px 8px}
@@ -85,33 +111,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .bar-inner.done{background:var(--grad-g)}
 .bar-day{font-size:10px;color:var(--muted2);text-align:center}
 .bar-val{font-size:9px;color:var(--muted);text-align:center;min-height:12px}
-.metrics-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin:0 20px 6px}
-.metrics-latest{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.metric-pill{background:var(--surface2);border-radius:14px;padding:14px;text-align:center}
-.mp-val{font-size:24px;font-weight:800;letter-spacing:-.5px}
-.mp-label{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
-.metric-pill.weight .mp-val{background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.metric-pill.fat .mp-val{background:var(--grad-r);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.metrics-chart{display:flex;align-items:flex-end;gap:4px;height:60px;margin-bottom:6px}
-.mc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%}
-.mc-outer{flex:1;width:100%;display:flex;align-items:flex-end;border-radius:4px 4px 0 0;background:var(--surface3);overflow:hidden}
-.mc-inner{width:100%;border-radius:4px 4px 0 0;transition:height .5s cubic-bezier(.4,0,.2,1)}
-.mc-inner.w{background:var(--grad-p)}
-.mc-inner.f{background:var(--grad-r)}
-.mc-label{font-size:9px;color:var(--muted2);text-align:center;white-space:nowrap}
-.mc-val{font-size:9px;color:var(--muted);text-align:center;min-height:11px}
-.chart-toggle{display:flex;gap:8px;margin-bottom:14px}
+
+/* BODY METRICS REDESIGN */
+.metrics-hero{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.mh-card{border-radius:22px;padding:20px 18px;position:relative;overflow:hidden;border:1px solid var(--border2)}
+.mh-card.weight{background:linear-gradient(145deg,#1a1530,#13131a);border-color:#a78bfa30}
+.mh-card.fat{background:linear-gradient(145deg,#2a1520,#13131a);border-color:#f8717130}
+.mh-glow{position:absolute;top:-30px;right:-30px;width:110px;height:110px;border-radius:50%;pointer-events:none}
+.mh-card.weight .mh-glow{background:radial-gradient(ellipse,#a78bfa25,transparent)}
+.mh-card.fat .mh-glow{background:radial-gradient(ellipse,#f8717125,transparent)}
+.mh-icon{width:28px;height:28px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.mh-card.weight .mh-icon{background:#a78bfa18}
+.mh-card.fat .mh-icon{background:#f8717118}
+.mh-icon svg{width:16px;height:16px}
+.mh-val{font-size:38px;font-weight:900;letter-spacing:-2px;line-height:1}
+.mh-card.weight .mh-val{background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mh-card.fat .mh-val{background:var(--grad-r);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mh-label{font-size:10px;color:var(--muted);margin-top:5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.mh-delta{display:inline-flex;align-items:center;gap:3px;margin-top:10px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px}
+.mh-delta.up{color:#f87171;background:#f8717118;border:1px solid #f8717130}
+.mh-delta.down{color:#34d399;background:#34d39918;border:1px solid #34d39930}
+.mh-delta.neutral{color:var(--muted);background:var(--surface3);border:1px solid transparent}
+
+/* METRICS SVG LINE CHART */
+.metrics-chart-wrap{background:var(--surface2);border-radius:20px;padding:18px 16px 14px;margin-bottom:16px;border:1px solid var(--border)}
+.chart-toggle{display:flex;gap:6px;margin-bottom:14px}
 .ctbtn{flex:1;padding:8px;border-radius:10px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s,color .15s}
 .ctbtn.active-w{background:#a78bfa22;color:var(--purple);border:1px solid #a78bfa44}
 .ctbtn.active-f{background:#f8717122;color:var(--red);border:1px solid #f8717144}
-.ctbtn.inactive{background:var(--surface2);color:var(--muted);border:1px solid transparent}
-.metrics-form{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.ctbtn.inactive{background:var(--surface3);color:var(--muted);border:1px solid transparent}
+.metrics-chart-wrap canvas,.metrics-svg-wrap{width:100%;display:block}
+.metrics-svg-wrap{overflow:visible;margin-bottom:4px}
+.mc-progress{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mc-progress-label{font-size:11px;color:var(--muted)}
+.mc-progress-val{font-size:12px;font-weight:700}
+.mc-progress-val.positive{color:var(--green)}
+.mc-progress-val.negative{color:var(--red)}
+.mc-progress-val.neutral{color:var(--muted)}
+.mc-dot-labels{display:flex;justify-content:space-between;padding:0 2px;margin-top:4px}
+.mc-dot-label{font-size:9px;color:var(--muted2);text-align:center;flex:1}
+
+.metrics-form-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin-bottom:14px}
+.metrics-form-title{font-size:14px;font-weight:700;margin-bottom:14px;letter-spacing:-.2px}
+.metrics-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .mf-row{display:flex;flex-direction:column;gap:5px}
 .mf-row label{font-size:12px;color:var(--muted);font-weight:500}
 .mf-row input{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-size:15px;font-weight:700;outline:none;-webkit-appearance:none;text-align:center;transition:border-color .18s;width:100%}
 .mf-row input:focus{border-color:#a78bfa55}
 .mf-row input::placeholder{color:var(--muted2)}
-.notif-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin:0 20px 6px}
+.metrics-history{background:var(--surface);border:1px solid var(--border2);border-radius:20px;overflow:hidden;margin-bottom:14px}
+.mh-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mh-header-title{font-size:14px;font-weight:700}
+.mh-header-count{font-size:11px;color:var(--muted)}
+.mh-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);gap:14px}
+.mh-row:last-child{border-bottom:none}
+.mh-date-badge{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:6px;padding:4px 8px;white-space:nowrap}
+.mh-row-vals{flex:1;display:flex;gap:16px}
+.mh-rv{display:flex;align-items:center;gap:6px}
+.mh-rv-dot{width:6px;height:6px;border-radius:50%}
+.mh-rv-dot.w{background:var(--purple)}
+.mh-rv-dot.f{background:var(--red)}
+.mh-rv-val{font-size:13px;font-weight:700}
+.mh-rv-unit{font-size:11px;color:var(--muted)}
+
+/* NOTIFICATIONS */
+.notif-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin-bottom:14px}
 .notif-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .ni-title{font-size:15px;font-weight:700}
 .ni-sub{font-size:12px;color:var(--muted);margin-top:3px}
@@ -125,14 +189,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .time-row label{font-size:13px;color:var(--muted);font-weight:500}
 .time-row input[type=time]{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-size:16px;font-weight:700;outline:none;-webkit-appearance:none;flex:1;transition:border-color .18s}
 .notif-status{margin-top:12px;font-size:12px;color:var(--muted);text-align:center;min-height:18px}
-.section-wrap{padding:20px 20px 4px}
+.notif-info-box{background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-top:14px;display:flex;gap:10px}
+.notif-info-icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:var(--blue)}
+.notif-info-icon svg{width:16px;height:16px}
+.notif-info-text{font-size:12px;color:var(--muted);line-height:1.5}
+.notif-info-text strong{color:var(--text);font-weight:600}
+
+/* FORMS */
+.section-wrap{padding:20px 0 4px}
 .sec-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:12px}
-.search-wrap{padding:0 20px 14px;position:relative}
-.search-wrap svg.si{position:absolute;left:33px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.35;pointer-events:none}
+.form-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px}
+.form-row{margin-bottom:12px}
+.form-row label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
+.form-row input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;transition:border-color .18s}
+.form-row input:focus{border-color:#a78bfa55}
+.form-row input::placeholder{color:var(--muted2)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-action{width:100%;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;border:none;transition:opacity .18s,transform .1s}
+.btn-action:active{opacity:.85;transform:scale(.98)}
+.btn-purple-grad{background:var(--grad-p);color:#fff}
+.btn-green-grad{background:var(--grad-g);color:#0a0a0f}
+.btn-surface{background:var(--surface2);color:var(--text);border:1px solid var(--border2)!important}
+.btn-confirm{background:var(--grad-p);color:#fff}
+
+/* FOOD */
+.quick-add-wrap{margin-bottom:16px}
+.quick-add-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.quick-add-chips{display:flex;flex-wrap:wrap;gap:8px}
+.qa-chip{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border2);border-radius:99px;padding:7px 13px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s;-webkit-tap-highlight-color:transparent}
+.qa-chip:active{transform:scale(.95);background:var(--surface2);border-color:#a78bfa55}
+.qa-chip-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+.qa-chip-prot{font-size:11px;font-weight:700;color:var(--green)}
+.qa-chip-plus{font-size:16px;color:var(--purple);font-weight:300;line-height:1}
+.search-wrap{padding:0 0 14px;position:relative}
+.search-wrap svg.si{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.35;pointer-events:none}
 .search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:13px 16px 13px 42px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;transition:border-color .18s}
 .search-wrap input:focus{border-color:#a78bfa55}
 .search-wrap input::placeholder{color:var(--muted2)}
-.food-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px}
+.btn-scan{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-bottom:14px;background:linear-gradient(135deg,#1e1a2e,#1a1e2e);border:1px solid #a78bfa30;border-radius:14px;padding:14px;color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:background .18s,border-color .18s}
+.btn-scan:active{background:var(--surface2);border-color:#a78bfa55}
+.btn-scan svg{width:20px;height:20px;color:var(--purple)}
+.scan-badge{background:var(--grad-p);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:#fff;margin-left:auto}
+.food-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .food-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:13px 12px 10px;position:relative;display:flex;flex-direction:column;gap:2px;transition:border-color .18s,transform .1s}
 .food-card:active{transform:scale(.97)}
 .food-card.active{border-color:#a78bfa40;background:linear-gradient(135deg,#1c1c26,#1a1a28)}
@@ -153,30 +251,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .qcount{flex:1;text-align:center;font-size:15px;font-weight:800;line-height:38px;color:var(--muted2)}
 .qcount.has-val{background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .no-results{text-align:center;color:var(--muted2);font-size:14px;padding:20px 0}
-.form-card{margin:0 20px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px}
-.form-row{margin-bottom:12px}
-.form-row label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
-.form-row input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;transition:border-color .18s}
-.form-row input:focus{border-color:#a78bfa55}
-.form-row input::placeholder{color:var(--muted2)}
-.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn-action{width:100%;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;border:none;transition:opacity .18s,transform .1s}
-.btn-action:active{opacity:.85;transform:scale(.98)}
-.btn-purple-grad{background:var(--grad-p);color:#fff}
-.btn-green-grad{background:var(--grad-g);color:#0a0a0f}
-.btn-surface{background:var(--surface2);color:var(--text);border:1px solid var(--border2)!important}
-.log-list{padding:0 20px}
-.log-item{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;animation:fadeIn .25s ease;position:relative;overflow:hidden}
-.log-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad-p);border-radius:3px 0 0 3px}
+.log-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px;animation:fadeIn .25s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes itemAdded{0%{transform:scale(0.96)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.log-item.added .log-item-inner,.log-item-inner.added{animation:itemAdded 0.25s ease;}
 .log-info{flex:1;min-width:0}
-.log-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.log-macros{display:flex;gap:8px}
-.log-kcal{font-size:12px;font-weight:700;color:var(--orange);background:#f9731618;border-radius:6px;padding:2px 8px}
-.log-prot{font-size:12px;font-weight:700;color:var(--green);background:#34d39918;border-radius:6px;padding:2px 8px}
-.btn-del{background:transparent;border:1px solid #f8717130;border-radius:10px;padding:6px 11px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
+.log-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-macros{display:flex;gap:10px;margin-top:3px}
+.log-kcal{font-size:12px;font-weight:600;color:var(--orange)}
+.log-prot{font-size:12px;font-weight:600;color:var(--green)}
+.btn-del{background:transparent;border:1px solid #f8717130;border-radius:10px;padding:6px 11px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer}
 .btn-del:active{background:#f8717118}
-.empty-log{text-align:center;color:var(--muted2);font-size:14px;padding:32px 0}
+.empty-log{text-align:center;color:var(--muted2);font-size:14px;padding:24px 0}
+
+/* SCANNER */
 .scanner-overlay{display:none;position:fixed;inset:0;background:#000;z-index:300;flex-direction:column}
 .scanner-overlay.open{display:flex}
 .scanner-header{padding:56px 20px 16px;display:flex;align-items:center;gap:14px;position:absolute;top:0;left:0;right:0;z-index:10}
@@ -196,9 +284,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .scanner-corner-bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
 .scanner-line{position:absolute;left:4px;right:4px;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,transparent);animation:scanLine 2s ease-in-out infinite;top:50%}
 @keyframes scanLine{0%,100%{top:10%}50%{top:90%}}
-.scanner-hint{position:absolute;bottom:80px;left:0;right:0;text-align:center;color:#ffffff88;font-size:14px}
-.scanner-status{position:absolute;bottom:120px;left:20px;right:20px;background:#ffffff14;border-radius:14px;padding:14px;text-align:center;color:#fff;font-size:14px;display:none}
+.scanner-hint{position:absolute;bottom:170px;left:0;right:0;text-align:center;color:#ffffff88;font-size:14px}
+.scanner-status{position:absolute;bottom:200px;left:20px;right:20px;background:#ffffff14;border-radius:14px;padding:14px;text-align:center;color:#fff;font-size:14px;display:none}
 .scanner-status.show{display:block}
+.scan-confidence{position:absolute;bottom:140px;left:50%;transform:translateX(-50%);width:240px}
+.scan-conf-bar{height:4px;background:#ffffff18;border-radius:99px;overflow:hidden;margin-bottom:6px}
+.scan-conf-fill{height:100%;border-radius:99px;background:var(--grad-p);transition:width .12s;width:0%}
+.scan-conf-label{font-size:12px;color:#ffffff77;text-align:center}
+.scanner-toggle-manual{position:absolute;bottom:108px;left:0;right:0;text-align:center}
+.scanner-toggle-manual button{background:#ffffff0e;border:1px solid #ffffff20;border-radius:99px;padding:8px 18px;color:#ffffffaa;font-size:13px;font-weight:600;cursor:pointer}
+.scanner-manual{position:absolute;bottom:0;left:0;right:0;background:#1c1c26f0;border-top:1px solid var(--border2);padding:20px 20px 44px;display:none;animation:pageIn .2s ease}
+.scanner-manual.show{display:block}
+.scanner-manual-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px}
+.scanner-manual-row{display:flex;gap:10px}
+.scanner-manual-row input{flex:1;background:var(--surface3);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;font-weight:700;outline:none;letter-spacing:1px;-webkit-appearance:none}
+.scanner-manual-row input::placeholder{color:var(--muted2);letter-spacing:0;font-weight:400}
+.scanner-manual-row button{background:var(--grad-p);border:none;border-radius:12px;padding:12px 18px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
 .scan-result{position:absolute;bottom:0;left:0;right:0;background:#1c1c26;border-radius:24px 24px 0 0;padding:24px 20px 48px;border-top:1px solid var(--border2);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .scan-result.show{transform:translateY(0)}
 .scan-product-name{font-size:18px;font-weight:700;margin-bottom:4px}
@@ -215,30 +316,133 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
 .scan-btns button{flex:1;padding:14px;border-radius:14px;border:none;font-size:15px;font-weight:700;cursor:pointer}
 .sbtn-cancel{background:var(--surface3);color:var(--muted)}
 .sbtn-add{background:var(--grad-p);color:#fff}
+
+/* IMPORT/EXPORT */
+.io-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin-bottom:14px}
+.io-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.io-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.io-btns{display:flex;flex-direction:column;gap:10px}
+.io-drop{border:2px dashed var(--border2);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:border-color .18s;position:relative}
+.io-drop.dragover{border-color:var(--purple)}
+.io-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.io-drop-icon{width:32px;height:32px;margin:0 auto 8px;color:var(--muted)}
+.io-drop-icon svg{width:28px;height:28px}
+.io-drop-text{font-size:13px;color:var(--muted);font-weight:500}
+.io-drop-sub{font-size:11px;color:var(--muted2);margin-top:3px}
+
+/* OVERLAY/DIALOG */
 .overlay{display:none;position:fixed;inset:0;background:#000000cc;z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .overlay.open{display:flex}
 .dialog{background:#1c1c26;border-radius:24px 24px 0 0;padding:28px 24px 48px;width:100%;max-width:430px;border-top:1px solid var(--border2)}
 .dialog-icon{width:48px;height:48px;border-radius:50%;background:#f8717118;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
 .dialog-icon svg{width:22px;height:22px;color:var(--red)}
+.dialog-icon.blue{background:#a78bfa18}
+.dialog-icon.blue svg{color:var(--purple)}
 .dialog p{font-size:17px;font-weight:700;text-align:center;margin-bottom:6px}
 .dialog small{font-size:13px;color:var(--muted);text-align:center;display:block}
 .dialog-btns{display:flex;gap:10px;margin-top:24px}
 .dbtn{flex:1;padding:14px;border-radius:14px;border:none;font-size:15px;font-weight:700;cursor:pointer}
 .dbtn-cancel{background:var(--surface3);color:var(--muted)}
 .dbtn-danger{background:#f8717120;color:var(--red);border:1px solid #f8717140!important}
+.dbtn-confirm{background:var(--grad-p);color:#fff}
+
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1c1c26;border:1px solid var(--border2);border-radius:14px;padding:12px 18px;font-size:14px;font-weight:600;z-index:500;transition:transform .3s cubic-bezier(.4,0,.2,1);white-space:nowrap;max-width:calc(100vw - 40px);text-align:center;box-shadow:0 8px 30px #00000060}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#34d39930;color:var(--green)}
+.toast.error{border-color:#f8717130;color:var(--red)}
+
+/* SPLASH */
+.splash{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s ease,transform .4s ease}
+.splash.hide{opacity:0;transform:scale(1.04);pointer-events:none}
+.splash-icon{width:72px;height:72px;border-radius:22px;background:var(--grad-p);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px #a78bfa40;animation:splashPulse 1.4s ease-in-out infinite}
+.splash-icon svg{width:36px;height:36px;color:#fff}
+.splash-title{font-size:24px;font-weight:800;letter-spacing:-.5px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.splash-sub{font-size:13px;color:var(--muted)}
+@keyframes splashPulse{0%,100%{box-shadow:0 8px 32px #a78bfa40}50%{box-shadow:0 8px 48px #a78bfa70}}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;gap:12px}
+.empty-state-icon{width:56px;height:56px;border-radius:18px;background:var(--surface2);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.empty-state-icon svg{width:26px;height:26px;color:var(--muted2)}
+.empty-state-title{font-size:16px;font-weight:700;color:var(--text)}
+.empty-state-sub{font-size:13px;color:var(--muted);line-height:1.5;max-width:220px}
+
+/* SWIPE TO DELETE */
+.log-item{position:relative;overflow:hidden;touch-action:pan-y}
+.log-item-inner{display:flex;align-items:center;gap:10px;padding:13px 15px;background:var(--surface);border-radius:16px;position:relative;z-index:1;transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.log-item-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--red);border-radius:0 16px 16px 0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+.log-item-bg svg{width:18px;height:18px;color:#fff}
+.log-item.swiping .log-item-bg{opacity:1}
+
+/* PULL TO REFRESH */
+.ptr-indicator{height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:height .2s ease;color:var(--muted);font-size:12px;font-weight:600;gap:8px}
+.ptr-indicator svg{width:16px;height:16px;transition:transform .3s}
+.ptr-indicator.ready svg{transform:rotate(180deg)}
+.ptr-indicator.loading svg{animation:spin .7s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* USER SWITCHER */
+.user-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.user-card{background:var(--surface2);border:1px solid var(--border2);border-radius:16px;padding:14px;text-align:center;cursor:pointer;transition:border-color .18s,background .18s;position:relative}
+.user-card.active{border-color:var(--purple);background:linear-gradient(135deg,#1a1530,#13131a)}
+.user-card-avatar{width:40px;height:40px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
+.user-card.active .user-card-avatar{box-shadow:0 0 0 3px #a78bfa44}
+.user-card-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.user-card-sub{font-size:10px;color:var(--muted)}
+.user-card-check{position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;background:var(--purple);display:none;align-items:center;justify-content:center}
+.user-card.active .user-card-check{display:flex}
+.user-card-check svg{width:10px;height:10px;color:#fff}
+.user-add-btn{background:var(--surface2);border:1px dashed var(--border2);border-radius:16px;padding:14px;text-align:center;cursor:pointer;color:var(--muted);font-size:13px;font-weight:600;width:100%;transition:border-color .18s,color .18s;margin-bottom:14px}
+.user-add-btn:active{border-color:var(--purple);color:var(--purple)}
+
+/* LOG SUMMARY */
+.log-summary{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px 18px;margin-top:4px;display:flex;align-items:center;justify-content:space-between}
+.log-summary-label{font-size:12px;color:var(--muted);font-weight:500}
+.log-summary-vals{display:flex;gap:16px;align-items:center}
+.log-sum-kcal{font-size:14px;font-weight:700;color:var(--orange)}
+.log-sum-sep{font-size:12px;color:var(--muted2)}
+.log-sum-prot{font-size:14px;font-weight:700;color:var(--green)}
+
+/* SLIDER */
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--surface3);outline:none;cursor:pointer}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--grad-p);cursor:pointer;box-shadow:0 2px 8px #a78bfa50}
+.slider-val{font-size:18px;font-weight:800;min-width:24px;text-align:center;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.slider-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:2px}
 </style>
 </head>
 <body>
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div class="splash-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+  </div>
+  <div class="splash-title">Protein Tracker</div>
+  <div class="splash-sub">Učitavanje…</div>
+</div>
+
 <div class="app">
-  <div class="header">
-    <div class="header-inner">
-      <div class="header-icon">
-        <img src="web-app-manifest-512x512.png" style="width:32px;height:32px;border-radius:9px;display:block;">
+<!-- PULL TO REFRESH -->
+<div class="ptr-indicator" id="ptrIndicator">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.57"/></svg>
+  <span id="ptrLabel">Povuci za osvežavanje</span>
+</div>
+
+<!-- PAGE: DASHBOARD -->
+<div class="page active" id="page-home">
+  <div class="hero-header">
+    <div class="hero-glow"></div>
+    <div class="hero-top">
+      <div class="hero-brand">
+        <div class="hero-icon">
+          <i data-lucide="bar-chart-2" style="width:18px;height:18px;color:#fff;stroke-width:2.5"></i>
+        </div>
+        <span class="hero-title">Protein Tracker</span>
       </div>
-      <h1>Protein Tracker</h1>
     </div>
-    <div id="pozdrav"></div>
-    <div class="datum" id="datum"></div>
+    <div class="hero-greeting" id="pozdrav"></div>
+    <div class="hero-date" id="datum"></div>
   </div>
 
   <div class="dashboard">
@@ -275,137 +479,283 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
       </div>
       <div class="bar-track"><div class="bar-fill" id="kcalBar" style="width:0%"></div></div>
     </div>
-    <button class="btn-scan-top" onclick="openScanner()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h.01M18 14h.01M14 18h.01M18 18h.01M21 14v1M21 18v3M17 21h4"/></svg>
-      Skeniraj barkod proizvoda
-      <span class="scan-badge">SCAN</span>
-    </button>
-    <button class="btn-reset" onclick="askResetDay()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+    <button class="btn-reset" onclick="haptic();askResetDay()">
+      <i data-lucide="trash-2" style="width:15px;height:15px;opacity:.8"></i>
       Obriši današnji unos
     </button>
-  </div>
-
-  <!-- DNEVNI UNOS - odmah ispod dashboarda -->
-
-  <div class="section-wrap" style="padding-top:8px">
-    <div class="log-section-header">
-      <div class="log-section-title">Današnji unos</div>
-      <div class="log-section-total">
-        <div class="lst-pill"><div class="lst-val prot" id="logTotProt">0g</div><div class="lst-label">proteini</div></div>
-        <div class="lst-pill"><div class="lst-val kcal" id="logTotKcal">0</div><div class="lst-label">kcal</div></div>
+    <div class="chart-card">
+      <div class="section-header">
+        <div class="section-heading">Proteini — 7 dana</div>
+        <div class="section-badge" id="chartBadge">Cilj: 160 g</div>
       </div>
+      <div class="chart-bars" id="chartBars"></div>
     </div>
-  </div>
-  <div class="log-list" id="logList"></div>
-
-  <div class="chart-card" style="margin-top:14px">
-    <div class="section-header">
-      <div class="section-heading">Proteini — 7 dana</div>
-      <div class="section-badge" id="chartBadge">Cilj: 160 g</div>
-    </div>
-    <div class="chart-bars" id="chartBars"></div>
-  </div>
-
-  <!-- BRZI UNOS -->
-
-  <div class="section-wrap" style="margin-top:8px"><div class="sec-title">Brzi unos</div></div>
-  <div class="search-wrap">
-    <svg class="si" viewBox="0 0 24 24" fill="none" stroke="#f4f4f8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
-    <input type="text" id="searchInput" placeholder="Pretraži namirnicu…" oninput="filterGrid()">
-  </div>
-  <div class="food-grid" id="foodGrid"></div>
-  <div id="noResults" class="no-results" style="display:none">Nema rezultata</div>
-
-  <div class="section-wrap" style="margin-top:10px"><div class="sec-title">Nova namirnica u bazu</div></div>
-  <div class="form-card">
-    <div class="form-row"><label>Naziv namirnice</label><input type="text" id="nName" placeholder="npr. Grčki jogurt"></div>
-    <div class="form-row"><label>Porcija</label><input type="text" id="nPortion" placeholder="npr. 100 g, 1 kom"></div>
-    <div class="form-2col">
-      <div class="form-row"><label>Kalorije</label><input type="number" id="nKcal" placeholder="0" inputmode="decimal"></div>
-      <div class="form-row"><label>Protein (g)</label><input type="number" id="nProt" placeholder="0" inputmode="decimal"></div>
-    </div>
-    <button class="btn-action btn-purple-grad" onclick="saveToBase()">Sačuvaj u bazu</button>
-  </div>
-
-  <div class="section-wrap" style="margin-top:22px"><div class="sec-title">Ručni unos</div></div>
-  <div class="form-card">
-    <div class="form-row"><label>Naziv</label><input type="text" id="mName" placeholder="npr. Jogurt"></div>
-    <div class="form-2col">
-      <div class="form-row"><label>Kalorije</label><input type="number" id="mKcal" placeholder="0" inputmode="decimal"></div>
-      <div class="form-row"><label>Protein (g)</label><input type="number" id="mProt" placeholder="0" inputmode="decimal"></div>
-    </div>
-    <button class="btn-action btn-green-grad" onclick="addManual()">+ Dodaj u dnevni unos</button>
-  </div>
-
-  <!-- TELESNA MERENJA -->
-
-  <div class="section-wrap" style="margin-top:22px"><div class="sec-title">Telesna merenja</div></div>
-  <div class="metrics-card">
-    <div class="metrics-latest">
-      <div class="metric-pill weight"><div class="mp-val" id="latestWeight">—</div><div class="mp-label">Težina (kg)</div></div>
-      <div class="metric-pill fat"><div class="mp-val" id="latestFat">—</div><div class="mp-label">Mast (%)</div></div>
-    </div>
-    <div class="chart-toggle">
-      <button class="ctbtn active-w" id="toggleW" onclick="setMetricView('w')">Težina</button>
-      <button class="ctbtn inactive" id="toggleF" onclick="setMetricView('f')">% Masti</button>
-    </div>
-    <div class="metrics-chart" id="metricsChart"></div>
-    <div style="font-size:10px;color:var(--muted2);text-align:right;margin-bottom:14px">Poslednjih 8 merenja</div>
-    <div class="metrics-form">
-      <div class="mf-row"><label>Datum</label><input type="date" id="inDate" style="font-size:13px;font-weight:500"></div>
-      <div class="mf-row"><label>Težina (kg)</label><input type="text" id="inWeight" placeholder="75.5" inputmode="decimal"></div>
-      <div class="mf-row"><label>% Masti</label><input type="text" id="inFat" placeholder="18.5" inputmode="decimal"></div>
-    </div>
-    <button class="btn-action btn-purple-grad" onclick="saveMetrics()">Sačuvaj merenje</button>
-  </div>
-
-  <!-- CILJEVI -->
-
-  <div class="section-wrap" style="margin-top:22px"><div class="sec-title">Ciljevi</div></div>
-  <div class="form-card">
-    <div class="form-2col">
-      <div class="form-row"><label>Kalorije (kcal)</label><input type="number" id="setKcal" inputmode="decimal" placeholder="2130"></div>
-      <div class="form-row"><label>Proteini (g)</label><input type="number" id="setProt" inputmode="decimal" placeholder="160"></div>
-    </div>
-    <button class="btn-action btn-green-grad" onclick="saveGoals()">Sačuvaj ciljeve</button>
-  </div>
-
-  <!-- PODSETNIK - na kraju -->
-
-  <div class="section-wrap" style="margin-top:22px"><div class="sec-title">Podsetnik</div></div>
-  <div class="notif-card">
-    <div class="notif-row">
-      <div><div class="ni-title">Dnevni podsetnik</div><div class="ni-sub">Obaveštenje o statusu proteina</div></div>
-      <label class="toggle-wrap"><input type="checkbox" id="notifToggle" onchange="toggleNotif()"><div class="toggle-slider"></div></label>
-    </div>
-    <div class="time-row">
-      <label>Vreme</label>
-      <input type="time" id="notifTime" value="21:00" onchange="saveNotifSettings()">
-    </div>
-    <div class="notif-status" id="notifStatus"></div>
-  </div>
-
-  <!-- IZVOZ - na kraju -->
-
-  <div class="section-wrap" style="margin-top:22px"><div class="sec-title">Izvoz podataka</div></div>
-  <div class="form-card" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-    <button class="btn-action btn-purple-grad" style="margin-top:0" onclick="exportCSV()">Izvezi istoriju proteina (CSV)</button>
-    <button class="btn-action btn-surface" style="margin-top:0" onclick="exportMetricsCSV()">Izvezi telesna merenja (CSV)</button>
   </div>
 </div>
 
-<!-- Scanner overlay -->
+<!-- PAGE: HRANA -->
+<div class="page" id="page-food">
+  <div class="page-header">
+    <div class="page-header-icon phi-green">
+      <i data-lucide="apple" style="width:18px;height:18px;color:#34d399;stroke-width:2"></i>
+    </div>
+    <h2>Unos hrane</h2>
+  </div>
+  <div style="padding:0 20px 20px">
+    <div class="search-wrap">
+      <i data-lucide="search" class="si" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.35;pointer-events:none;color:#f4f4f8"></i>
+      <input type="text" id="searchInput" placeholder="Pretraži namirnicu…" oninput="filterGrid()">
+    </div>
+    <div class="quick-add-wrap" id="quickAddWrap" style="display:none">
+      <div class="quick-add-label">Brzi unos</div>
+      <div class="quick-add-chips" id="quickAddChips"></div>
+    </div>
+    <button class="btn-scan" onclick="openScanner()">
+      <i data-lucide="scan-barcode" style="width:20px;height:20px;color:var(--purple)"></i>
+      Skeniraj barkod proizvoda
+      <span class="scan-badge">QR</span>
+    </button>
+    <div class="food-grid" id="foodGrid"></div>
+    <div id="noResults" class="no-results" style="display:none">Nema rezultata</div>
 
+    <div class="section-wrap" style="margin-top:10px"><div class="sec-title">Ručni unos</div></div>
+    <div class="form-card" style="margin-bottom:14px">
+      <div class="form-row"><label>Naziv</label><input type="text" id="mName" placeholder="npr. Jogurt"></div>
+      <div class="form-2col">
+        <div class="form-row"><label>Kalorije</label><input type="text" id="mKcal" placeholder="0" inputmode="decimal"></div>
+        <div class="form-row"><label>Protein (g)</label><input type="text" id="mProt" placeholder="0" inputmode="decimal"></div>
+      </div>
+      <button class="btn-action btn-green-grad" onclick="haptic();addManual()">+ Dodaj u dnevni unos</button>
+    </div>
+
+    <div class="section-wrap"><div class="sec-title">Nova namirnica u bazu</div></div>
+    <div class="form-card" style="margin-bottom:14px">
+      <div class="form-row"><label>Naziv namirnice</label><input type="text" id="nName" placeholder="npr. Grčki jogurt"></div>
+      <div class="form-row"><label>Porcija</label><input type="text" id="nPortion" placeholder="npr. 100 g, 1 kom"></div>
+      <div class="form-2col">
+        <div class="form-row"><label>Kalorije</label><input type="text" id="nKcal" placeholder="0" inputmode="decimal"></div>
+        <div class="form-row"><label>Protein (g)</label><input type="text" id="nProt" placeholder="0" inputmode="decimal"></div>
+      </div>
+      <button class="btn-action btn-purple-grad" onclick="haptic();saveToBase()">Sačuvaj u bazu</button>
+    </div>
+
+    <div class="section-wrap"><div class="sec-title">Današnji unos</div></div>
+    <div id="logList"></div>
+    <div id="logSummary" style="display:none"></div>
+  </div>
+</div>
+
+<!-- PAGE: MERENJA -->
+<div class="page" id="page-body">
+  <div class="page-header">
+    <div class="page-header-icon phi-orange">
+      <i data-lucide="activity" style="width:18px;height:18px;color:#f97316;stroke-width:2"></i>
+    </div>
+    <h2>Telesna merenja</h2>
+  </div>
+  <div style="padding:0 20px 20px">
+    <div class="metrics-hero">
+      <div class="mh-card weight">
+        <div class="mh-glow"></div>
+        <div class="mh-icon"><i data-lucide="scale" style="color:var(--purple);stroke-width:2"></i></div>
+        <div class="mh-val" id="latestWeight">—</div>
+        <div class="mh-label">Težina · kg</div>
+        <div class="mh-delta neutral" id="weightDelta">nema podataka</div>
+      </div>
+      <div class="mh-card fat">
+        <div class="mh-glow"></div>
+        <div class="mh-icon"><i data-lucide="percent" style="color:var(--red);stroke-width:2"></i></div>
+        <div class="mh-val" id="latestFat">—</div>
+        <div class="mh-label">Mast · %</div>
+        <div class="mh-delta neutral" id="fatDelta">nema podataka</div>
+      </div>
+    </div>
+    <div class="metrics-chart-wrap">
+      <div class="chart-toggle">
+        <button class="ctbtn active-w" id="toggleW" onclick="setMetricView('w')">Težina</button>
+        <button class="ctbtn inactive" id="toggleF" onclick="setMetricView('f')">% Masti</button>
+      </div>
+      <div id="metricsChart"></div>
+      <div class="mc-dot-labels" id="mcDotLabels"></div>
+      <div class="mc-progress" id="metricsProgress" style="display:none">
+        <span class="mc-progress-label">Ukupno od prvog merenja</span>
+        <span class="mc-progress-val" id="mcProgressVal"></span>
+      </div>
+    </div>
+    <div class="metrics-form-card">
+      <div class="metrics-form-title">Novo merenje</div>
+      <div class="metrics-form">
+        <div class="mf-row"><label>Težina (kg)</label><input type="text" id="inWeight" placeholder="75.5" inputmode="decimal"></div>
+        <div class="mf-row"><label>% Masti</label><input type="text" id="inFat" placeholder="18.5" inputmode="decimal"></div>
+      </div>
+      <button class="btn-action btn-purple-grad" onclick="haptic();saveMetrics()">Sačuvaj merenje</button>
+    </div>
+
+    <div class="metrics-form-card">
+      <div class="metrics-form-title">Unesi ranija merenja</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Dodaj merenja za prethodne datume koja već znaš.</div>
+      <div class="form-row">
+        <label>Datum</label>
+        <input type="date" id="histDate" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-size:15px;font-weight:600;outline:none;-webkit-appearance:none;transition:border-color .18s">
+      </div>
+      <div class="metrics-form" style="margin-bottom:12px">
+        <div class="mf-row"><label>Težina (kg)</label><input type="text" id="histWeight" placeholder="75.5" inputmode="decimal"></div>
+        <div class="mf-row"><label>% Masti</label><input type="text" id="histFat" placeholder="18.5" inputmode="decimal"></div>
+      </div>
+      <button class="btn-action btn-surface" onclick="haptic();saveHistoricMetric()">Dodaj merenje</button>
+    </div>
+    <div class="metrics-history" id="metricsHistory" style="display:none">
+      <div class="mh-header">
+        <span class="mh-header-title">Istorija</span>
+        <span class="mh-header-count" id="metricsCount">0 unosa</span>
+      </div>
+      <div id="metricsRows"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: PODEŠAVANJA -->
+<div class="page" id="page-settings">
+  <div class="page-header">
+    <div class="page-header-icon phi-purple">
+      <i data-lucide="settings" style="width:18px;height:18px;color:#a78bfa;stroke-width:2"></i>
+    </div>
+    <h2>Podešavanja</h2>
+  </div>
+  <div style="padding:0 20px 20px">
+    <div class="sec-title" style="margin-bottom:12px">Korisnici</div>
+    <div class="user-cards" id="userCards"></div>
+    <button class="user-add-btn" onclick="addUserPrompt()">+ Dodaj korisnika</button>
+
+    <div class="sec-title" style="margin-bottom:12px">Izgled</div>
+    <div class="notif-card" style="margin-bottom:20px">
+      <div class="notif-row" style="margin-bottom:0">
+        <div>
+          <div class="ni-title">Light mode</div>
+          <div class="ni-sub">Svetla tema umesto tamne</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-bottom:12px">Podsetnik</div>
+    <div class="notif-card">
+      <div class="notif-row">
+        <div><div class="ni-title">Dnevni podsetnik</div><div class="ni-sub">Obaveštenje o statusu proteina</div></div>
+        <label class="toggle-wrap"><input type="checkbox" id="notifToggle" onchange="toggleNotif()"><div class="toggle-slider"></div></label>
+      </div>
+      <div class="time-row">
+        <label>Vreme</label>
+        <input type="time" id="notifTime" value="21:00" onchange="saveNotifSettings()">
+      </div>
+      <div class="notif-status" id="notifStatus"></div>
+      <div class="notif-info-box">
+        <div class="notif-info-icon"><i data-lucide="info" style="width:16px;height:16px;color:var(--blue)"></i></div>
+        <div class="notif-info-text"><strong>Napomena:</strong> Podsetnik radi samo dok je ova stranica otvorena u pregledaču. Telefoni zamrzavaju tabove u pozadini. Dodaj aplikaciju na početni ekran (PWA) za bolji rad u pozadini.</div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-bottom:12px;margin-top:8px">Skener</div>
+    <div class="notif-card" style="margin-bottom:20px">
+      <div class="notif-row" style="margin-bottom:14px">
+        <div>
+          <div class="ni-title">Preciznost skenera</div>
+          <div class="ni-sub">Koliko puta kod mora biti viđen pre prihvatanja</div>
+        </div>
+        <span class="slider-val" id="thresholdVal">4</span>
+      </div>
+      <div class="slider-row">
+        <input type="range" id="thresholdSlider" min="2" max="8" value="4" step="1" oninput="updateThreshold(this.value)">
+      </div>
+      <div class="slider-labels">
+        <span>2 — brže</span>
+        <span>8 — preciznije</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5">
+        Ako skener greši ili čita pogrešne kodove → povećaj vrednost.<br>Ako skeniranje traje predugo → smanji vrednost.
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-bottom:12px;margin-top:8px">Ciljevi</div>
+    <div class="form-card" style="margin-bottom:20px">
+      <div class="form-2col">
+        <div class="form-row"><label>Kalorije (kcal)</label><input type="text" id="setKcal" inputmode="decimal" placeholder="2130"></div>
+        <div class="form-row"><label>Proteini (g)</label><input type="text" id="setProt" inputmode="decimal" placeholder="160"></div>
+      </div>
+      <button class="btn-action btn-green-grad" onclick="saveGoals()">Sačuvaj ciljeve</button>
+    </div>
+
+    <div class="sec-title" style="margin-bottom:12px">Uvoz / Izvoz podataka</div>
+    <div class="io-card">
+      <div class="io-title" style="display:flex;align-items:center;gap:7px"><i data-lucide="upload" style="width:15px;height:15px;color:var(--purple)"></i> Izvoz</div>
+      <div class="io-sub">Preuzmi podatke kao CSV ili kompletan JSON backup.</div>
+      <div class="io-btns">
+        <button class="btn-action btn-purple-grad" style="margin-top:0" onclick="exportCSV()">Izvezi istoriju proteina (CSV)</button>
+        <button class="btn-action btn-surface" style="margin-top:0" onclick="exportMetricsCSV()">Izvezi telesna merenja (CSV)</button>
+        <button class="btn-action btn-surface" style="margin-top:0" onclick="exportFullJSON()">Kompletan backup (JSON)</button>
+      </div>
+    </div>
+    <div class="io-card">
+      <div class="io-title" style="display:flex;align-items:center;gap:7px"><i data-lucide="download" style="width:15px;height:15px;color:var(--green)"></i> Uvoz</div>
+      <div class="io-sub">Učitaj backup JSON fajl. <strong style="color:var(--red)">Zamenuje sve trenutne podatke!</strong></div>
+      <div class="io-drop" id="importDrop">
+        <input type="file" id="importFile" accept=".json" onchange="handleImport(this)">
+        <div class="io-drop-icon"><i data-lucide="folder-open" style="width:28px;height:28px;color:var(--muted)"></i></div>
+        <div class="io-drop-text">Prevuci JSON fajl ovde</div>
+        <div class="io-drop-sub">ili klikni da izabereš</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.app -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" id="nav-home" onclick="haptic();showPage('home')">
+      <i data-lucide="home"></i>
+      <span>Pregled</span>
+    </button>
+    <button class="nav-btn" id="nav-food" onclick="haptic();showPage('food')">
+      <i data-lucide="apple"></i>
+      <span>Hrana</span>
+    </button>
+    <button class="nav-btn" id="nav-body" onclick="haptic();showPage('body')">
+      <i data-lucide="activity"></i>
+      <span>Merenja</span>
+    </button>
+    <button class="nav-btn" id="nav-settings" onclick="haptic();showPage('settings')">
+      <i data-lucide="settings"></i>
+      <span>Podešavanja</span>
+    </button>
+  </div>
+</div>
+
+<!-- SCANNER OVERLAY -->
 <div class="scanner-overlay" id="scannerOverlay">
   <div id="quagga-container"></div>
   <div class="scanner-header">
-    <button class="scanner-close" onclick="closeScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <button class="scanner-close" onclick="closeScanner()"><i data-lucide="x" style="width:18px;height:18px;color:#fff;stroke-width:2.5"></i></button>
     <span class="scanner-title">Skeniraj barkod</span>
   </div>
   <div class="scanner-frame"><div class="scanner-box"><div class="scanner-corner-tr"></div><div class="scanner-corner-bl"></div><div class="scanner-line"></div></div></div>
   <div class="scanner-hint">Postavi barkod unutar okvira</div>
+  <div class="scan-confidence">
+    <div class="scan-conf-bar"><div class="scan-conf-fill" id="scanConfFill"></div></div>
+    <div class="scan-conf-label" id="scanConfLabel">Skeniram…</div>
+  </div>
   <div class="scanner-status" id="scannerStatus"></div>
+  <div class="scanner-toggle-manual">
+    <button onclick="toggleManualEntry()">Unesi kod ručno</button>
+  </div>
+  <div class="scanner-manual" id="scannerManual">
+    <div class="scanner-manual-title">Unesi barkod ručno</div>
+    <div class="scanner-manual-row">
+      <input type="number" id="manualCode" placeholder="npr. 4003015046085" inputmode="numeric">
+      <button onclick="submitManualCode()">Traži</button>
+    </div>
+  </div>
   <div class="scan-result" id="scanResult">
     <div class="scan-product-name" id="srName"></div>
     <div class="scan-brand" id="srBrand"></div>
@@ -416,7 +766,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
     </div>
     <div class="scan-portion-row">
       <label>Količina:</label>
-      <input type="number" id="srGrams" value="100" inputmode="decimal" min="1">
+      <input type="text" id="srGrams" value="100" inputmode="decimal" min="1">
       <span>g</span>
     </div>
     <div class="scan-btns">
@@ -426,20 +776,73 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sa
   </div>
 </div>
 
+<!-- CONFIRM DIALOG -->
 <div class="overlay" id="overlayConfirm">
   <div class="dialog">
-    <div class="dialog-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></div>
+    <div class="dialog-icon"><i data-lucide="trash-2" style="width:22px;height:22px;color:var(--red)"></i></div>
     <p id="dlgTitle"></p><small id="dlgSub"></small>
     <div class="dialog-btns">
       <button class="dbtn dbtn-cancel" onclick="closeOverlay()">Otkaži</button>
-      <button class="dbtn dbtn-danger" id="dlgConfirmBtn">Obriši</button>
+      <button class="dbtn dbtn-danger" id="dlgConfirmBtn">Potvrdi</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<!-- IMPORT DIALOG -->
+<div class="overlay" id="overlayImport">
+  <div class="dialog">
+    <div class="dialog-icon blue"><i data-lucide="upload" style="width:22px;height:22px;color:var(--purple)"></i></div>
+    <p>Uvezi podatke?</p><small id="importDlgSub">Ovo će zameniti sve trenutne podatke.</small>
+    <div class="dialog-btns">
+      <button class="dbtn dbtn-cancel" onclick="closeImportOverlay()">Otkaži</button>
+      <button class="dbtn dbtn-confirm" id="importConfirmBtn">Uvezi</button>
+    </div>
+  </div>
+</div>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" onload="lucide.createIcons()" onerror="lucideFallback()"></script>
 <script>
+function lucideFallback(){
+  // Minimal SVG fallbacks samo za nav ikonice koje su najkritičnije
+  var fb={
+    'home':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    'apple':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75-.63 3.71-1.64C17.62 17.27 18 15.46 18 13.5c0-3.5-2.5-6-6-6s-6 2.5-6 6c0 1.96.38 3.77 2.29 5.8C9.25 20.31 10.5 20.94 12 20.94z"/><path d="M12 7.5V4M10 4h4"/></svg>',
+    'activity':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+    'settings':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>',
+    'trash-2':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+    'x':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    'search':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>',
+    'scan-barcode':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>',
+    'scale':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 9l9-6 9 6M5 21h14"/></svg>',
+    'percent':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+    'info':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    'upload':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+    'download':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+    'folder-open':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>',
+    'bar-chart-2':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
+  };
+  document.querySelectorAll('[data-lucide]').forEach(function(el){
+    var name=el.getAttribute('data-lucide');
+    if(fb[name]){
+      var tmp=document.createElement('div');
+      tmp.innerHTML=fb[name];
+      var svg=tmp.firstChild;
+      // Kopiraj style atribut
+      var st=el.getAttribute('style');
+      if(st) svg.setAttribute('style',st);
+      svg.setAttribute('class',el.getAttribute('class')||'');
+      el.parentNode.replaceChild(svg,el);
+    }
+  });
+  console.warn('Lucide CDN nije dostupan — koriste se inline SVG fallbackovi.');
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script>
+// ===== GLOBALS =====
 var GOAL_KCAL=2130, GOAL_PROT=160;
 var BASE_DB=[
   {name:"Jaja",portion:"1 kom",kcal:75,protein:6},
@@ -465,364 +868,124 @@ var BASE_DB=[
   {name:"Soja sos",portion:"100 ml",kcal:46,protein:4.2},
   {name:"Senf",portion:"porcija",kcal:15,protein:0.5}
 ];
-
 var DB=[], foodLog=[], freq={}, history={}, bodyMetrics=[];
-var scannedProduct=null, scanActive=false;
-var metricView='w', notifTimer=null;
+var scannedProduct=null, metricView='w', notifTimer=null;
 
-function todayStr(){ return new Date().toISOString().slice(0,10); }
-
-function loadData(){
-  var sdb=localStorage.getItem('fitdb');
-  DB=sdb?JSON.parse(sdb):BASE_DB.map(function(f){ return Object.assign({},f,{custom:false}); });
-  if(!sdb) saveDB();
-  freq=JSON.parse(localStorage.getItem('fitfreq')||'{}');
-  history=JSON.parse(localStorage.getItem('fithistory')||'{}');
-  bodyMetrics=JSON.parse(localStorage.getItem('fitbody')||'[]');
-  var sl=localStorage.getItem('fitlog');
-  if(sl){
-    var d=JSON.parse(sl);
-    if(d.date===todayStr()){ foodLog=d.log; }
-    else { archiveDay(d.date,d.log); foodLog=[]; saveLog(); }
-  }
-}
-
-function archiveDay(ds,dl){
-  history[ds]=Math.round(dl.reduce(function(s,it){ return s+it.protein; },0));
-  var keys=Object.keys(history).sort();
-  if(keys.length>7) keys.slice(0,keys.length-7).forEach(function(k){ delete history[k]; });
-  localStorage.setItem('fithistory',JSON.stringify(history));
-}
-
-function saveDB(){ localStorage.setItem('fitdb',JSON.stringify(DB)); }
-function saveLog(){ localStorage.setItem('fitlog',JSON.stringify({date:todayStr(),log:foodLog})); }
-function saveFreq(){ localStorage.setItem('fitfreq',JSON.stringify(freq)); }
-
-function loadGoals(){
-  var g=JSON.parse(localStorage.getItem('fitgoals')||'{}');
-  if(g.kcal) GOAL_KCAL=g.kcal;
-  if(g.prot) GOAL_PROT=g.prot;
-  document.getElementById('setKcal').value=GOAL_KCAL;
-  document.getElementById('setProt').value=GOAL_PROT;
-}
-
-function saveGoals(){
-  var k=parseFloat(document.getElementById('setKcal').value);
-  var p=parseFloat(document.getElementById('setProt').value);
-  if(!k||!p) return;
-  GOAL_KCAL=k; GOAL_PROT=p;
-  localStorage.setItem('fitgoals',JSON.stringify({kcal:k,prot:p}));
-  renderDashboard(); renderChart();
-  document.getElementById('ringGoalTxt').textContent='/ '+GOAL_PROT+' g';
-  document.getElementById('chartBadge').textContent='Cilj: '+GOAL_PROT+' g';
-  document.getElementById('kcalGoalTxt').textContent='/ '+GOAL_KCAL;
-}
-
-function haptic(){ if(navigator.vibrate) navigator.vibrate(8); }
-
-function exportCSV(){
-  var today=new Date();
-  var rows=[['Datum','Proteini (g)']];
-  for(var x=6;x>=0;x--){
-    var d=new Date(today); d.setDate(today.getDate()-x);
-    var ds=d.toISOString().slice(0,10);
-    var v=ds===todayStr()?Math.round(foodLog.reduce(function(s,it){ return s+it.protein; },0)):(history[ds]||0);
-    rows.push([ds,v]);
-  }
-  downloadCSV(rows,'proteini_historija.csv');
-}
-
-function exportMetricsCSV(){
-  var rows=[['Datum','Težina (kg)','Mast (%)']];
-  bodyMetrics.forEach(function(m){ rows.push([m.date,m.weight||'',m.fat||'']); });
-  downloadCSV(rows,'telesna_merenja.csv');
-}
-
-function downloadCSV(rows,filename){
-  var csv=rows.map(function(r){ return r.join(','); }).join('\n');
-  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.download=filename; a.click();
-  URL.revokeObjectURL(url);
-}
-
-function setDatum(){
-  var d=new Date();
-  var dn=['Nedelja','Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota'];
-  var mn=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
-  var h=d.getHours();
-  var poz=h>=5&&h<12?'Dobro jutro':h>=12&&h<18?'Dobar dan':'Dobro veče';
-  document.getElementById('pozdrav').textContent=poz+', Ilija.';
-  document.getElementById('datum').textContent=dn[d.getDay()]+', '+d.getDate()+'. '+mn[d.getMonth()]+' '+d.getFullYear()+'.';
-  document.getElementById('inDate').value=todayStr();
-}
-
-function sortedDB(){
-  return DB.slice().sort(function(a,b){ return (freq[b.name]||0)-(freq[a.name]||0); });
-}
-
-function renderDashboard(){
-  var tK=foodLog.reduce(function(s,it){ return s+it.kcal; },0);
-  var tP=foodLog.reduce(function(s,it){ return s+it.protein; },0);
-  var pPct=Math.min(100,Math.round(tP/GOAL_PROT*100));
-  var kPct=Math.min(100,Math.round(tK/GOAL_KCAL*100));
-  document.getElementById('ringFill').style.strokeDashoffset=339.3-(339.3*pPct/100);
-  document.getElementById('ringG').textContent=Math.round(tP);
-  document.getElementById('protPct').textContent=pPct+'%';
-  document.getElementById('protRem').textContent=Math.max(0,Math.round(GOAL_PROT-tP))+' g';
-  document.getElementById('kcalCur').textContent=Math.round(tK);
-  document.getElementById('kcalBar').style.width=kPct+'%';
-  document.getElementById('kcalRem').textContent=Math.max(0,Math.round(GOAL_KCAL-tK));
-}
-
-function renderChart(){
-  var el=document.getElementById('chartBars'); el.innerHTML='';
-  var dn=['Ned','Pon','Uto','Sre','Čet','Pet','Sub'];
-  var today=new Date();
-  var days=[];
-  for(var x=6;x>=0;x--){ var dd=new Date(today); dd.setDate(today.getDate()-x); days.push(dd); }
-  var vals=days.map(function(d){
-    var ds=d.toISOString().slice(0,10);
-    return ds===todayStr()?foodLog.reduce(function(s,it){ return s+it.protein; },0):(history[ds]||0);
-  });
-  var maxVal=Math.max.apply(null,vals.concat([GOAL_PROT,1]));
-  days.forEach(function(d,i){
-    var v=Math.round(vals[i]);
-    var pct=Math.round(v/maxVal*100);
-    var cls=v>=GOAL_PROT?'done':v>0?'partial':'';
-    var col=document.createElement('div'); col.className='chart-col';
-    col.innerHTML='<div class="bar-val">'+(v>0?v:'')+'</div><div class="bar-outer"><div class="bar-inner '+cls+'" style="height:'+pct+'%"></div></div><div class="bar-day">'+dn[d.getDay()]+'</div>';
-    el.appendChild(col);
-  });
-}
-
-function parseNum(val){ return parseFloat(String(val).replace(',','.')); }
-
-function saveMetrics(){
-  var dateVal=document.getElementById('inDate').value||todayStr();
-  var w=parseNum(document.getElementById('inWeight').value);
-  var f=parseNum(document.getElementById('inFat').value);
-  if(!w&&!f) return;
-  var entry={date:dateVal,weight:w||null,fat:f||null};
-  var ex=bodyMetrics.findIndex(function(m){ return m.date===dateVal; });
-  if(ex>=0) bodyMetrics[ex]=entry; else bodyMetrics.push(entry);
-  bodyMetrics.sort(function(a,b){ return a.date.localeCompare(b.date); });
-  if(bodyMetrics.length>30) bodyMetrics=bodyMetrics.slice(-30);
-  localStorage.setItem('fitbody',JSON.stringify(bodyMetrics));
-  document.getElementById('inWeight').value='';
-  document.getElementById('inFat').value='';
-  document.getElementById('inDate').value=todayStr();
-  renderMetrics();
-}
-
-function setMetricView(v){
-  metricView=v;
-  document.getElementById('toggleW').className='ctbtn '+(v==='w'?'active-w':'inactive');
-  document.getElementById('toggleF').className='ctbtn '+(v==='f'?'active-f':'inactive');
-  renderMetrics();
-}
-
-function renderMetrics(){
-  var last=bodyMetrics.length?bodyMetrics[bodyMetrics.length-1]:null;
-  document.getElementById('latestWeight').textContent=last&&last.weight?last.weight+'':'—';
-  document.getElementById('latestFat').textContent=last&&last.fat?last.fat+'%':'—';
-  var el=document.getElementById('metricsChart'); el.innerHTML='';
-  var data=bodyMetrics.slice(-8);
-  if(!data.length){
-    el.innerHTML='<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:12px">Još nema merenja</div>';
-    return;
-  }
-  var vals=data.map(function(m){ return metricView==='w'?m.weight:m.fat; }).filter(function(v){ return v!==null; });
-  if(!vals.length){
-    el.innerHTML='<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:12px">Nema podataka</div>';
-    return;
-  }
-  var maxV=Math.max.apply(null,vals);
-  var minV=Math.min.apply(null,vals);
-  var range=maxV-minV||1;
-  data.forEach(function(m){
-    var v=metricView==='w'?m.weight:m.fat;
-    var pct=v?Math.round(((v-minV)/range)*70+20):0;
-    var dayStr=m.date.slice(5).replace('-','.');
-    var col=document.createElement('div'); col.className='mc-col';
-    col.innerHTML='<div class="mc-val">'+(v?v:'')+'</div><div class="mc-outer"><div class="mc-inner '+metricView+'" style="height:'+pct+'%"></div></div><div class="mc-label">'+dayStr+'</div>';
-    el.appendChild(col);
-  });
-}
-
-function loadNotifSettings(){
-  var s=JSON.parse(localStorage.getItem('fitnotif')||'{}');
-  document.getElementById('notifToggle').checked=s.enabled||false;
-  document.getElementById('notifTime').value=s.time||'21:00';
-  if(s.enabled) scheduleNotif(s.time||'21:00');
-  updateNotifStatus(s.enabled);
-}
-
-function saveNotifSettings(){
-  var enabled=document.getElementById('notifToggle').checked;
-  var time=document.getElementById('notifTime').value;
-  localStorage.setItem('fitnotif',JSON.stringify({enabled:enabled,time:time}));
-  if(enabled) scheduleNotif(time); else clearNotifTimer();
-  updateNotifStatus(enabled);
-}
-
-function toggleNotif(){
-  var enabled=document.getElementById('notifToggle').checked;
-  if(enabled){
-    if(!('Notification' in window)){
-      document.getElementById('notifStatus').textContent='Notifikacije nisu podržane.';
-      document.getElementById('notifToggle').checked=false; return;
-    }
-    Notification.requestPermission().then(function(perm){
-      if(perm!=='granted'){
-        document.getElementById('notifStatus').textContent='Dozvola odbijena.';
-        document.getElementById('notifToggle').checked=false; return;
-      }
-      saveNotifSettings();
-    });
-  } else { saveNotifSettings(); }
-}
-
-function updateNotifStatus(enabled){
-  var time=document.getElementById('notifTime').value;
-  document.getElementById('notifStatus').textContent=enabled?'Podsetnik je aktivan u '+time:'Podsetnik je isključen';
-}
-
-function scheduleNotif(time){
-  clearNotifTimer();
-  function check(){
-    var now=new Date(), parts=time.split(':');
-    var target=new Date(); target.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
-    var diff=target-now;
-    var delay=diff<0?diff+86400000:diff;
-    notifTimer=setTimeout(function(){ fireNotif(); scheduleNotif(time); },delay);
-  }
-  check();
-}
-
-function clearNotifTimer(){ if(notifTimer){ clearTimeout(notifTimer); notifTimer=null; } }
-
-function fireNotif(){
-  if(Notification.permission!=='granted') return;
-  var tP=foodLog.reduce(function(s,it){ return s+it.protein; },0);
-  var rem=Math.max(0,Math.round(GOAL_PROT-tP));
-  var pct=Math.min(100,Math.round(tP/GOAL_PROT*100));
-  var body=rem>0?'Uneo si '+Math.round(tP)+'g proteina ('+pct+'%). Nedostaje još '+rem+'g!':'Cilj dostignut! Uneo si '+Math.round(tP)+'g proteina danas.';
-  new Notification('Protein Tracker',{body:body,icon:'web-app-manifest-512x512.png'});
-}
-
-function getPortions(name){
-  return foodLog.filter(function(it){ return it.name===name&&it._db; }).reduce(function(s,it){ return s+it.qty; },0);
-}
-
-function renderGrid(filter){
-  filter=filter||'';
-  var g=document.getElementById('foodGrid'), nr=document.getElementById('noResults');
-  g.innerHTML='';
-  var q=filter.toLowerCase();
-  var sorted=sortedDB();
-  var filtered=sorted.map(function(f){ return {f:f,origIdx:DB.indexOf(f)}; }).filter(function(o){ return o.f.name.toLowerCase().indexOf(q)>=0; });
-  nr.style.display=filtered.length?'none':'block';
-  filtered.forEach(function(o){
-    var f=o.f, origIdx=o.origIdx;
-    var cnt=getPortions(f.name);
-    var c=document.createElement('div');
-    c.className='food-card'+(cnt>0?' active':'');
-    c.id='card-'+origIdx;
-    c.innerHTML='<button class="card-del" onclick="askDeleteFood(event,'+origIdx+')"><svg viewBox="0 0 24 24" fill="none" stroke="#f4f4f8" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
-      +'<div class="fn">'+f.name+'</div><div class="fp">'+f.portion+'</div>'
-      +'<div class="fstats"><span class="fkcal">'+f.kcal+' kcal</span><span class="fprot">'+f.protein+'g</span></div>'
-      +(f.custom?'<div class="custom-dot"></div>':'')
-      +'<div class="qty-ctrl"><button class="qbtn minus" onclick="adj(event,'+origIdx+',-1)">−</button><div class="qcount'+(cnt>0?' has-val':'')+'" id="qc-'+origIdx+'">'+cnt+'</div><button class="qbtn plus" onclick="adj(event,'+origIdx+',1)">+</button></div>';
-    g.appendChild(c);
-  });
-}
-
-function filterGrid(){ renderGrid(document.getElementById('searchInput').value); }
-
-function adj(e,idx,delta){
-  e.stopPropagation(); haptic();
-  var f=DB[idx];
-  var ex=foodLog.findIndex(function(it){ return it.name===f.name&&it._db; });
-  if(ex>=0){
-    foodLog[ex].qty+=delta;
-    if(foodLog[ex].qty<=0) foodLog.splice(ex,1);
-    else { foodLog[ex].kcal=f.kcal*foodLog[ex].qty; foodLog[ex].protein=f.protein*foodLog[ex].qty; }
-  } else {
-    if(delta<1) return;
-    foodLog.push({name:f.name,kcal:f.kcal,protein:f.protein,qty:1,_db:true});
-    freq[f.name]=(freq[f.name]||0)+1; saveFreq();
-  }
-  saveLog(); renderDashboard(); renderLog(); renderChart();
-  var cnt=getPortions(f.name);
-  var qc=document.getElementById('qc-'+idx);
-  var card=document.getElementById('card-'+idx);
-  if(qc){ qc.textContent=cnt; qc.className='qcount'+(cnt>0?' has-val':''); }
-  if(card) card.className='food-card'+(cnt>0?' active':'');
-}
+// ===== QR: DEBOUNCE =====
+var scanCandidates={}, scanLocked=false;
+var SCAN_THRESHOLD=parseInt(localStorage.getItem('fitscanth')||'4');
 
 function openScanner(){
   document.getElementById('scannerOverlay').classList.add('open');
   document.body.style.overflow='hidden';
-  scanActive=false;
-  showScanStatus('Pokretanje kamere…');
+  scanLocked=false; scanCandidates={};
+  resetConfBar();
+  document.getElementById('scannerManual').classList.remove('show');
+  document.getElementById('scanResult').classList.remove('show');
+  document.getElementById('scannerStatus').classList.remove('show');
   Quagga.init({
-    inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('quagga-container'),constraints:{facingMode:'environment',width:{min:640},height:{min:480}}},
-    decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader']},
-    locate:true
-  }, function(err){
-    if(err){ showScanStatus('Kamera nije dostupna: '+err.message); return; }
-    document.getElementById('scannerStatus').classList.remove('show');
+    inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('quagga-container'),
+      constraints:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},
+    decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader'],multiple:false},
+    locator:{patchSize:'medium',halfSample:true},numOfWorkers:2,frequency:10,locate:true
+  },function(err){
+    if(err){showScanStatus('Kamera nije dostupna: '+(err.message||err));return;}
     Quagga.start();
   });
-  Quagga.onDetected(function(result){
-    if(scanActive) return;
-    var code=result.codeResult.code;
-    if(code){ scanActive=true; Quagga.stop(); lookupBarcode(code); }
-  });
+  Quagga.onDetected(onBarcodeDetected);
 }
 
+function onBarcodeDetected(result){
+  if(scanLocked) return;
+  var code=result.codeResult.code;
+  if(!code||code.length<6) return;
+  scanCandidates[code]=(scanCandidates[code]||0)+1;
+  var count=scanCandidates[code];
+  var pct=Math.min(100,Math.round(count/SCAN_THRESHOLD*100));
+  updateConfBar(pct, count<SCAN_THRESHOLD?'Čitam kod… ('+count+'/'+SCAN_THRESHOLD+')':'Kod potvrđen!');
+  if(count>=SCAN_THRESHOLD){
+    scanLocked=true;
+    Quagga.offDetected(onBarcodeDetected);
+    Quagga.stop(); haptic(); lookupBarcode(code);
+  }
+}
+
+function updateConfBar(pct,label){
+  document.getElementById('scanConfFill').style.width=pct+'%';
+  document.getElementById('scanConfLabel').textContent=label;
+}
+function resetConfBar(){
+  document.getElementById('scanConfFill').style.width='0%';
+  document.getElementById('scanConfLabel').textContent='Skeniram…';
+}
+function toggleManualEntry(){
+  var el=document.getElementById('scannerManual');
+  el.classList.toggle('show');
+  if(el.classList.contains('show')) document.getElementById('manualCode').focus();
+}
+function submitManualCode(){
+  var code=document.getElementById('manualCode').value.trim();
+  if(!code||code.length<6){showScanStatus('Unesi ispravan kod (min. 6 cifara)');return;}
+  scanLocked=true;
+  try{Quagga.offDetected(onBarcodeDetected);}catch(e){}
+  try{Quagga.stop();}catch(e){}
+  document.getElementById('scannerManual').classList.remove('show');
+  haptic(); lookupBarcode(code);
+}
 function closeScanner(){
-  try{ Quagga.stop(); }catch(e){}
+  try{Quagga.offDetected(onBarcodeDetected);}catch(e){}
+  try{Quagga.stop();}catch(e){}
   document.getElementById('scannerOverlay').classList.remove('open');
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
+  document.getElementById('scannerManual').classList.remove('show');
   document.body.style.overflow='';
-  scannedProduct=null; scanActive=false;
+  scannedProduct=null; scanLocked=false; scanCandidates={};
+  resetConfBar();
 }
-
 function resetScanner(){
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
-  scannedProduct=null; scanActive=false;
-  Quagga.start();
+  scannedProduct=null; scanLocked=false; scanCandidates={};
+  resetConfBar();
+  document.getElementById('manualCode').value='';
+  Quagga.init({
+    inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('quagga-container'),
+      constraints:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},
+    decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader'],multiple:false},
+    locator:{patchSize:'medium',halfSample:true},numOfWorkers:2,frequency:10,locate:true
+  },function(err){if(!err){Quagga.start();Quagga.onDetected(onBarcodeDetected);}});
 }
-
-function showScanStatus(msg){
-  var el=document.getElementById('scannerStatus');
-  el.textContent=msg; el.classList.add('show');
-}
-
+function showScanStatus(msg){var el=document.getElementById('scannerStatus');el.textContent=msg;el.classList.add('show');}
 function lookupBarcode(code){
-  showScanStatus('Pretraga: '+code+'...');
-  var url='https://world.openfoodfacts.org/api/v0/product/'+code+'.json';
-  fetch(url,{method:'GET',headers:{'Accept':'application/json','User-Agent':'ProteinTracker/1.0 (https://llija994.github.io/protein-tracker)'}})
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(data){
-      if(data.status!==1||!data.product){ showScanStatus('Proizvod nije u bazi. Unesi rucno.'); scanActive=false; Quagga.start(); return; }
-      var p=data.product, n=p.nutriments||{};
-      scannedProduct={
-        name:p.product_name||p.product_name_en||'Nepoznat proizvod',
-        brand:p.brands||'',
-        kcalPer100:Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),
-        protPer100:Math.round((n.proteins_100g||0)*10)/10,
-        carbPer100:Math.round((n.carbohydrates_100g||0)*10)/10
-      };
-      showProductCard(scannedProduct);
-    })
-    .catch(function(e){ showScanStatus('Greska: '+e.message+'. Pokusaj ponovo.'); scanActive=false; Quagga.start(); });
+  showScanStatus('Pretraga: '+code+'…');
+  fetch('https://world.openfoodfacts.org/api/v0/product/'+code+'.json',{
+    method:'GET',headers:{'Accept':'application/json','User-Agent':'ProteinTracker/1.0'}
+  }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+  .then(function(data){
+    if(data.status!==1||!data.product){
+      showScanStatus('Proizvod nije u bazi. Otvaram ručni unos…');
+      setTimeout(function(){
+        closeScanner();
+        showPage('food');
+        // Prefill name with barcode as fallback
+        var nameField=document.getElementById('mName');
+        if(nameField){nameField.value='Proizvod '+code;nameField.focus();nameField.select();}
+        showToast('Proizvod nije pronađen — unesi podatke ručno','error');
+      },1200);
+      return;
+    }
+    var p=data.product,n=p.nutriments||{};
+    scannedProduct={
+      name:p.product_name||p.product_name_en||'Nepoznat proizvod',
+      brand:p.brands||'',
+      kcalPer100:Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),
+      protPer100:Math.round((n.proteins_100g||0)*10)/10,
+      carbPer100:Math.round((n.carbohydrates_100g||0)*10)/10
+    };
+    showProductCard(scannedProduct);
+  }).catch(function(e){showScanStatus('Greška: '+e.message);scanLocked=false;});
 }
-
 function showProductCard(p){
   document.getElementById('scannerStatus').classList.remove('show');
   document.getElementById('srName').textContent=p.name;
@@ -833,81 +996,786 @@ function showProductCard(p){
   document.getElementById('srGrams').value=100;
   document.getElementById('scanResult').classList.add('show');
 }
-
 function addScannedProduct(){
   if(!scannedProduct) return;
-  var grams=parseFloat(document.getElementById('srGrams').value)||100;
+  var grams=parsePosNum(document.getElementById('srGrams').value)||100;
   var factor=grams/100;
   foodLog.push({name:scannedProduct.name+(grams!==100?' ('+grams+'g)':''),kcal:Math.round(scannedProduct.kcalPer100*factor),protein:Math.round(scannedProduct.protPer100*factor*10)/10,qty:1,_db:false});
-  saveLog(); renderDashboard(); renderLog(); renderChart(); closeScanner();
+  window._logJustAdded=true;
+  saveLog();renderDashboard();renderLog();renderChart();closeScanner();
+  showToast('✅ Dodato: '+scannedProduct.name,'success');
 }
 
-function openOverlay(title,sub,action){
+// ===== NAVIGATION =====
+function showPage(name){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ===== TOAST =====
+var toastTimer=null;
+function showToast(msg,type){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast '+(type||'');
+  el.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){el.classList.remove('show');},2600);
+}
+
+// ===== DATA =====
+function todayStr(){return new Date().toISOString().slice(0,10);}
+var currentUser=localStorage.getItem('fitcurrentuser')||'ilija';
+function sk(key){return currentUser+'_'+key;}
+function loadData(){
+  var sdb=localStorage.getItem(sk('fitdb'));
+  DB=sdb?JSON.parse(sdb):BASE_DB.map(function(f){return Object.assign({},f,{custom:false});});
+  if(!sdb) saveDB();
+  freq=JSON.parse(localStorage.getItem(sk('fitfreq'))||'{}');
+  history=JSON.parse(localStorage.getItem(sk('fithistory'))||'{}');
+  bodyMetrics=JSON.parse(localStorage.getItem(sk('fitbody'))||'[]');
+  var sl=localStorage.getItem(sk('fitlog'));
+  if(sl){var d=JSON.parse(sl);if(d.date===todayStr()){foodLog=d.log;}else{archiveDay(d.date,d.log);foodLog=[];saveLog();}}
+}
+function archiveDay(ds,dl){
+  history[ds]=Math.round(dl.reduce(function(s,it){return s+it.protein;},0));
+  var keys=Object.keys(history).sort();
+  if(keys.length>30) keys.slice(0,keys.length-30).forEach(function(k){delete history[k];});
+  localStorage.setItem(sk('fithistory'),JSON.stringify(history));
+}
+function saveDB(){localStorage.setItem(sk('fitdb'),JSON.stringify(DB));}
+function saveLog(){localStorage.setItem(sk('fitlog'),JSON.stringify({date:todayStr(),log:foodLog}));}
+function saveFreq(){localStorage.setItem(sk('fitfreq'),JSON.stringify(freq));}
+function loadGoals(){
+  var g=JSON.parse(localStorage.getItem(sk('fitgoals'))||'{}');
+  if(g.kcal) GOAL_KCAL=g.kcal;
+  if(g.prot) GOAL_PROT=g.prot;
+  document.getElementById('setKcal').value=GOAL_KCAL;
+  document.getElementById('setProt').value=GOAL_PROT;
+}
+function saveGoals(){
+  var k=parsePosNum(document.getElementById('setKcal').value);
+  var p=parsePosNum(document.getElementById('setProt').value);
+  if(!k||!p) return;
+  GOAL_KCAL=k;GOAL_PROT=p;
+  localStorage.setItem(sk('fitgoals'),JSON.stringify({kcal:k,prot:p}));
+  renderDashboard();renderChart();
+  document.getElementById('ringGoalTxt').textContent='/ '+GOAL_PROT+' g';
+  document.getElementById('chartBadge').textContent='Cilj: '+GOAL_PROT+' g';
+  document.getElementById('kcalGoalTxt').textContent='/ '+GOAL_KCAL;
+  showToast('✅ Ciljevi sačuvani','success');
+}
+function haptic(){if(navigator.vibrate) navigator.vibrate(8);}
+
+// ===== EXPORT/IMPORT =====
+function exportCSV(){
+  var today=new Date(),rows=[['Datum','Proteini (g)']];
+  for(var x=29;x>=0;x--){
+    var d=new Date(today);d.setDate(today.getDate()-x);
+    var ds=d.toISOString().slice(0,10);
+    var v=ds===todayStr()?Math.round(foodLog.reduce(function(s,it){return s+it.protein;},0)):(history[ds]||0);
+    rows.push([ds,v]);
+  }
+  downloadCSV(rows,'proteini_historija.csv');showToast('📤 Izvoz uspešan','success');
+}
+function exportMetricsCSV(){
+  var rows=[['Datum','Težina (kg)','Mast (%)']];
+  bodyMetrics.forEach(function(m){rows.push([m.date,m.weight||'',m.fat||'']);});
+  downloadCSV(rows,'telesna_merenja.csv');showToast('📤 Izvoz uspešan','success');
+}
+function exportFullJSON(){
+  var payload={version:2,exportDate:new Date().toISOString(),goals:{kcal:GOAL_KCAL,prot:GOAL_PROT},db:DB,freq:freq,history:history,bodyMetrics:bodyMetrics,todayLog:{date:todayStr(),log:foodLog}};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='protein_tracker_backup_'+todayStr()+'.json';a.click();
+  URL.revokeObjectURL(url);showToast('📦 Backup sačuvan','success');
+}
+function downloadCSV(rows,filename){
+  var csv=rows.map(function(r){return r.join(',');}).join('\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+var pendingImportData=null;
+function handleImport(input){
+  var file=input.files[0];if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.version||!data.goals){showToast('❌ Neispravan fajl','error');input.value='';return;}
+      pendingImportData=data;
+      document.getElementById('importDlgSub').textContent='Backup od '+data.exportDate.slice(0,10)+' — zamenuje sve podatke.';
+      document.getElementById('overlayImport').classList.add('open');
+    }catch(err){showToast('❌ Greška pri čitanju fajla','error');}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+function closeImportOverlay(){document.getElementById('overlayImport').classList.remove('open');pendingImportData=null;}
+function doImport(){
+  if(!pendingImportData) return;
+  var d=pendingImportData;
+  if(d.goals){GOAL_KCAL=d.goals.kcal||GOAL_KCAL;GOAL_PROT=d.goals.prot||GOAL_PROT;localStorage.setItem(sk('fitgoals'),JSON.stringify({kcal:GOAL_KCAL,prot:GOAL_PROT}));}
+  if(d.db){DB=d.db;saveDB();}
+  if(d.freq){freq=d.freq;saveFreq();}
+  if(d.history){history=d.history;localStorage.setItem(sk('fithistory'),JSON.stringify(history));}
+  if(d.bodyMetrics){bodyMetrics=d.bodyMetrics;localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));}
+  if(d.todayLog&&d.todayLog.date===todayStr()){foodLog=d.todayLog.log;saveLog();}
+  closeImportOverlay();
+  renderDashboard();renderChart();renderMetrics();renderLog();renderGrid();loadGoals();
+  showToast('✅ Uvoz uspešan!','success');
+}
+
+// ===== DATUM =====
+function setDatum(){
+  var d=new Date();
+  var dn=['Nedelja','Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota'];
+  var mn=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
+  var h=d.getHours();
+  var poz=h>=5&&h<12?'Dobro jutro':h>=12&&h<18?'Dobar dan':'Dobro veče';
+  var name=getUserName(currentUser);
+  document.getElementById('pozdrav').textContent=poz+', '+name+'. 👋';
+  document.getElementById('datum').textContent=dn[d.getDay()]+', '+d.getDate()+'. '+mn[d.getMonth()]+' '+d.getFullYear()+'.';
+}
+
+// ===== RENDER =====
+function sortedDB(){return DB.slice().sort(function(a,b){return (freq[b.name]||0)-(freq[a.name]||0);});}
+function renderDashboard(){
+  var tK=foodLog.reduce(function(s,it){return s+it.kcal;},0);
+  var tP=foodLog.reduce(function(s,it){return s+it.protein;},0);
+  var pPct=Math.min(100,Math.round(tP/GOAL_PROT*100));
+  var kPct=Math.min(100,Math.round(tK/GOAL_KCAL*100));
+  document.getElementById('ringFill').style.strokeDashoffset=339.3-(339.3*pPct/100);
+  document.getElementById('ringG').textContent=Math.round(tP);
+  document.getElementById('protPct').textContent=pPct+'%';
+  document.getElementById('protRem').textContent=Math.max(0,Math.round(GOAL_PROT-tP))+' g';
+  document.getElementById('kcalCur').textContent=Math.round(tK);
+  document.getElementById('kcalBar').style.width=kPct+'%';
+  document.getElementById('kcalRem').textContent=Math.max(0,Math.round(GOAL_KCAL-tK));
+}
+function renderChart(){
+  var el=document.getElementById('chartBars');el.innerHTML='';
+  var dn=['Ned','Pon','Uto','Sre','Čet','Pet','Sub'];
+  var today=new Date(),days=[];
+  for(var x=6;x>=0;x--){var dd=new Date(today);dd.setDate(today.getDate()-x);days.push(dd);}
+  var vals=days.map(function(d){var ds=d.toISOString().slice(0,10);return ds===todayStr()?foodLog.reduce(function(s,it){return s+it.protein;},0):(history[ds]||0);});
+  var maxVal=Math.max.apply(null,vals.concat([GOAL_PROT,1]));
+  days.forEach(function(d,i){
+    var v=Math.round(vals[i]),pct=Math.round(v/maxVal*100),cls=v>=GOAL_PROT?'done':v>0?'partial':'';
+    var col=document.createElement('div');col.className='chart-col';
+    col.innerHTML='<div class="bar-val">'+(v>0?v:'')+'</div><div class="bar-outer"><div class="bar-inner '+cls+'" style="height:'+pct+'%"></div></div><div class="bar-day">'+dn[d.getDay()]+'</div>';
+    el.appendChild(col);
+  });
+}
+function parseNum(val){
+  var n=parseFloat(String(val).replace(',','.').replace(/[^0-9.]/g,''));
+  return isNaN(n)?0:n;
+}
+function parsePosNum(val){ var n=parseNum(val); return n>0?n:0; }
+function saveMetrics(){
+  var w=parseNum(document.getElementById('inWeight').value);
+  var f=parseNum(document.getElementById('inFat').value);
+  if(!w&&!f) return;
+  var entry={date:todayStr(),weight:w||null,fat:f||null};
+  var ex=bodyMetrics.findIndex(function(m){return m.date===todayStr();});
+  if(ex>=0) bodyMetrics[ex]=entry; else bodyMetrics.push(entry);
+  bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
+  if(bodyMetrics.length>60) bodyMetrics=bodyMetrics.slice(-60);
+  localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
+  document.getElementById('inWeight').value='';document.getElementById('inFat').value='';
+  renderMetrics();showToast('✅ Merenje sačuvano','success');
+}
+function saveHistoricMetric(){
+  var dateVal=document.getElementById('histDate').value;
+  var w=parseNum(document.getElementById('histWeight').value);
+  var f=parseNum(document.getElementById('histFat').value);
+  if(!dateVal){showToast('Izaberi datum','error');return;}
+  if(!w&&!f){showToast('Unesi težinu ili % masti','error');return;}
+  var entry={date:dateVal,weight:w||null,fat:f||null};
+  var ex=bodyMetrics.findIndex(function(m){return m.date===dateVal;});
+  if(ex>=0){bodyMetrics[ex]=entry;}else{bodyMetrics.push(entry);}
+  bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
+  if(bodyMetrics.length>60) bodyMetrics=bodyMetrics.slice(-60);
+  localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
+  document.getElementById('histWeight').value='';
+  document.getElementById('histFat').value='';
+  document.getElementById('histDate').value='';
+  renderMetrics();
+  showToast('✅ Merenje za '+dateVal+' sačuvano','success');
+}
+function setMetricView(v){
+  metricView=v;
+  document.getElementById('toggleW').className='ctbtn '+(v==='w'?'active-w':'inactive');
+  document.getElementById('toggleF').className='ctbtn '+(v==='f'?'active-f':'inactive');
+  renderMetrics();
+}
+function renderMetrics(){
+  var last=bodyMetrics.length?bodyMetrics[bodyMetrics.length-1]:null;
+  var prev=bodyMetrics.length>1?bodyMetrics[bodyMetrics.length-2]:null;
+
+  // Hero cards
+  document.getElementById('latestWeight').textContent=last&&last.weight!=null?last.weight+'':'—';
+  if(last&&prev&&last.weight!=null&&prev.weight!=null){
+    var dw=Math.round((last.weight-prev.weight)*10)/10;
+    var wdEl=document.getElementById('weightDelta');
+    wdEl.textContent=(dw>0?'▲ +':dw<0?'▼ ':'')+Math.abs(dw)+' kg';
+    wdEl.className='mh-delta '+(dw>0?'up':dw<0?'down':'neutral');
+  } else {document.getElementById('weightDelta').textContent='nema prethodnog';document.getElementById('weightDelta').className='mh-delta neutral';}
+  document.getElementById('latestFat').textContent=last&&last.fat!=null?last.fat+'%':'—';
+  if(last&&prev&&last.fat!=null&&prev.fat!=null){
+    var df=Math.round((last.fat-prev.fat)*10)/10;
+    var fdEl=document.getElementById('fatDelta');
+    fdEl.textContent=(df>0?'▲ +':df<0?'▼ ':'')+Math.abs(df)+'%';
+    fdEl.className='mh-delta '+(df>0?'up':df<0?'down':'neutral');
+  } else {document.getElementById('fatDelta').textContent='nema prethodnog';document.getElementById('fatDelta').className='mh-delta neutral';}
+
+  // SVG line chart
+  var el=document.getElementById('metricsChart');
+  var labelsEl=document.getElementById('mcDotLabels');
+  var progressWrap=document.getElementById('metricsProgress');
+  var progressVal=document.getElementById('mcProgressVal');
+  el.innerHTML=''; labelsEl.innerHTML='';
+
+  var data=bodyMetrics.slice(-8);
+  if(!data.length){
+    el.innerHTML='<div style="height:80px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:12px">Još nema merenja</div>';
+    progressWrap.style.display='none'; renderMetricsHistory(); return;
+  }
+  var vals=data.map(function(m){return metricView==='w'?m.weight:m.fat;});
+  var hasVals=vals.filter(function(v){return v!=null;});
+  if(!hasVals.length){
+    el.innerHTML='<div style="height:80px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:12px">Nema podataka</div>';
+    progressWrap.style.display='none'; renderMetricsHistory(); return;
+  }
+
+  var W=320, H=80, pad=14;
+  var maxV=Math.max.apply(null,hasVals), minV=Math.min.apply(null,hasVals);
+  var range=maxV-minV||1;
+  var isWeight=metricView==='w';
+  var color=isWeight?'#a78bfa':'#f87171';
+  var gradId=isWeight?'mcGradW':'mcGradF';
+
+  // Build points
+  var pts=data.map(function(m,i){
+    var v=isWeight?m.weight:m.fat;
+    var x=data.length===1?W/2:pad+(i/(data.length-1))*(W-pad*2);
+    var y=v!=null?H-pad-((v-minV)/range)*(H-pad*2):null;
+    return {x:x,y:y,v:v,date:m.date};
+  });
+
+  // Smooth bezier path through valid points
+  var validPts=pts.filter(function(p){return p.y!=null;});
+  var pathD='', areaD='';
+  if(validPts.length===1){
+    pathD='M'+validPts[0].x+','+validPts[0].y;
+    areaD='M'+validPts[0].x+','+H+' L'+validPts[0].x+','+validPts[0].y+' Z';
+  } else {
+    for(var i=0;i<validPts.length;i++){
+      if(i===0){
+        pathD='M'+validPts[i].x+','+validPts[i].y;
+        areaD='M'+validPts[i].x+','+H+' L'+validPts[i].x+','+validPts[i].y;
+      } else {
+        var cp1x=validPts[i-1].x+(validPts[i].x-validPts[i-1].x)*0.45;
+        var cp1y=validPts[i-1].y;
+        var cp2x=validPts[i].x-(validPts[i].x-validPts[i-1].x)*0.45;
+        var cp2y=validPts[i].y;
+        pathD+=' C'+cp1x+','+cp1y+' '+cp2x+','+cp2y+' '+validPts[i].x+','+validPts[i].y;
+        areaD+=' C'+cp1x+','+cp1y+' '+cp2x+','+cp2y+' '+validPts[i].x+','+validPts[i].y;
+      }
+    }
+    areaD+=' L'+validPts[validPts.length-1].x+','+H+' Z';
+  }
+
+  var svg='<svg class="metrics-svg-wrap" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">'
+    +'<defs>'
+    +'<linearGradient id="'+gradId+'" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0%" stop-color="'+color+'" stop-opacity="0.25"/>'
+    +'<stop offset="100%" stop-color="'+color+'" stop-opacity="0.02"/>'
+    +'</linearGradient>'
+    +'<filter id="mcGlow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+    +'</defs>'
+    +(validPts.length>1?'<path d="'+areaD+'" fill="url(#'+gradId+')" />':'')
+    +'<path d="'+pathD+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#mcGlow)"/>';
+
+  // Dots + value labels
+  validPts.forEach(function(p,i){
+    var isLast=i===validPts.length-1;
+    svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(isLast?4:3)+'" fill="'+(isLast?color:'var(--surface2)')+'" stroke="'+color+'" stroke-width="2"/>';
+    if(isLast||validPts.length<=4){
+      svg+='<text x="'+p.x+'" y="'+(p.y-8)+'" text-anchor="middle" font-size="9" fill="'+color+'" font-weight="700">'+p.v+'</text>';
+    }
+  });
+  svg+='</svg>';
+  el.innerHTML=svg;
+
+  // Date labels below
+  labelsEl.innerHTML='';
+  data.forEach(function(m){
+    var s=document.createElement('span');
+    s.className='mc-dot-label';
+    s.textContent=m.date.slice(5).replace('-','.');
+    labelsEl.appendChild(s);
+  });
+
+  // Progress from first to last measurement
+  var allVals=bodyMetrics.map(function(m){return isWeight?m.weight:m.fat;}).filter(function(v){return v!=null;});
+  if(allVals.length>=2){
+    var first=allVals[0], latest=allVals[allVals.length-1];
+    var diff=Math.round((latest-first)*10)/10;
+    var unit=isWeight?' kg':'%';
+    var label=isWeight?'Ukupno od prvog merenja':'Mast od prvog merenja';
+    document.querySelector('.mc-progress-label').textContent=label;
+    progressVal.textContent=(diff>0?'+':'')+diff+unit;
+    progressVal.className='mc-progress-val '+(diff<0?'positive':diff>0?'negative':'neutral');
+    progressWrap.style.display='flex';
+  } else {
+    progressWrap.style.display='none';
+  }
+
+  renderMetricsHistory();
+}
+function renderMetricsHistory(){
+  var hist=document.getElementById('metricsHistory'),rows=document.getElementById('metricsRows');
+  if(!bodyMetrics.length){hist.style.display='none';return;}
+  hist.style.display='block';
+  document.getElementById('metricsCount').textContent=bodyMetrics.length+' unosa';
+  rows.innerHTML='';
+  bodyMetrics.slice().reverse().slice(0,20).forEach(function(m){
+    var row=document.createElement('div');row.className='mh-row';
+    var dateStr=m.date.slice(5).replace('-','.') + '. ' + m.date.slice(0,4);
+    row.innerHTML='<span class="mh-date-badge">'+dateStr+'</span><div class="mh-row-vals">'
+      +(m.weight!=null?'<div class="mh-rv"><div class="mh-rv-dot w"></div><span class="mh-rv-val">'+m.weight+'</span><span class="mh-rv-unit">kg</span></div>':'')
+      +(m.fat!=null?'<div class="mh-rv"><div class="mh-rv-dot f"></div><span class="mh-rv-val">'+m.fat+'</span><span class="mh-rv-unit">%</span></div>':'')
+      +'</div>';
+    rows.appendChild(row);
+  });
+}
+
+// ===== NOTIFICATIONS =====
+function loadNotifSettings(){
+  var s=JSON.parse(localStorage.getItem('fitnotif')||'{}');
+  document.getElementById('notifToggle').checked=s.enabled||false;
+  document.getElementById('notifTime').value=s.time||'21:00';
+  if(s.enabled) scheduleNotif(s.time||'21:00');
+  updateNotifStatus(s.enabled);
+}
+function saveNotifSettings(){
+  var enabled=document.getElementById('notifToggle').checked;
+  var time=document.getElementById('notifTime').value;
+  localStorage.setItem('fitnotif',JSON.stringify({enabled:enabled,time:time}));
+  if(enabled) scheduleNotif(time); else clearNotifTimer();
+  updateNotifStatus(enabled);
+}
+function toggleNotif(){
+  var enabled=document.getElementById('notifToggle').checked;
+  if(enabled){
+    if(!('Notification' in window)){document.getElementById('notifStatus').textContent='Notifikacije nisu podržane.';document.getElementById('notifToggle').checked=false;return;}
+    Notification.requestPermission().then(function(perm){
+      if(perm!=='granted'){document.getElementById('notifStatus').textContent='Dozvola odbijena.';document.getElementById('notifToggle').checked=false;return;}
+      saveNotifSettings();
+    });
+  } else {saveNotifSettings();}
+}
+function updateNotifStatus(enabled){
+  var time=document.getElementById('notifTime').value;
+  document.getElementById('notifStatus').textContent=enabled?'✅ Aktivan u '+time+' (stranica mora biti otvorena)':'⭕ Isključen';
+}
+function scheduleNotif(time){
+  clearNotifTimer();
+  function check(){
+    var now=new Date(),parts=time.split(':');
+    var target=new Date();target.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+    var diff=target-now,delay=diff<0?diff+86400000:diff;
+    notifTimer=setTimeout(function(){fireNotif();scheduleNotif(time);},delay);
+  }
+  check();
+}
+function clearNotifTimer(){if(notifTimer){clearTimeout(notifTimer);notifTimer=null;}}
+function fireNotif(){
+  if(Notification.permission!=='granted') return;
+  var tP=foodLog.reduce(function(s,it){return s+it.protein;},0);
+  var rem=Math.max(0,Math.round(GOAL_PROT-tP)),pct=Math.min(100,Math.round(tP/GOAL_PROT*100));
+  var body=rem>0?'Uneo si '+Math.round(tP)+'g proteina ('+pct+'%). Nedostaje još '+rem+'g!':'Cilj dostignut! '+Math.round(tP)+'g proteina danas. 🎉';
+  new Notification('Protein Tracker',{body:body,icon:'web-app-manifest-512x512.png'});
+}
+
+// ===== FOOD GRID =====
+function getPortions(name){return foodLog.filter(function(it){return it.name===name&&it._db;}).reduce(function(s,it){return s+it.qty;},0);}
+function renderGrid(filter){
+  filter=filter||'';
+  var g=document.getElementById('foodGrid'),nr=document.getElementById('noResults');
+  g.innerHTML='';
+  var q=filter.toLowerCase(),sorted=sortedDB();
+  var filtered=sorted.map(function(f){return {f:f,origIdx:DB.indexOf(f)};}).filter(function(o){return o.f.name.toLowerCase().indexOf(q)>=0;});
+  nr.style.display=filtered.length?'none':'block';
+  filtered.forEach(function(o){
+    var f=o.f,origIdx=o.origIdx,cnt=getPortions(f.name);
+    var c=document.createElement('div');c.className='food-card'+(cnt>0?' active':'');c.id='card-'+origIdx;
+    c.innerHTML='<button class="card-del" onclick="askDeleteFood(event,'+origIdx+')"><i data-lucide="x" style="width:12px;height:12px;color:#f4f4f8;stroke-width:2.5"></i></button>'
+      +'<div class="fn">'+f.name+'</div><div class="fp">'+f.portion+'</div>'
+      +'<div class="fstats"><span class="fkcal">'+f.kcal+' kcal</span><span class="fprot">'+f.protein+'g</span></div>'
+      +(f.custom?'<div class="custom-dot"></div>':'')
+      +'<div class="qty-ctrl"><button class="qbtn minus" onclick="adj(event,'+origIdx+',-1)">−</button><div class="qcount'+(cnt>0?' has-val':'')+'" id="qc-'+origIdx+'">'+cnt+'</div><button class="qbtn plus" onclick="adj(event,'+origIdx+',1)">+</button></div>';
+    g.appendChild(c);
+  });
+  if(window.lucide) lucide.createIcons();
+  renderQuickAdd();
+}
+function renderQuickAdd(){
+  var wrap=document.getElementById('quickAddWrap');
+  var chips=document.getElementById('quickAddChips');
+  // Get top 6 by frequency, only items that exist in DB
+  var top=Object.keys(freq)
+    .filter(function(name){return DB.some(function(f){return f.name===name;});})
+    .sort(function(a,b){return (freq[b]||0)-(freq[a]||0);})
+    .slice(0,6);
+  if(!top.length){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  chips.innerHTML='';
+  top.forEach(function(name){
+    var food=DB.find(function(f){return f.name===name;});
+    if(!food) return;
+    var chip=document.createElement('button');
+    chip.className='qa-chip';
+    chip.innerHTML='<span class="qa-chip-plus">+</span><span class="qa-chip-name">'+food.name+'</span><span class="qa-chip-prot">'+food.protein+'g</span>';
+    chip.onclick=function(){ haptic(); quickAdd(name); };
+    chips.appendChild(chip);
+  });
+}
+function quickAdd(name){
+  var food=DB.find(function(f){return f.name===name;});
+  if(!food) return;
+  var ex=foodLog.findIndex(function(it){return it.name===food.name&&it._db;});
+  if(ex>=0){
+    foodLog[ex].qty+=1;
+    foodLog[ex].kcal=food.kcal*foodLog[ex].qty;
+    foodLog[ex].protein=food.protein*foodLog[ex].qty;
+  } else {
+    foodLog.push({name:food.name,kcal:food.kcal,protein:food.protein,qty:1,_db:true});
+    window._logJustAdded=true;
+  }
+  freq[name]=(freq[name]||0)+1; saveFreq();
+  saveLog(); renderDashboard(); renderLog(); renderChart(); renderGrid();
+  showToast('✅ Dodato: '+food.name,'success');
+}
+function adj(e,idx,delta){
+  e.stopPropagation();haptic();
+  var f=DB[idx],ex=foodLog.findIndex(function(it){return it.name===f.name&&it._db;});
+  if(ex>=0){
+    foodLog[ex].qty+=delta;
+    if(foodLog[ex].qty<=0) foodLog.splice(ex,1);
+    else{foodLog[ex].kcal=f.kcal*foodLog[ex].qty;foodLog[ex].protein=f.protein*foodLog[ex].qty;}
+  } else {
+    if(delta<1) return;
+    foodLog.push({name:f.name,kcal:f.kcal,protein:f.protein,qty:1,_db:true});
+    window._logJustAdded=true;
+    freq[f.name]=(freq[f.name]||0)+1;saveFreq();
+  }
+  saveLog();renderDashboard();renderLog();renderChart();
+  var cnt=getPortions(f.name);
+  var qc=document.getElementById('qc-'+idx),card=document.getElementById('card-'+idx);
+  if(qc){qc.textContent=cnt;qc.className='qcount'+(cnt>0?' has-val':'');}
+  if(card) card.className='food-card'+(cnt>0?' active':'');
+}
+function renderLog(){
+  var el=document.getElementById('logList');
+  if(!foodLog.length){
+    el.innerHTML='<div class="empty-state">'
+      +'<div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/></svg></div>'
+      +'<div class="empty-state-title">Još nisi uneo ništa</div>'
+      +'<div class="empty-state-sub">Dodaj namirnicu iz liste ili skeniraj barkod proizvoda</div>'
+      +'</div>';
+    return;
+  }
+  el.innerHTML='';
+  foodLog.forEach(function(item,i){
+    var wrap=document.createElement('div');
+    wrap.className='log-item';
+    wrap.style.marginBottom='8px';
+    wrap.innerHTML='<div class="log-item-bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>'
+      +'<div class="log-item-inner"><div class="log-info"><div class="log-name">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div><div class="log-macros"><span class="log-kcal">'+Math.round(item.kcal)+' kcal</span><span class="log-prot">'+Math.round(item.protein*10)/10+'g prot</span></div></div>'
+      +'<button class="btn-del" onclick="delItem('+i+')">Obriši</button></div>';
+    // Swipe logic
+    (function(idx, wrapEl){
+      var startX=0, curX=0, swiping=false;
+      var inner=wrapEl.querySelector('.log-item-inner');
+      wrapEl.addEventListener('touchstart',function(e){
+        startX=e.touches[0].clientX; curX=startX; swiping=true;
+      },{passive:true});
+      wrapEl.addEventListener('touchmove',function(e){
+        if(!swiping) return;
+        curX=e.touches[0].clientX;
+        var dx=curX-startX;
+        if(dx>0) return; // solo levo
+        var clamped=Math.max(dx,-90);
+        inner.style.transform='translateX('+clamped+'px)';
+        wrapEl.classList.add('swiping');
+      },{passive:true});
+      wrapEl.addEventListener('touchend',function(){
+        swiping=false;
+        var dx=curX-startX;
+        if(dx<-60){
+          // Potvrdi brisanje
+          inner.style.transform='translateX(-100%)';
+          setTimeout(function(){ delItem(idx); },220);
+        } else {
+          inner.style.transform='';
+          wrapEl.classList.remove('swiping');
+        }
+      });
+    })(i, wrap);
+    el.appendChild(wrap);
+  });
+  var wraps=el.querySelectorAll('.log-item');
+  var last=wraps[wraps.length-1];
+  if(last&&window._logJustAdded){
+    last.querySelector('.log-item-inner').classList.add('added');
+    window._logJustAdded=false;
+  }
+  renderLogSummary();
+}
+function renderLogSummary(){
+  var el=document.getElementById('logSummary');
+  if(!foodLog.length){el.style.display='none';return;}
+  var tK=Math.round(foodLog.reduce(function(s,it){return s+it.kcal;},0));
+  var tP=Math.round(foodLog.reduce(function(s,it){return s+it.protein;},0)*10)/10;
+  el.style.display='block';
+  el.innerHTML='<div class="log-summary">'
+    +'<span class="log-summary-label">Ukupno danas</span>'
+    +'<div class="log-summary-vals">'
+    +'<span class="log-sum-kcal">'+tK+' kcal</span>'
+    +'<span class="log-sum-sep">·</span>'
+    +'<span class="log-sum-prot">'+tP+'g prot</span>'
+    +'</div></div>';
+}
+function delItem(i){foodLog.splice(i,1);saveLog();renderDashboard();renderLog();renderChart();renderGrid(document.getElementById('searchInput').value);}
+
+// ===== DIALOGS =====
+function openOverlay(title,sub,action,label,danger){
   document.getElementById('dlgTitle').textContent=title;
   document.getElementById('dlgSub').textContent=sub;
-  document.getElementById('dlgConfirmBtn').onclick=function(){ action(); closeOverlay(); };
+  var btn=document.getElementById('dlgConfirmBtn');
+  btn.textContent=label||'Obriši';
+  btn.className='dbtn '+(danger===false?'dbtn-confirm':'dbtn-danger');
+  btn.onclick=function(){action();closeOverlay();};
   document.getElementById('overlayConfirm').classList.add('open');
 }
-function closeOverlay(){ document.getElementById('overlayConfirm').classList.remove('open'); }
-
+function closeOverlay(){document.getElementById('overlayConfirm').classList.remove('open');}
 function askResetDay(){
   openOverlay('Obrisati današnji unos?','Kalorije i proteini biće resetovani na 0.',function(){
-    foodLog=[]; saveLog(); renderDashboard(); renderLog(); renderChart();
-    renderGrid(document.getElementById('searchInput').value);
+    foodLog=[];saveLog();renderDashboard();renderLog();renderChart();renderGrid(document.getElementById('searchInput').value);
   });
 }
-
 function askDeleteFood(e,i){
   e.stopPropagation();
-  openOverlay('Obrisati "'+DB[i].name+'"?','Namirnica neće više biti dostupna u brzom unosu.',function(){
-    DB.splice(i,1); saveDB(); filterGrid();
+  var removed=DB.splice(i,1)[0];
+  saveDB(); filterGrid();
+  showToastUndo('Obrisano: '+removed.name, function(){
+    DB.splice(i,0,removed); saveDB(); filterGrid();
   });
 }
-
 function saveToBase(){
   var n=document.getElementById('nName').value.trim();
   var por=document.getElementById('nPortion').value.trim()||'porcija';
-  var k=parseFloat(document.getElementById('nKcal').value)||0;
-  var p=parseFloat(document.getElementById('nProt').value)||0;
-  if(!n){ document.getElementById('nName').focus(); return; }
-  DB.push({name:n,portion:por,kcal:k,protein:p,custom:true}); saveDB(); filterGrid();
-  ['nName','nPortion','nKcal','nProt'].forEach(function(id){ document.getElementById(id).value=''; });
+  var k=parsePosNum(document.getElementById('nKcal').value);
+  var p=parsePosNum(document.getElementById('nProt').value);
+  if(!n){document.getElementById('nName').focus();return;}
+  DB.push({name:n,portion:por,kcal:k,protein:p,custom:true});saveDB();filterGrid();
+  ['nName','nPortion','nKcal','nProt'].forEach(function(id){document.getElementById(id).value='';});
+  showToast('✅ Namirnica sačuvana u bazu','success');
 }
-
 function addManual(){
   var n=document.getElementById('mName').value.trim();
-  var k=parseFloat(document.getElementById('mKcal').value)||0;
-  var p=parseFloat(document.getElementById('mProt').value)||0;
-  if(!n){ document.getElementById('mName').focus(); return; }
+  var k=parsePosNum(document.getElementById('mKcal').value);
+  var p=parsePosNum(document.getElementById('mProt').value);
+  if(!n){document.getElementById('mName').focus();return;}
   foodLog.push({name:n,kcal:k,protein:p,qty:1,_db:false});
-  saveLog(); renderDashboard(); renderLog(); renderChart();
-  ['mName','mKcal','mProt'].forEach(function(id){ document.getElementById(id).value=''; });
+  window._logJustAdded=true;
+  saveLog();renderDashboard();renderLog();renderChart();
+  ['mName','mKcal','mProt'].forEach(function(id){document.getElementById(id).value='';});
+  showToast('✅ Dodato: '+n,'success');
+}
+document.getElementById('overlayConfirm').addEventListener('click',function(e){if(e.target===this) closeOverlay();});
+document.getElementById('overlayImport').addEventListener('click',function(e){if(e.target===this) closeImportOverlay();});
+document.getElementById('importConfirmBtn').addEventListener('click',doImport);
+
+// Drag and drop import
+(function(){
+  var drop=document.getElementById('importDrop');
+  drop.addEventListener('dragover',function(e){e.preventDefault();drop.classList.add('dragover');});
+  drop.addEventListener('dragleave',function(){drop.classList.remove('dragover');});
+  drop.addEventListener('drop',function(e){
+    e.preventDefault();drop.classList.remove('dragover');
+    var file=e.dataTransfer.files[0];
+    if(file) handleImport({files:[file]});
+  });
+})();
+
+// ===== SPLASH =====
+function hideSplash(){
+  var s=document.getElementById('splash');
+  s.classList.add('hide');
+  setTimeout(function(){s.style.display='none';},420);
 }
 
-function renderLog(){
-  var el=document.getElementById('logList');
-  var tP=Math.round(foodLog.reduce(function(s,it){ return s+it.protein; },0)*10)/10;
-  var tK=Math.round(foodLog.reduce(function(s,it){ return s+it.kcal; },0));
-  document.getElementById('logTotProt').textContent=tP+'g';
-  document.getElementById('logTotKcal').textContent=tK;
-  if(!foodLog.length){ el.innerHTML='<div class="empty-log">Još nisi uneo ništa danas</div>'; return; }
-  el.innerHTML='';
-  foodLog.forEach(function(item,i){
-    var d=document.createElement('div'); d.className='log-item';
-    d.innerHTML='<div class="log-info"><div class="log-name">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div><div class="log-macros"><span class="log-kcal">'+Math.round(item.kcal)+' kcal</span><span class="log-prot">'+Math.round(item.protein*10)/10+'g prot</span></div></div><button class="btn-del" onclick="delItem('+i+')">Obriši</button>';
-    el.appendChild(d);
+// ===== UNDO TOAST =====
+var undoTimer=null;
+function showToastUndo(msg, undoFn){
+  var el=document.getElementById('toast');
+  el.innerHTML=msg+' <span id="toastUndoBtn" style="margin-left:10px;text-decoration:underline;cursor:pointer;color:var(--purple);font-weight:700">Poništi</span>';
+  el.className='toast';
+  el.classList.add('show');
+  if(undoTimer) clearTimeout(undoTimer);
+  var committed=false;
+  document.getElementById('toastUndoBtn').onclick=function(){
+    committed=true;
+    el.classList.remove('show');
+    clearTimeout(undoTimer);
+    undoFn();
+    showToast('↩ Vraćeno','success');
+  };
+  undoTimer=setTimeout(function(){
+    if(!committed) el.classList.remove('show');
+  },3200);
+}
+
+// ===== PULL TO REFRESH =====
+function initPullToRefresh(){
+  var ptr=document.getElementById('ptrIndicator');
+  var label=document.getElementById('ptrLabel');
+  var startY=0, pulling=false, threshold=65;
+  document.addEventListener('touchstart',function(e){
+    if(document.getElementById('page-home').classList.contains('active')&&window.scrollY===0){
+      startY=e.touches[0].clientY; pulling=true;
+    }
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!pulling) return;
+    var dy=e.touches[0].clientY-startY;
+    if(dy<0){pulling=false;return;}
+    var h=Math.min(dy*0.45,50);
+    ptr.style.height=h+'px';
+    if(dy>threshold){ptr.classList.add('ready');label.textContent='Pusti za osvežavanje';}
+    else{ptr.classList.remove('ready');label.textContent='Povuci za osvežavanje';}
+  },{passive:true});
+  document.addEventListener('touchend',function(){
+    if(!pulling) return;
+    pulling=false;
+    var wasReady=ptr.classList.contains('ready');
+    ptr.style.height='0';
+    ptr.classList.remove('ready');
+    label.textContent='Povuci za osvežavanje';
+    if(wasReady){ haptic(); setDatum(); showToast('Osveženo','success'); }
   });
 }
 
-function delItem(i){
-  foodLog.splice(i,1); saveLog(); renderDashboard(); renderLog(); renderChart();
-  renderGrid(document.getElementById('searchInput').value);
+// ===== WEEKLY BACKUP REMINDER =====
+function checkBackupReminder(){
+  var last=localStorage.getItem('fitlastbackup');
+  var now=Date.now();
+  var week=7*24*60*60*1000;
+  if(!last||now-parseInt(last)>week){
+    setTimeout(function(){
+      showToastUndo('💾 Napravi backup podataka', function(){});
+      // Override undo button to export instead
+      setTimeout(function(){
+        var btn=document.getElementById('toastUndoBtn');
+        if(btn){btn.textContent='Exportuj';btn.onclick=function(){exportFullJSON();localStorage.setItem('fitlastbackup',Date.now()+'');};}
+      },50);
+    },3000);
+  }
 }
 
-document.getElementById('overlayConfirm').addEventListener('click',function(e){ if(e.target===this) closeOverlay(); });
+function updateThreshold(val){
+  SCAN_THRESHOLD=parseInt(val);
+  localStorage.setItem('fitscanth',val);
+  document.getElementById('thresholdVal').textContent=val;
+}
+function loadThreshold(){
+  var v=localStorage.getItem('fitscanth')||'4';
+  document.getElementById('thresholdSlider').value=v;
+  document.getElementById('thresholdVal').textContent=v;
+}
+// ===== USERS =====
+var AVATAR_COLORS=['#a78bfa','#60a5fa','#34d399','#f97316','#f87171','#f59e0b'];
+function getUsers(){
+  var u=localStorage.getItem('fitusers');
+  if(!u) return [{id:'ilija',name:'Ilija',color:'#a78bfa'}];
+  return JSON.parse(u);
+}
+function saveUsers(users){localStorage.setItem('fitusers',JSON.stringify(users));}
+function switchUser(id){
+  currentUser=id;
+  localStorage.setItem('fitcurrentuser',id);
+  // Reload all data for new user
+  loadData(); loadGoals(); setDatum();
+  renderDashboard(); renderChart(); renderMetrics();
+  renderGrid(); renderLog(); renderQuickAdd();
+  renderUserCards();
+  showToast('👤 '+getUserName(id),'success');
+  showPage('home');
+}
+function getUserName(id){
+  var found=getUsers().filter(function(u){return u.id===id;})[0];
+  return found?found.name:id;
+}
+function addUserPrompt(){
+  var name=prompt('Upiši ime novog korisnika:');
+  if(!name||!name.trim()) return;
+  name=name.trim();
+  var id=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  var users=getUsers();
+  if(users.some(function(u){return u.id===id;})){showToast('Korisnik već postoji','error');return;}
+  var color=AVATAR_COLORS[users.length%AVATAR_COLORS.length];
+  users.push({id:id,name:name,color:color});
+  saveUsers(users);
+  renderUserCards();
+  showToast('✅ Korisnik '+name+' dodat','success');
+}
+function renderUserCards(){
+  var el=document.getElementById('userCards');
+  if(!el) return;
+  var users=getUsers();
+  el.innerHTML='';
+  users.forEach(function(u){
+    var isActive=u.id===currentUser;
+    var initials=u.name.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+    var card=document.createElement('div');
+    card.className='user-card'+(isActive?' active':'');
+    card.onclick=function(){if(!isActive){haptic();switchUser(u.id);}};
+    card.innerHTML='<div class="user-card-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>'
+      +'<div class="user-card-avatar" style="background:'+u.color+'">'+initials+'</div>'
+      +'<div class="user-card-name">'+u.name+'</div>'
+      +'<div class="user-card-sub">'+(isActive?'Aktivan':'Klikni za prebacivanje')+'</div>';
+    el.appendChild(card);
+  });
+}
 
-loadData(); loadGoals(); setDatum(); renderDashboard(); renderChart(); renderMetrics(); loadNotifSettings(); renderGrid(); renderLog();
+// ===== THEME =====
+function loadTheme(){
+  var light=localStorage.getItem('fittheme')==='light';
+  document.body.classList.toggle('light-mode',light);
+  document.getElementById('themeToggle').checked=light;
+}
+function toggleTheme(){
+  var light=document.getElementById('themeToggle').checked;
+  document.body.classList.toggle('light-mode',light);
+  localStorage.setItem('fittheme',light?'light':'dark');
+  haptic();
+}
+
+// ===== INIT =====
+loadData();loadGoals();setDatum();loadTheme();loadThreshold();
+renderDashboard();renderChart();renderMetrics();loadNotifSettings();renderGrid();renderLog();renderQuickAdd();
+renderUserCards();
+initPullToRefresh();
+checkBackupReminder();
+setTimeout(hideSplash, 800);
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(function(){});}
 </script>
-
 </body>
 </html>
