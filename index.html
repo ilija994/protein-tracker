@@ -635,9 +635,22 @@ body::-webkit-scrollbar{display:none}
       </div>
     </div>
 
+    <div class="sec-title" style="margin-bottom:12px">Skener barkoda</div>
+    <div class="notif-card" style="margin-bottom:20px">
+      <div class="notif-row" style="margin-bottom:4px">
+        <div>
+          <div class="ni-title">Osetljivost skenera</div>
+          <div class="ni-sub">Koliko puta mora da prepozna barkod pre potvrde</div>
+        </div>
+        <div style="font-size:22px;font-weight:900;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;min-width:28px;text-align:right" id="scannerConfirmDisplay">4</div>
+      </div>
+      <div class="slider-row" style="margin-top:8px">
+        <input type="range" id="scannerConfirmSlider" min="2" max="8" value="4" oninput="updateScannerConfirm(this.value)">
+      </div>
+      <div class="slider-labels"><span>2 — brže</span><span>8 — preciznije</span></div>
+    </div>
+
     <div class="sec-title" style="margin-bottom:12px">Podsetnik</div>
-    <div class="notif-card">
-      <div class="notif-row">
         <div><div class="ni-title">Dnevni podsetnik</div><div class="ni-sub">Obaveštenje o statusu proteina</div></div>
         <label class="toggle-wrap"><input type="checkbox" id="notifToggle" onchange="toggleNotif()"><div class="toggle-slider"></div></label>
       </div>
@@ -908,20 +921,25 @@ function startQuagga(){
   });
 
   Quagga.offDetected();
+  var confirmBuffer={};
+  var CONFIRM_NEEDED=getScannerConfirm();
   Quagga.onDetected(function(result){
     if(scanLocked) return;
     var code=result.codeResult.code;
     if(!code||code.length<6) return;
-    // Provjera kvaliteta — filtriraj loše očitave
     var errors=result.codeResult.decodedCodes
       .filter(function(x){return x.error!==undefined;})
       .map(function(x){return x.error;});
     var avgErr=errors.length?errors.reduce(function(a,b){return a+b;},0)/errors.length:1;
     if(avgErr>0.25) return;
-    scanLocked=true;
-    haptic();
-    Quagga.stop();
-    lookupBarcode(code);
+    confirmBuffer[code]=(confirmBuffer[code]||0)+1;
+    if(confirmBuffer[code]>=CONFIRM_NEEDED){
+      scanLocked=true;
+      confirmBuffer={};
+      haptic();
+      Quagga.stop();
+      lookupBarcode(code);
+    }
   });
 }
 
@@ -1376,6 +1394,21 @@ function toggleNotif(){
     });
   } else {saveNotifSettings();}
 }
+function updateScannerConfirm(val){
+  val=parseInt(val);
+  document.getElementById('scannerConfirmDisplay').textContent=val;
+  document.getElementById('scannerConfirmSlider').value=val;
+  localStorage.setItem('scannerConfirm',val);
+  haptic();
+}
+function loadScannerConfirm(){
+  var saved=parseInt(localStorage.getItem('scannerConfirm'))||4;
+  document.getElementById('scannerConfirmDisplay').textContent=saved;
+  document.getElementById('scannerConfirmSlider').value=saved;
+}
+function getScannerConfirm(){
+  return parseInt(localStorage.getItem('scannerConfirm'))||4;
+}
 function updateNotifStatus(enabled){
   var time=document.getElementById('notifTime').value;
   document.getElementById('notifStatus').textContent=enabled?'✅ Aktivan u '+time+' (stranica mora biti otvorena)':'⭕ Isključen';
@@ -1809,7 +1842,7 @@ function toggleTheme(){
 }
 
 // ===== INIT =====
-loadData();loadGoals();setDatum();loadTheme();
+loadData();loadGoals();setDatum();loadTheme();loadScannerConfirm();
 renderDashboard();renderChart();renderMetrics();loadNotifSettings();renderGrid();renderLog();renderQuickAdd();
 renderUserCards();
 initPullToRefresh();
