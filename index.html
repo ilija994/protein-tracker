@@ -478,10 +478,10 @@ body::-webkit-scrollbar{display:none}
         </div>
       </div>
     </div>
-    <div class="kcal-card">
+    <div class="kcal-card" onclick="haptic();showPage('food');setTimeout(function(){var el=document.getElementById('logList');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80)" style="cursor:pointer">
       <div class="kcal-top">
         <div>
-          <div class="kcal-label">Kalorije</div>
+          <div class="kcal-label">Kalorije <span style="font-size:10px;color:var(--muted2);font-weight:400;text-transform:none;letter-spacing:0">— tap za detalje</span></div>
           <div class="kcal-val"><span id="kcalCur">0</span> <span class="kgoal" id="kcalGoalTxt">/ 2130</span></div>
         </div>
         <div class="kcal-badge"><div class="kb-val" id="kcalRem">2130</div><div class="kb-label">preostalo</div></div>
@@ -512,7 +512,7 @@ body::-webkit-scrollbar{display:none}
   </div>
   <div style="padding:0 20px 20px">
     <div class="search-wrap">
-      <i data-lucide="search" class="si" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.35;pointer-events:none;color:#f4f4f8"></i>
+      <i data-lucide="search" class="si" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;opacity:.7;pointer-events:none;color:var(--purple)"></i>
       <input type="text" id="searchInput" placeholder="Pretraži namirnicu…" oninput="filterGrid()">
     </div>
     <div class="quick-add-wrap" id="quickAddWrap" style="display:none">
@@ -1423,17 +1423,33 @@ function renderMetricsHistory(){
   document.getElementById('metricsCount').textContent=bodyMetrics.length+' unosa';
   rows.innerHTML='';
   bodyMetrics.slice().reverse().slice(0,20).forEach(function(m){
+    var realIdx=bodyMetrics.indexOf(m);
     var row=document.createElement('div');row.className='mh-row';
     var dateStr=m.date.slice(5).replace('-','.') + '. ' + m.date.slice(0,4);
-    row.innerHTML='<span class="mh-date-badge">'+dateStr+'</span><div class="mh-row-vals">'
+    row.innerHTML='<span class="mh-date-badge">'+dateStr+'</span>'
+      +'<div class="mh-row-vals">'
       +(m.weight!=null?'<div class="mh-rv"><div class="mh-rv-dot w"></div><span class="mh-rv-val">'+m.weight+'</span><span class="mh-rv-unit">kg</span></div>':'')
       +(m.fat!=null?'<div class="mh-rv"><div class="mh-rv-dot f"></div><span class="mh-rv-val">'+m.fat+'</span><span class="mh-rv-unit">%</span></div>':'')
-      +'</div>';
+      +'</div>'
+      +'<button onclick="deleteMetric('+realIdx+')" style="background:none;border:none;padding:4px 8px;cursor:pointer;color:var(--muted2);flex-shrink:0" >'
+      +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
+      +'</button>';
     rows.appendChild(row);
   });
 }
 
-// ===== NOTIFICATIONS =====
+function deleteMetric(i){
+  haptic();
+  var removed=bodyMetrics.splice(i,1)[0];
+  localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
+  renderMetrics();
+  showToastUndo('Obrisano merenje: '+removed.date.slice(5).replace('-','.'), function(){
+    bodyMetrics.splice(i,0,removed);
+    bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
+    localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
+    renderMetrics();
+  });
+}
 function loadNotifSettings(){
   var s=JSON.parse(localStorage.getItem('fitnotif')||'{}');
   document.getElementById('notifToggle').checked=s.enabled||false;
@@ -1519,6 +1535,9 @@ function fireNotif(){
 
 // ===== FOOD GRID =====
 function getPortions(name){return foodLog.filter(function(it){return it.name===name&&it._db;}).reduce(function(s,it){return s+it.qty;},0);}
+function filterGrid(){
+  renderGrid(document.getElementById('searchInput').value);
+}
 function renderGrid(filter){
   filter=filter||'';
   var g=document.getElementById('foodGrid'),nr=document.getElementById('noResults');
@@ -1687,10 +1706,13 @@ function askResetDay(){
 }
 function askDeleteFood(e,i){
   e.stopPropagation();
-  var removed=DB.splice(i,1)[0];
-  saveDB(); filterGrid();
-  showToastUndo('Obrisano: '+removed.name, function(){
-    DB.splice(i,0,removed); saveDB(); filterGrid();
+  var food=DB[i];
+  openOverlay('Obrisati "'+food.name+'"?','Namirnica će biti uklonjena iz baze.',function(){
+    var removed=DB.splice(i,1)[0];
+    saveDB(); filterGrid();
+    showToastUndo('Obrisano: '+removed.name, function(){
+      DB.splice(i,0,removed); saveDB(); filterGrid();
+    });
   });
 }
 function saveToBase(){
