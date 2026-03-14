@@ -126,7 +126,10 @@ body::-webkit-scrollbar{display:none}
 .bar-day.today{color:var(--purple);font-weight:700}
 .bar-dot{width:4px;height:4px;border-radius:50%;background:var(--purple);opacity:0}
 .bar-dot.today{opacity:1}
-.bar-val{display:none}
+.bar-inner.kcal-partial{background:linear-gradient(to top,#c2410c,#f97316)}
+.bar-inner.kcal-over{background:linear-gradient(to top,#991b1b,#f87171);box-shadow:0 -4px 16px rgba(248,113,113,0.35)}
+.bar-inner.today-kcal{background:linear-gradient(to top,#c2410c,#fb923c);box-shadow:0 -4px 16px rgba(249,115,22,0.5)}
+.bar-inner.today-over{background:linear-gradient(to top,#991b1b,#f87171);box-shadow:0 -4px 20px rgba(248,113,113,0.5)}
 
 /* BODY METRICS REDESIGN */
 .metrics-hero{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
@@ -484,9 +487,13 @@ body::-webkit-scrollbar{display:none}
           <div class="kcal-label">Kalorije <span style="font-size:10px;color:var(--muted2);font-weight:400;text-transform:none;letter-spacing:0">— tap za detalje</span></div>
           <div class="kcal-val"><span id="kcalCur">0</span> <span class="kgoal" id="kcalGoalTxt">/ 2130</span></div>
         </div>
-        <div class="kcal-badge"><div class="kb-val" id="kcalRem">2130</div><div class="kb-label">preostalo</div></div>
+        <div class="kcal-badge" id="kcalRemBadge"><div class="kb-val" id="kcalRem">2130</div><div class="kb-label" id="kcalRemLabel">preostalo</div></div>
       </div>
       <div class="bar-track"><div class="bar-fill" id="kcalBar" style="width:0%"></div></div>
+      <div id="kcalWarn" style="display:none;align-items:center;gap:6px;margin-top:10px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);border-radius:10px;padding:8px 12px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:var(--red);flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span style="font-size:12px;font-weight:600;color:var(--red)">Prekoračen dnevni kalorijski cilj</span>
+      </div>
     </div>
     <button class="btn-reset" onclick="haptic();askResetDay()">
       <i data-lucide="trash-2" style="width:15px;height:15px;opacity:.8"></i>
@@ -498,6 +505,13 @@ body::-webkit-scrollbar{display:none}
         <div class="section-badge" id="chartBadge">Cilj: 160 g</div>
       </div>
       <div class="chart-bars" id="chartBars"></div>
+    </div>
+    <div class="chart-card" style="margin-top:10px">
+      <div class="section-header">
+        <div class="section-heading">Kalorije — 7 dana</div>
+        <div class="section-badge" id="kcalChartBadge" style="color:var(--orange);background:rgba(249,115,22,0.1)">Cilj: 2130</div>
+      </div>
+      <div class="chart-bars" id="kcalChartBars"></div>
     </div>
   </div>
 </div>
@@ -1060,7 +1074,7 @@ function addScannedProduct(){
   var factor=grams/100;
   foodLog.push({name:scannedProduct.name+(grams!==100?' ('+grams+'g)':''),kcal:Math.round(scannedProduct.kcalPer100*factor),protein:Math.round(scannedProduct.protPer100*factor*10)/10,qty:1,_db:false});
   window._logJustAdded=true;
-  saveLog();renderDashboard();renderLog();renderChart();closeScanner();
+  saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();closeScanner();
   showToast('✅ Dodato: '+scannedProduct.name,'success');
 }
 
@@ -1102,6 +1116,12 @@ function archiveDay(ds,dl){
   var keys=Object.keys(history).sort();
   if(keys.length>30) keys.slice(0,keys.length-30).forEach(function(k){delete history[k];});
   localStorage.setItem(sk('fithistory'),JSON.stringify(history));
+  // Arhiviraj i kalorije
+  var kh=JSON.parse(localStorage.getItem(sk('fitkcalhistory'))||'{}');
+  kh[ds]=Math.round(dl.reduce(function(s,it){return s+it.kcal;},0));
+  var kkeys=Object.keys(kh).sort();
+  if(kkeys.length>30) kkeys.slice(0,kkeys.length-30).forEach(function(k){delete kh[k];});
+  localStorage.setItem(sk('fitkcalhistory'),JSON.stringify(kh));
 }
 function saveDB(){localStorage.setItem(sk('fitdb'),JSON.stringify(DB));}
 function saveLog(){localStorage.setItem(sk('fitlog'),JSON.stringify({date:todayStr(),log:foodLog}));}
@@ -1119,7 +1139,7 @@ function saveGoals(){
   if(!k||!p) return;
   GOAL_KCAL=k;GOAL_PROT=p;
   localStorage.setItem(sk('fitgoals'),JSON.stringify({kcal:k,prot:p}));
-  renderDashboard();renderChart();
+  renderDashboard();renderChart();renderKcalChart();
   document.getElementById('ringGoalTxt').textContent='/ '+GOAL_PROT+' g';
   document.getElementById('chartBadge').textContent='Cilj: '+GOAL_PROT+' g';
   document.getElementById('kcalGoalTxt').textContent='/ '+GOAL_KCAL;
@@ -1184,7 +1204,7 @@ function doImport(){
   if(d.bodyMetrics){bodyMetrics=d.bodyMetrics;localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));}
   if(d.todayLog&&d.todayLog.date===todayStr()){foodLog=d.todayLog.log;saveLog();}
   closeImportOverlay();
-  renderDashboard();renderChart();renderMetrics();renderLog();renderGrid();loadGoals();
+  renderDashboard();renderChart();renderKcalChart();renderMetrics();renderLog();renderGrid();loadGoals();
   showToast('✅ Uvoz uspešan!','success');
 }
 
@@ -1207,13 +1227,20 @@ function renderDashboard(){
   var tP=foodLog.reduce(function(s,it){return s+it.protein;},0);
   var pPct=Math.min(100,Math.round(tP/GOAL_PROT*100));
   var kPct=Math.min(100,Math.round(tK/GOAL_KCAL*100));
+  var kOver=tK>GOAL_KCAL;
   document.getElementById('ringFill').style.strokeDashoffset=339.3-(339.3*pPct/100);
   document.getElementById('ringG').textContent=Math.round(tP);
   document.getElementById('protPct').textContent=pPct+'%';
   document.getElementById('protRem').textContent=Math.max(0,Math.round(GOAL_PROT-tP))+' g';
   document.getElementById('kcalCur').textContent=Math.round(tK);
-  document.getElementById('kcalBar').style.width=kPct+'%';
-  document.getElementById('kcalRem').textContent=Math.max(0,Math.round(GOAL_KCAL-tK));
+  document.getElementById('kcalCur').style.color=kOver?'var(--red)':'';
+  document.getElementById('kcalBar').style.width=Math.min(100,kPct)+'%';
+  document.getElementById('kcalBar').style.background=kOver?'linear-gradient(90deg,#f87171,#ef4444)':'';
+  document.getElementById('kcalRem').textContent=kOver?Math.round(tK-GOAL_KCAL):Math.max(0,Math.round(GOAL_KCAL-tK));
+  document.getElementById('kcalRemLabel').textContent=kOver?'previše':'preostalo';
+  document.getElementById('kcalRem').style.color=kOver?'var(--red)':'';
+  var warn=document.getElementById('kcalWarn');
+  if(warn) warn.style.display=kOver?'flex':'none';
 }
 function renderChart(){
   var el=document.getElementById('chartBars');el.innerHTML='';
@@ -1249,8 +1276,50 @@ function renderChart(){
     el.appendChild(col);
   });
 }
+function renderKcalChart(){
+  var el=document.getElementById('kcalChartBars');
+  if(!el) return;
+  el.innerHTML='';
+  var dn=['Ned','Pon','Uto','Sre','Čet','Pet','Sub'];
+  var today=new Date(),days=[];
+  for(var x=6;x>=0;x--){var dd=new Date(today);dd.setDate(today.getDate()-x);days.push(dd);}
+  var vals=days.map(function(d){
+    var ds=d.toISOString().slice(0,10);
+    if(ds===todayStr()) return foodLog.reduce(function(s,it){return s+it.kcal;},0);
+    var hl=localStorage.getItem(currentUser+'_fitkcalhistory');
+    var kh=hl?JSON.parse(hl):{};
+    return kh[ds]||0;
+  });
+  var maxVal=Math.max.apply(null,vals.concat([GOAL_KCAL*1.1,1]));
+  var goalPct=Math.round(GOAL_KCAL/maxVal*100);
+
+  var goalLine=document.createElement('div');
+  goalLine.className='chart-goal-line';
+  goalLine.style.bottom=goalPct+'%';
+  goalLine.style.borderColor='rgba(249,115,22,0.5)';
+  el.appendChild(goalLine);
+
+  days.forEach(function(d,i){
+    var v=Math.round(vals[i]);
+    var pct=Math.round(v/maxVal*100);
+    var isToday=d.toISOString().slice(0,10)===todayStr();
+    var over=v>GOAL_KCAL;
+    var cls=isToday?(over?'today-over':'today-kcal'):(over?'kcal-over':v>0?'kcal-partial':'empty');
+    var col=document.createElement('div');col.className='chart-col';
+    col.innerHTML=
+      '<div class="bar-outer">'
+        +'<div class="bar-inner '+cls+'" style="height:'+pct+'%">'
+          +(v>0?'<span class="bar-prot-label">'+v+'</span>':'')
+        +'</div>'
+      +'</div>'
+      +'<div class="bar-day-wrap">'
+        +'<div class="bar-day'+(isToday?' today':'')+'">'+dn[d.getDay()]+'</div>'
+        +'<div class="bar-dot'+(isToday?' today':'')+'"></div>'
+      +'</div>';
+    el.appendChild(col);
+  });
+}
 function parseNum(val){
-  var n=parseFloat(String(val).replace(',','.').replace(/[^0-9.]/g,''));
   return isNaN(n)?0:n;
 }
 function parsePosNum(val){ var n=parseNum(val); return n>0?n:0; }
@@ -1440,14 +1509,18 @@ function renderMetricsHistory(){
 
 function deleteMetric(i){
   haptic();
-  var removed=bodyMetrics.splice(i,1)[0];
-  localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
-  renderMetrics();
-  showToastUndo('Obrisano merenje: '+removed.date.slice(5).replace('-','.'), function(){
-    bodyMetrics.splice(i,0,removed);
-    bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
+  var m=bodyMetrics[i];
+  var dateStr=m.date.slice(5).replace('-','.')+'. '+m.date.slice(0,4);
+  openOverlay('Obrisati merenje?',dateStr,function(){
+    var removed=bodyMetrics.splice(i,1)[0];
     localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
     renderMetrics();
+    showToastUndo('Obrisano merenje: '+removed.date.slice(5).replace('-','.'), function(){
+      bodyMetrics.splice(i,0,removed);
+      bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
+      localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
+      renderMetrics();
+    });
   });
 }
 function loadNotifSettings(){
@@ -1593,7 +1666,7 @@ function quickAdd(name){
     window._logJustAdded=true;
   }
   freq[name]=(freq[name]||0)+1; saveFreq();
-  saveLog(); renderDashboard(); renderLog(); renderChart(); renderGrid();
+  saveLog(); renderDashboard(); renderLog(); renderChart();renderKcalChart(); renderGrid();
   showToast('✅ Dodato: '+food.name,'success');
 }
 function adj(e,idx,delta){
@@ -1609,7 +1682,7 @@ function adj(e,idx,delta){
     window._logJustAdded=true;
     freq[f.name]=(freq[f.name]||0)+1;saveFreq();
   }
-  saveLog();renderDashboard();renderLog();renderChart();
+  saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();
   var cnt=getPortions(f.name);
   var qc=document.getElementById('qc-'+idx),card=document.getElementById('card-'+idx);
   if(qc){qc.textContent=cnt;qc.className='qcount'+(cnt>0?' has-val':'');}
@@ -1686,7 +1759,7 @@ function renderLogSummary(){
     +'<span class="log-sum-prot">'+tP+'g prot</span>'
     +'</div></div>';
 }
-function delItem(i){foodLog.splice(i,1);saveLog();renderDashboard();renderLog();renderChart();renderGrid(document.getElementById('searchInput').value);}
+function delItem(i){foodLog.splice(i,1);saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();renderGrid(document.getElementById('searchInput').value);}
 
 // ===== DIALOGS =====
 function openOverlay(title,sub,action,label,danger){
@@ -1701,7 +1774,7 @@ function openOverlay(title,sub,action,label,danger){
 function closeOverlay(){document.getElementById('overlayConfirm').classList.remove('open');}
 function askResetDay(){
   openOverlay('Obrisati današnji unos?','Kalorije i proteini biće resetovani na 0.',function(){
-    foodLog=[];saveLog();renderDashboard();renderLog();renderChart();renderGrid(document.getElementById('searchInput').value);
+    foodLog=[];saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();renderGrid(document.getElementById('searchInput').value);
   });
 }
 function askDeleteFood(e,i){
@@ -1732,7 +1805,7 @@ function addManual(){
   if(!n){document.getElementById('mName').focus();return;}
   foodLog.push({name:n,kcal:k,protein:p,qty:1,_db:false});
   window._logJustAdded=true;
-  saveLog();renderDashboard();renderLog();renderChart();
+  saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();
   ['mName','mKcal','mProt'].forEach(function(id){document.getElementById(id).value='';});
   showToast('✅ Dodato: '+n,'success');
 }
@@ -1843,7 +1916,7 @@ function handleProteinCSV(input){
       if(val>0){history[date]=val; imported++;}
     }
     localStorage.setItem(sk('fithistory'),JSON.stringify(history));
-    renderChart();
+    renderChart();renderKcalChart();
     showToast('✅ Uvezeno '+imported+' dana proteina'+(skipped?' ('+skipped+' preskočeno)':''),'success');
     input.value='';
   };
@@ -1893,7 +1966,7 @@ function switchUser(id){
   localStorage.setItem('fitcurrentuser',id);
   // Reload all data for new user
   loadData(); loadGoals(); setDatum();
-  renderDashboard(); renderChart(); renderMetrics();
+  renderDashboard(); renderChart();renderKcalChart(); renderMetrics();
   renderGrid(); renderLog(); renderQuickAdd();
   renderUserCards();
   showToast('👤 '+getUserName(id),'success');
@@ -1950,7 +2023,7 @@ function toggleTheme(){
 
 // ===== INIT =====
 loadData();loadGoals();setDatum();loadTheme();loadScannerConfirm();
-renderDashboard();renderChart();renderMetrics();loadNotifSettings();renderGrid();renderLog();renderQuickAdd();
+renderDashboard();renderChart();renderKcalChart();renderMetrics();loadNotifSettings();renderGrid();renderLog();renderQuickAdd();
 renderUserCards();
 initPullToRefresh();
 checkBackupReminder();
