@@ -103,18 +103,30 @@ body::-webkit-scrollbar{display:none}
 .btn-reset{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:transparent;border:1px solid var(--border2);border-radius:14px;padding:13px;color:var(--red);font-size:14px;font-weight:600;cursor:pointer;transition:background .18s;margin-bottom:14px}
 .btn-reset:active{background:#f8717114}
 .btn-reset svg{width:15px;height:15px;opacity:.8}
-.chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin-bottom:6px}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px 14px;margin-bottom:6px;position:relative;overflow:hidden}
+.chart-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(to top,rgba(167,139,250,0.04),transparent);pointer-events:none}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .section-heading{font-size:15px;font-weight:700;letter-spacing:-.2px}
 .section-badge{font-size:11px;font-weight:600;color:var(--purple);background:#a78bfa18;border-radius:6px;padding:3px 8px}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:8px}
-.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%}
-.bar-outer{flex:1;width:100%;display:flex;align-items:flex-end;border-radius:5px 5px 0 0;background:var(--surface3);overflow:hidden}
-.bar-inner{width:100%;border-radius:5px 5px 0 0;transition:height .5s cubic-bezier(.4,0,.2,1)}
-.bar-inner.partial{background:#60a5fa55}
-.bar-inner.done{background:var(--grad-g)}
-.bar-day{font-size:10px;color:var(--muted2);text-align:center}
-.bar-val{font-size:9px;color:var(--muted);text-align:center;min-height:12px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:130px;margin-bottom:0;position:relative}
+.chart-goal-line{position:absolute;left:0;right:0;border-top:1px dashed rgba(167,139,250,0.35);pointer-events:none;transition:bottom .6s cubic-bezier(.4,0,.2,1)}
+.chart-goal-line::after{content:'cilj';position:absolute;right:0;top:-16px;font-size:9px;color:rgba(167,139,250,0.6);font-weight:600;letter-spacing:.3px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;cursor:default}
+.bar-outer{flex:1;width:100%;display:flex;align-items:flex-end;border-radius:8px 8px 0 0;background:var(--surface3);overflow:hidden;position:relative;transition:transform .1s}
+.bar-inner{width:100%;border-radius:8px 8px 0 0;transition:height .7s cubic-bezier(.34,1.56,.64,1);position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
+.bar-inner.empty{background:transparent}
+.bar-inner.partial{background:linear-gradient(to top,#3b82f6,#60a5fa88)}
+.bar-inner.done{background:linear-gradient(to top,#059669,#34d399);box-shadow:0 -4px 16px rgba(52,211,153,0.35)}
+.bar-inner.today-partial{background:linear-gradient(to top,#7c3aed,#a78bfa);box-shadow:0 -4px 16px rgba(167,139,250,0.4)}
+.bar-inner.today-done{background:linear-gradient(to top,#059669,#34d399);box-shadow:0 -4px 20px rgba(52,211,153,0.5)}
+.bar-prot-label{font-size:8px;font-weight:700;color:rgba(255,255,255,0.85);line-height:1;display:none}
+.bar-inner.partial .bar-prot-label,.bar-inner.done .bar-prot-label,.bar-inner.today-partial .bar-prot-label,.bar-inner.today-done .bar-prot-label{display:block}
+.bar-day-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;width:100%}
+.bar-day{font-size:10px;color:var(--muted2);text-align:center;font-weight:500}
+.bar-day.today{color:var(--purple);font-weight:700}
+.bar-dot{width:4px;height:4px;border-radius:50%;background:var(--purple);opacity:0}
+.bar-dot.today{opacity:1}
+.bar-val{display:none}
 
 /* BODY METRICS REDESIGN */
 .metrics-hero{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
@@ -1200,11 +1212,31 @@ function renderChart(){
   var today=new Date(),days=[];
   for(var x=6;x>=0;x--){var dd=new Date(today);dd.setDate(today.getDate()-x);days.push(dd);}
   var vals=days.map(function(d){var ds=d.toISOString().slice(0,10);return ds===todayStr()?foodLog.reduce(function(s,it){return s+it.protein;},0):(history[ds]||0);});
-  var maxVal=Math.max.apply(null,vals.concat([GOAL_PROT,1]));
+  var maxVal=Math.max.apply(null,vals.concat([GOAL_PROT*1.1,1]));
+  var goalPct=Math.round(GOAL_PROT/maxVal*100);
+
+  // Goal line
+  var goalLine=document.createElement('div');
+  goalLine.className='chart-goal-line';
+  goalLine.style.bottom=goalPct+'%';
+  el.appendChild(goalLine);
+
   days.forEach(function(d,i){
-    var v=Math.round(vals[i]),pct=Math.round(v/maxVal*100),cls=v>=GOAL_PROT?'done':v>0?'partial':'';
+    var v=Math.round(vals[i]);
+    var pct=Math.round(v/maxVal*100);
+    var isToday=d.toISOString().slice(0,10)===todayStr();
+    var cls=isToday?(v>=GOAL_PROT?'today-done':'today-partial'):(v>=GOAL_PROT?'done':v>0?'partial':'empty');
     var col=document.createElement('div');col.className='chart-col';
-    col.innerHTML='<div class="bar-val">'+(v>0?v:'')+'</div><div class="bar-outer"><div class="bar-inner '+cls+'" style="height:'+pct+'%"></div></div><div class="bar-day">'+dn[d.getDay()]+'</div>';
+    col.innerHTML=
+      '<div class="bar-outer">'
+        +'<div class="bar-inner '+cls+'" style="height:'+pct+'%">'
+          +(v>0?'<span class="bar-prot-label">'+v+'</span>':'')
+        +'</div>'
+      +'</div>'
+      +'<div class="bar-day-wrap">'
+        +'<div class="bar-day'+(isToday?' today':'')+'">'+dn[d.getDay()]+'</div>'
+        +'<div class="bar-dot'+(isToday?' today':'')+'"></div>'
+      +'</div>';
     el.appendChild(col);
   });
 }
