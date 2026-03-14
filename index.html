@@ -265,41 +265,26 @@ body::-webkit-scrollbar{display:none}
 .empty-log{text-align:center;color:var(--muted2);font-size:14px;padding:24px 0}
 
 /* SCANNER */
-.scanner-overlay{display:none;position:fixed;inset:0;background:#000;z-index:300;flex-direction:column}
+.scanner-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column}
 .scanner-overlay.open{display:flex}
-.scanner-header{padding:56px 20px 16px;display:flex;align-items:center;gap:14px;position:absolute;top:0;left:0;right:0;z-index:10}
-.scanner-close{background:#ffffff18;border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.scanner-close svg{width:18px;height:18px;color:#fff}
-.scanner-title{font-size:17px;font-weight:700;color:#fff}
-#quagga-container{position:absolute;inset:0;overflow:hidden}
-#quagga-container video{width:100%;height:100%;object-fit:cover}
-#quagga-container canvas{display:none}
-.scanner-frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.scanner-box{width:240px;height:160px;position:relative}
-.scanner-box::before,.scanner-box::after{content:'';position:absolute;width:36px;height:36px;border-color:#a78bfa;border-style:solid}
-.scanner-box::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-.scanner-box::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.scanner-corner-tr,.scanner-corner-bl{position:absolute;width:36px;height:36px;border-color:#a78bfa;border-style:solid}
-.scanner-corner-tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-.scanner-corner-bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-.scanner-line{position:absolute;left:4px;right:4px;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,transparent);animation:scanLine 2s ease-in-out infinite;top:50%}
-@keyframes scanLine{0%,100%{top:10%}50%{top:90%}}
-.scanner-hint{position:absolute;bottom:170px;left:0;right:0;text-align:center;color:#ffffff88;font-size:14px}
-.scanner-status{position:absolute;bottom:200px;left:20px;right:20px;background:#ffffff14;border-radius:14px;padding:14px;text-align:center;color:#fff;font-size:14px;display:none}
-.scanner-status.show{display:block}
-.scan-confidence{position:absolute;bottom:140px;left:50%;transform:translateX(-50%);width:240px}
-.scan-conf-bar{height:4px;background:#ffffff18;border-radius:99px;overflow:hidden;margin-bottom:6px}
-.scan-conf-fill{height:100%;border-radius:99px;background:var(--grad-p);transition:width .12s;width:0%}
-.scan-conf-label{font-size:12px;color:#ffffff77;text-align:center}
-.scanner-toggle-manual{position:absolute;bottom:108px;left:0;right:0;text-align:center}
-.scanner-toggle-manual button{background:#ffffff0e;border:1px solid #ffffff20;border-radius:99px;padding:8px 18px;color:#ffffffaa;font-size:13px;font-weight:600;cursor:pointer}
-.scanner-manual{position:absolute;bottom:0;left:0;right:0;background:#1c1c26f0;border-top:1px solid var(--border2);padding:20px 20px 44px;display:none;animation:pageIn .2s ease}
-.scanner-manual.show{display:block}
-.scanner-manual-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px}
+.scanner-header{padding:56px 20px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border)}
+.scanner-close{background:var(--surface2);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.scanner-title{font-size:17px;font-weight:700}
+.scanner-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
+.scanner-icon{width:100px;height:100px;border-radius:28px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.scanner-body-title{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.scanner-body-sub{font-size:14px;color:var(--muted);line-height:1.5;max-width:260px}
+.scanner-cam-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--grad-p);border-radius:16px;padding:16px 32px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;margin-top:8px;width:100%}
+.scanner-cam-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.scanner-divider{font-size:12px;color:var(--muted2);font-weight:500;width:100%;display:flex;align-items:center;gap:10px}
+.scanner-divider::before,.scanner-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+.scanner-manual-inline{width:100%}
 .scanner-manual-row{display:flex;gap:10px}
-.scanner-manual-row input{flex:1;background:var(--surface3);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;font-weight:700;outline:none;letter-spacing:1px;-webkit-appearance:none}
-.scanner-manual-row input::placeholder{color:var(--muted2);letter-spacing:0;font-weight:400}
-.scanner-manual-row button{background:var(--grad-p);border:none;border-radius:12px;padding:12px 18px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.scanner-manual-row input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;font-weight:600;outline:none;-webkit-appearance:none}
+.scanner-manual-row input::placeholder{color:var(--muted2);font-weight:400}
+.scanner-manual-row button{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:12px 18px;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.scanner-status{margin:0 20px 16px;background:var(--surface2);border-radius:14px;padding:14px;text-align:center;font-size:14px;display:none;border:1px solid var(--border2)}
+.scanner-status.show{display:block}
 .scan-result{position:absolute;bottom:0;left:0;right:0;background:#1c1c26;border-radius:24px 24px 0 0;padding:24px 20px 48px;border-top:1px solid var(--border2);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .scan-result.show{transform:translateY(0)}
 .scan-product-name{font-size:18px;font-weight:700;margin-bottom:4px}
@@ -655,27 +640,6 @@ body::-webkit-scrollbar{display:none}
       </div>
     </div>
 
-    <div class="sec-title" style="margin-bottom:12px;margin-top:8px">Skener</div>
-    <div class="notif-card" style="margin-bottom:20px">
-      <div class="notif-row" style="margin-bottom:14px">
-        <div>
-          <div class="ni-title">Preciznost skenera</div>
-          <div class="ni-sub">Koliko puta kod mora biti viđen pre prihvatanja</div>
-        </div>
-        <span class="slider-val" id="thresholdVal">4</span>
-      </div>
-      <div class="slider-row">
-        <input type="range" id="thresholdSlider" min="2" max="8" value="4" step="1" oninput="updateThreshold(this.value)">
-      </div>
-      <div class="slider-labels">
-        <span>2 — brže</span>
-        <span>8 — preciznije</span>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5">
-        Ako skener greši ili čita pogrešne kodove → povećaj vrednost.<br>Ako skeniranje traje predugo → smanji vrednost.
-      </div>
-    </div>
-
     <div class="sec-title" style="margin-bottom:12px;margin-top:8px">Ciljevi</div>
     <div class="form-card" style="margin-bottom:20px">
       <div class="form-2col">
@@ -756,28 +720,33 @@ body::-webkit-scrollbar{display:none}
 
 <!-- SCANNER OVERLAY -->
 <div class="scanner-overlay" id="scannerOverlay">
-  <div id="quagga-container"></div>
   <div class="scanner-header">
     <button class="scanner-close" onclick="closeScanner()"><i data-lucide="x" style="width:18px;height:18px;color:#fff;stroke-width:2.5"></i></button>
     <span class="scanner-title">Skeniraj barkod</span>
   </div>
-  <div class="scanner-frame"><div class="scanner-box"><div class="scanner-corner-tr"></div><div class="scanner-corner-bl"></div><div class="scanner-line"></div></div></div>
-  <div class="scanner-hint">Postavi barkod unutar okvira</div>
-  <div class="scan-confidence">
-    <div class="scan-conf-bar"><div class="scan-conf-fill" id="scanConfFill"></div></div>
-    <div class="scan-conf-label" id="scanConfLabel">Skeniram…</div>
-  </div>
-  <div class="scanner-status" id="scannerStatus"></div>
-  <div class="scanner-toggle-manual">
-    <button onclick="toggleManualEntry()">Unesi kod ručno</button>
-  </div>
-  <div class="scanner-manual" id="scannerManual">
-    <div class="scanner-manual-title">Unesi barkod ručno</div>
-    <div class="scanner-manual-row">
-      <input type="number" id="manualCode" placeholder="npr. 4003015046085" inputmode="numeric">
-      <button onclick="submitManualCode()">Traži</button>
+
+  <div class="scanner-body">
+    <div class="scanner-icon">
+      <i data-lucide="scan-barcode" style="width:64px;height:64px;color:var(--purple)"></i>
+    </div>
+    <div class="scanner-body-title">Slikaj barkod</div>
+    <div class="scanner-body-sub">Uperi kameru u barkod i iPhone će ga automatski prepoznati</div>
+    <label class="scanner-cam-btn">
+      <input type="file" accept="image/*" capture="environment" id="barcodeInput" onchange="handleBarcodeImage(this)">
+      <i data-lucide="camera" style="width:22px;height:22px"></i>
+      Otvori kameru
+    </label>
+    <div class="scanner-divider">ili unesi ručno</div>
+    <div class="scanner-manual-inline">
+      <div class="scanner-manual-row">
+        <input type="number" id="manualCode" placeholder="Broj barkoda…" inputmode="numeric">
+        <button onclick="submitManualCode()">Traži</button>
+      </div>
     </div>
   </div>
+
+  <div class="scanner-status" id="scannerStatus"></div>
+
   <div class="scan-result" id="scanResult">
     <div class="scan-product-name" id="srName"></div>
     <div class="scan-brand" id="srBrand"></div>
@@ -788,7 +757,7 @@ body::-webkit-scrollbar{display:none}
     </div>
     <div class="scan-portion-row">
       <label>Količina:</label>
-      <input type="text" id="srGrams" value="100" inputmode="decimal" min="1">
+      <input type="text" id="srGrams" value="100" inputmode="decimal">
       <span>g</span>
     </div>
     <div class="scan-btns">
@@ -862,7 +831,6 @@ function lucideFallback(){
   console.warn('Lucide CDN nije dostupan — koriste se inline SVG fallbackovi.');
 }
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <script>
 // ===== GLOBALS =====
 var GOAL_KCAL=2130, GOAL_PROT=160;
@@ -893,90 +861,71 @@ var BASE_DB=[
 var DB=[], foodLog=[], freq={}, history={}, bodyMetrics=[];
 var scannedProduct=null, metricView='w', notifTimer=null;
 
-// ===== QR: DEBOUNCE =====
-var scanCandidates={}, scanLocked=false;
-var SCAN_THRESHOLD=parseInt(localStorage.getItem('fitscanth')||'4');
-
+// ===== SCANNER — NATIVE iOS =====
 function openScanner(){
   document.getElementById('scannerOverlay').classList.add('open');
   document.body.style.overflow='hidden';
-  scanLocked=false; scanCandidates={};
-  resetConfBar();
-  document.getElementById('scannerManual').classList.remove('show');
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
-  Quagga.init({
-    inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('quagga-container'),
-      constraints:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},
-    decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader'],multiple:false},
-    locator:{patchSize:'medium',halfSample:true},numOfWorkers:2,frequency:10,locate:true
-  },function(err){
-    if(err){showScanStatus('Kamera nije dostupna: '+(err.message||err));return;}
-    Quagga.start();
-  });
-  Quagga.onDetected(onBarcodeDetected);
+  document.getElementById('manualCode').value='';
+  document.getElementById('barcodeInput').value='';
+  scannedProduct=null;
+  if(window.lucide) lucide.createIcons();
 }
 
-function onBarcodeDetected(result){
-  if(scanLocked) return;
-  var code=result.codeResult.code;
-  if(!code||code.length<6) return;
-  scanCandidates[code]=(scanCandidates[code]||0)+1;
-  var count=scanCandidates[code];
-  var pct=Math.min(100,Math.round(count/SCAN_THRESHOLD*100));
-  updateConfBar(pct, count<SCAN_THRESHOLD?'Čitam kod… ('+count+'/'+SCAN_THRESHOLD+')':'Kod potvrđen!');
-  if(count>=SCAN_THRESHOLD){
-    scanLocked=true;
-    Quagga.offDetected(onBarcodeDetected);
-    Quagga.stop(); haptic(); lookupBarcode(code);
-  }
-}
-
-function updateConfBar(pct,label){
-  document.getElementById('scanConfFill').style.width=pct+'%';
-  document.getElementById('scanConfLabel').textContent=label;
-}
-function resetConfBar(){
-  document.getElementById('scanConfFill').style.width='0%';
-  document.getElementById('scanConfLabel').textContent='Skeniram…';
-}
-function toggleManualEntry(){
-  var el=document.getElementById('scannerManual');
-  el.classList.toggle('show');
-  if(el.classList.contains('show')) document.getElementById('manualCode').focus();
-}
-function submitManualCode(){
-  var code=document.getElementById('manualCode').value.trim();
-  if(!code||code.length<6){showScanStatus('Unesi ispravan kod (min. 6 cifara)');return;}
-  scanLocked=true;
-  try{Quagga.offDetected(onBarcodeDetected);}catch(e){}
-  try{Quagga.stop();}catch(e){}
-  document.getElementById('scannerManual').classList.remove('show');
-  haptic(); lookupBarcode(code);
-}
 function closeScanner(){
-  try{Quagga.offDetected(onBarcodeDetected);}catch(e){}
-  try{Quagga.stop();}catch(e){}
   document.getElementById('scannerOverlay').classList.remove('open');
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
-  document.getElementById('scannerManual').classList.remove('show');
   document.body.style.overflow='';
-  scannedProduct=null; scanLocked=false; scanCandidates={};
-  resetConfBar();
+  scannedProduct=null;
 }
+
 function resetScanner(){
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
-  scannedProduct=null; scanLocked=false; scanCandidates={};
-  resetConfBar();
+  document.getElementById('barcodeInput').value='';
   document.getElementById('manualCode').value='';
-  Quagga.init({
-    inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('quagga-container'),
-      constraints:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},
-    decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader'],multiple:false},
-    locator:{patchSize:'medium',halfSample:true},numOfWorkers:2,frequency:10,locate:true
-  },function(err){if(!err){Quagga.start();Quagga.onDetected(onBarcodeDetected);}});
+  scannedProduct=null;
+}
+
+function handleBarcodeImage(input){
+  var file=input.files[0];
+  if(!file) return;
+  showScanStatus('Čitam barkod…');
+
+  // Use BarcodeDetector if available (iOS 17+, Chrome, etc.)
+  if('BarcodeDetector' in window){
+    var detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39']});
+    var img=new Image();
+    var url=URL.createObjectURL(file);
+    img.onload=function(){
+      detector.detect(img).then(function(barcodes){
+        URL.revokeObjectURL(url);
+        if(barcodes.length>0){
+          haptic();
+          lookupBarcode(barcodes[0].rawValue);
+        } else {
+          showScanStatus('Barkod nije pronađen na slici. Pokušaj ponovo ili unesi ručno.');
+        }
+      }).catch(function(){
+        URL.revokeObjectURL(url);
+        showScanStatus('Greška pri čitanju. Pokušaj ponovo ili unesi ručno.');
+      });
+    };
+    img.src=url;
+  } else {
+    // Fallback — iOS 16 i stariji: korisnik sam unosi broj
+    URL.revokeObjectURL(URL.createObjectURL(file));
+    showScanStatus('Automatsko čitanje nije podržano na ovom uređaju. Unesi broj barkoda ručno ispod.');
+  }
+}
+
+function submitManualCode(){
+  var code=document.getElementById('manualCode').value.trim();
+  if(!code||code.length<6){showScanStatus('Unesi ispravan kod (min. 6 cifara)');return;}
+  haptic();
+  lookupBarcode(code);
 }
 function showScanStatus(msg){var el=document.getElementById('scannerStatus');el.textContent=msg;el.classList.add('show');}
 function lookupBarcode(code){
@@ -1712,16 +1661,6 @@ function checkBackupReminder(){
   }
 }
 
-function updateThreshold(val){
-  SCAN_THRESHOLD=parseInt(val);
-  localStorage.setItem('fitscanth',val);
-  document.getElementById('thresholdVal').textContent=val;
-}
-function loadThreshold(){
-  var v=localStorage.getItem('fitscanth')||'4';
-  document.getElementById('thresholdSlider').value=v;
-  document.getElementById('thresholdVal').textContent=v;
-}
 function handleProteinCSV(input){
   var file=input.files[0]; if(!file) return;
   var reader=new FileReader();
@@ -1844,7 +1783,7 @@ function toggleTheme(){
 }
 
 // ===== INIT =====
-loadData();loadGoals();setDatum();loadTheme();loadThreshold();
+loadData();loadGoals();setDatum();loadTheme();
 renderDashboard();renderChart();renderMetrics();loadNotifSettings();renderGrid();renderLog();renderQuickAdd();
 renderUserCards();
 initPullToRefresh();
