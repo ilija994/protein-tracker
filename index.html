@@ -705,6 +705,28 @@ body::-webkit-scrollbar{display:none}
         <div class="io-drop-sub">ili klikni da izabereš</div>
       </div>
     </div>
+
+    <div class="io-card">
+      <div class="io-title" style="display:flex;align-items:center;gap:7px"><i data-lucide="bar-chart-2" style="width:15px;height:15px;color:var(--blue)"></i> Uvoz proteina (CSV)</div>
+      <div class="io-sub">Učitaj CSV istoriju proteina koju si ranije izvezao iz ove aplikacije.</div>
+      <div class="io-drop">
+        <input type="file" accept=".csv" onchange="handleProteinCSV(this)">
+        <div class="io-drop-icon"><i data-lucide="file-text" style="width:28px;height:28px;color:var(--muted)"></i></div>
+        <div class="io-drop-text">proteini_historija.csv</div>
+        <div class="io-drop-sub">ili klikni da izabereš</div>
+      </div>
+    </div>
+
+    <div class="io-card">
+      <div class="io-title" style="display:flex;align-items:center;gap:7px"><i data-lucide="activity" style="width:15px;height:15px;color:var(--orange)"></i> Uvoz merenja (CSV)</div>
+      <div class="io-sub">Učitaj CSV telesnih merenja koju si ranije izvezao iz ove aplikacije.</div>
+      <div class="io-drop">
+        <input type="file" accept=".csv" onchange="handleMetricsCSV(this)">
+        <div class="io-drop-icon"><i data-lucide="file-text" style="width:28px;height:28px;color:var(--muted)"></i></div>
+        <div class="io-drop-text">telesna_merenja.csv</div>
+        <div class="io-drop-sub">ili klikni da izabereš</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1700,6 +1722,59 @@ function loadThreshold(){
   document.getElementById('thresholdSlider').value=v;
   document.getElementById('thresholdVal').textContent=v;
 }
+function handleProteinCSV(input){
+  var file=input.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var lines=e.target.result.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+    var imported=0, skipped=0;
+    // Skip header row
+    for(var i=1;i<lines.length;i++){
+      var parts=lines[i].split(',');
+      if(parts.length<2) continue;
+      var date=parts[0].trim();
+      var val=parseInt(parts[1].trim());
+      if(!date.match(/^\d{4}-\d{2}-\d{2}$/)||isNaN(val)){skipped++;continue;}
+      if(val>0){history[date]=val; imported++;}
+    }
+    localStorage.setItem(sk('fithistory'),JSON.stringify(history));
+    renderChart();
+    showToast('✅ Uvezeno '+imported+' dana proteina'+(skipped?' ('+skipped+' preskočeno)':''),'success');
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function handleMetricsCSV(input){
+  var file=input.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var lines=e.target.result.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+    var imported=0, skipped=0;
+    for(var i=1;i<lines.length;i++){
+      var parts=lines[i].split(',');
+      if(parts.length<2) continue;
+      var date=parts[0].trim();
+      var w=parts[1]?parseFloat(parts[1].trim()):null;
+      var f=parts[2]?parseFloat(parts[2].trim()):null;
+      if(!date.match(/^\d{4}-\d{2}-\d{2}$/)){skipped++;continue;}
+      if(isNaN(w)) w=null;
+      if(isNaN(f)) f=null;
+      if(!w&&!f){skipped++;continue;}
+      var entry={date:date,weight:w||null,fat:f||null};
+      var ex=bodyMetrics.findIndex(function(m){return m.date===date;});
+      if(ex>=0) bodyMetrics[ex]=entry; else bodyMetrics.push(entry);
+      imported++;
+    }
+    bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
+    localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
+    renderMetrics();
+    showToast('✅ Uvezeno '+imported+' merenja'+(skipped?' ('+skipped+' preskočeno)':''),'success');
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
 // ===== USERS =====
 var AVATAR_COLORS=['#a78bfa','#60a5fa','#34d399','#f97316','#f87171','#f59e0b'];
 function getUsers(){
