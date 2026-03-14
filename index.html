@@ -237,7 +237,7 @@ body::-webkit-scrollbar{display:none}
 .food-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .food-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:13px 12px 10px;position:relative;display:flex;flex-direction:column;gap:2px;transition:border-color .18s,transform .1s}
 .food-card:active{transform:scale(.97)}
-.food-card.active{border-color:#a78bfa40;background:linear-gradient(135deg,#1c1c26,#1a1a28)}
+.food-card.active{border-color:#a78bfa40;background:var(--card-weight-bg)}
 .card-del{position:absolute;top:9px;right:9px;background:none;border:none;cursor:pointer;padding:3px;opacity:.25;transition:opacity .15s;z-index:2;line-height:0}
 .card-del:active{opacity:.8}
 .card-del svg{width:12px;height:12px}
@@ -269,25 +269,32 @@ body::-webkit-scrollbar{display:none}
 .empty-log{text-align:center;color:var(--muted2);font-size:14px;padding:24px 0}
 
 /* SCANNER */
-.scanner-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column}
+.scanner-overlay{display:none;position:fixed;inset:0;background:#000;z-index:300;flex-direction:column}
 .scanner-overlay.open{display:flex}
-.scanner-header{padding:56px 20px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border)}
-.scanner-close{background:var(--surface2);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.scanner-title{font-size:17px;font-weight:700}
-.scanner-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;text-align:center}
-.scanner-icon{width:100px;height:100px;border-radius:28px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:8px}
-.scanner-body-title{font-size:20px;font-weight:800;letter-spacing:-.3px}
-.scanner-body-sub{font-size:14px;color:var(--muted);line-height:1.5;max-width:260px}
-.scanner-cam-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--grad-p);border-radius:16px;padding:16px 32px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;margin-top:8px;width:100%}
-.scanner-cam-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.scanner-divider{font-size:12px;color:var(--muted2);font-weight:500;width:100%;display:flex;align-items:center;gap:10px}
-.scanner-divider::before,.scanner-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
-.scanner-manual-inline{width:100%}
+.scanner-header{padding:56px 20px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0}
+.scanner-close{background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.scanner-title{font-size:17px;font-weight:700;color:#fff}
+.scanner-viewport-wrap{position:relative;flex:1;overflow:hidden;background:#000}
+#scannerViewport{width:100%;height:100%}
+#scannerViewport video{width:100%!important;height:100%!important;object-fit:cover!important;display:block}
+#scannerViewport canvas{display:none!important}
+.scanner-laser{position:absolute;left:12%;right:12%;top:50%;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,#60a5fa,#a78bfa,transparent);border-radius:2px;transform:translateY(-50%);animation:laserScan 2s ease-in-out infinite;box-shadow:0 0 8px #a78bfa80}
+@keyframes laserScan{0%,100%{top:35%}50%{top:65%}}
+.scanner-corners{position:absolute;inset:20%}
+.sc-tl,.sc-tr,.sc-bl,.sc-br{position:absolute;width:24px;height:24px;border-color:#fff;border-style:solid}
+.sc-tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.sc-tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.sc-bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.sc-br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.scanner-hint{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:13px;color:rgba(255,255,255,0.7);font-weight:500}
+.scanner-manual-bar{padding:16px 20px;background:#000;flex-shrink:0}
+.scanner-divider{font-size:12px;color:rgba(255,255,255,0.3);font-weight:500;width:100%;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.scanner-divider::before,.scanner-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.1)}
 .scanner-manual-row{display:flex;gap:10px}
-.scanner-manual-row input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;font-weight:600;outline:none;-webkit-appearance:none}
-.scanner-manual-row input::placeholder{color:var(--muted2);font-weight:400}
-.scanner-manual-row button{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:12px 18px;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
-.scanner-status{margin:0 20px 16px;background:var(--surface2);border-radius:14px;padding:14px;text-align:center;font-size:14px;display:none;border:1px solid var(--border2)}
+.scanner-manual-row input{flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:12px 14px;color:#fff;font-size:16px;font-weight:600;outline:none;-webkit-appearance:none}
+.scanner-manual-row input::placeholder{color:rgba(255,255,255,0.3);font-weight:400}
+.scanner-manual-row button{background:var(--grad-p);border:none;border-radius:12px;padding:12px 18px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.scanner-status{margin:0 20px 8px;background:rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;text-align:center;font-size:14px;display:none;border:1px solid rgba(255,255,255,0.15);color:#fff;flex-shrink:0}
 .scanner-status.show{display:block}
 .scan-result{position:absolute;bottom:0;left:0;right:0;background:#1c1c26;border-radius:24px 24px 0 0;padding:24px 20px 48px;border-top:1px solid var(--border2);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .scan-result.show{transform:translateY(0)}
@@ -400,6 +407,7 @@ body::-webkit-scrollbar{display:none}
 .slider-val{font-size:18px;font-weight:800;min-width:24px;text-align:center;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .slider-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:2px}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
 </head>
 <body>
 <!-- SPLASH -->
@@ -729,27 +737,25 @@ body::-webkit-scrollbar{display:none}
     <span class="scanner-title">Skeniraj barkod</span>
   </div>
 
-  <div class="scanner-body">
-    <div class="scanner-icon">
-      <i data-lucide="scan-barcode" style="width:64px;height:64px;color:var(--purple)"></i>
+  <div class="scanner-viewport-wrap" id="scannerViewportWrap">
+    <div id="scannerViewport"></div>
+    <div class="scanner-laser"></div>
+    <div class="scanner-corners">
+      <span class="sc-tl"></span><span class="sc-tr"></span>
+      <span class="sc-bl"></span><span class="sc-br"></span>
     </div>
-    <div class="scanner-body-title">Slikaj barkod</div>
-    <div class="scanner-body-sub">Uperi kameru u barkod i iPhone će ga automatski prepoznati</div>
-    <label class="scanner-cam-btn">
-      <input type="file" accept="image/*" capture="environment" id="barcodeInput" onchange="handleBarcodeImage(this)">
-      <i data-lucide="camera" style="width:22px;height:22px"></i>
-      Otvori kameru
-    </label>
-    <div class="scanner-divider">ili unesi ručno</div>
-    <div class="scanner-manual-inline">
-      <div class="scanner-manual-row">
-        <input type="number" id="manualCode" placeholder="Broj barkoda…" inputmode="numeric">
-        <button onclick="submitManualCode()">Traži</button>
-      </div>
-    </div>
+    <div class="scanner-hint">Uperi kameru u barkod</div>
   </div>
 
   <div class="scanner-status" id="scannerStatus"></div>
+
+  <div class="scanner-manual-bar">
+    <div class="scanner-divider">ili unesi ručno</div>
+    <div class="scanner-manual-row">
+      <input type="number" id="manualCode" placeholder="Broj barkoda…" inputmode="numeric">
+      <button onclick="submitManualCode()">Traži</button>
+    </div>
+  </div>
 
   <div class="scan-result" id="scanResult">
     <div class="scan-product-name" id="srName"></div>
@@ -872,58 +878,73 @@ function openScanner(){
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
   document.getElementById('manualCode').value='';
-  document.getElementById('barcodeInput').value='';
   scannedProduct=null;
-  if(window.lucide) lucide.createIcons();
+  scanLocked=false;
+  startQuagga();
+}
+
+function startQuagga(){
+  if(!window.Quagga){showScanStatus('Quagga se učitava…');setTimeout(startQuagga,500);return;}
+  Quagga.init({
+    inputStream:{
+      name:'Live',
+      type:'LiveStream',
+      target:document.getElementById('scannerViewport'),
+      constraints:{facingMode:'environment',width:{min:640},height:{min:480}},
+      area:{top:'25%',right:'10%',left:'10%',bottom:'25%'}
+    },
+    decoder:{
+      readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader'],
+      multiple:false
+    },
+    locate:true,
+    frequency:10
+  },function(err){
+    if(err){
+      showScanStatus('Kamera nije dostupna. Unesi broj ručno.');
+      return;
+    }
+    Quagga.start();
+  });
+
+  Quagga.offDetected();
+  Quagga.onDetected(function(result){
+    if(scanLocked) return;
+    var code=result.codeResult.code;
+    if(!code||code.length<6) return;
+    // Provjera kvaliteta — filtriraj loše očitave
+    var errors=result.codeResult.decodedCodes
+      .filter(function(x){return x.error!==undefined;})
+      .map(function(x){return x.error;});
+    var avgErr=errors.length?errors.reduce(function(a,b){return a+b;},0)/errors.length:1;
+    if(avgErr>0.25) return;
+    scanLocked=true;
+    haptic();
+    Quagga.stop();
+    lookupBarcode(code);
+  });
 }
 
 function closeScanner(){
+  try{Quagga.stop();}catch(e){}
   document.getElementById('scannerOverlay').classList.remove('open');
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
   document.body.style.overflow='';
   scannedProduct=null;
+  scanLocked=false;
 }
 
 function resetScanner(){
   document.getElementById('scanResult').classList.remove('show');
   document.getElementById('scannerStatus').classList.remove('show');
-  document.getElementById('barcodeInput').value='';
   document.getElementById('manualCode').value='';
   scannedProduct=null;
+  scanLocked=false;
+  startQuagga();
 }
 
-function handleBarcodeImage(input){
-  var file=input.files[0];
-  if(!file) return;
-  showScanStatus('Čitam barkod…');
-
-  // Use BarcodeDetector if available (iOS 17+, Chrome, etc.)
-  if('BarcodeDetector' in window){
-    var detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39']});
-    var img=new Image();
-    var url=URL.createObjectURL(file);
-    img.onload=function(){
-      detector.detect(img).then(function(barcodes){
-        URL.revokeObjectURL(url);
-        if(barcodes.length>0){
-          haptic();
-          lookupBarcode(barcodes[0].rawValue);
-        } else {
-          showScanStatus('Barkod nije pronađen na slici. Pokušaj ponovo ili unesi ručno.');
-        }
-      }).catch(function(){
-        URL.revokeObjectURL(url);
-        showScanStatus('Greška pri čitanju. Pokušaj ponovo ili unesi ručno.');
-      });
-    };
-    img.src=url;
-  } else {
-    // Fallback — iOS 16 i stariji: korisnik sam unosi broj
-    URL.revokeObjectURL(URL.createObjectURL(file));
-    showScanStatus('Automatsko čitanje nije podržano na ovom uređaju. Unesi broj barkoda ručno ispod.');
-  }
-}
+function handleBarcodeImage(){} // više se ne koristi
 
 function submitManualCode(){
   var code=document.getElementById('manualCode').value.trim();
@@ -1390,11 +1411,12 @@ function renderGrid(filter){
   filtered.forEach(function(o){
     var f=o.f,origIdx=o.origIdx,cnt=getPortions(f.name);
     var c=document.createElement('div');c.className='food-card'+(cnt>0?' active':'');c.id='card-'+origIdx;
+    c.onclick=function(e){if(!e.target.closest('.qbtn')&&!e.target.closest('.card-del')){haptic();adj(e,origIdx,1);}}
     c.innerHTML='<button class="card-del" onclick="askDeleteFood(event,'+origIdx+')"><i data-lucide="x" style="width:12px;height:12px;color:#f4f4f8;stroke-width:2.5"></i></button>'
       +'<div class="fn">'+f.name+'</div><div class="fp">'+f.portion+'</div>'
       +'<div class="fstats"><span class="fkcal">'+f.kcal+' kcal</span><span class="fprot">'+f.protein+'g</span></div>'
       +(f.custom?'<div class="custom-dot"></div>':'')
-      +'<div class="qty-ctrl"><button class="qbtn minus" onclick="adj(event,'+origIdx+',-1)">−</button><div class="qcount'+(cnt>0?' has-val':'')+'" id="qc-'+origIdx+'">'+cnt+'</div><button class="qbtn plus" onclick="adj(event,'+origIdx+',1)">+</button></div>';
+      +'<div class="qty-ctrl"><button class="qbtn minus" onclick="adj(event,'+origIdx+',-1)">−</button><div class="qcount'+(cnt>0?' has-val':'')+'" id="qc-'+origIdx+'">'+cnt+'</div><button class="qbtn plus" onclick="haptic();adj(event,'+origIdx+',1)">+</button></div>';
     g.appendChild(c);
   });
   if(window.lucide) lucide.createIcons();
