@@ -104,7 +104,8 @@ body::-webkit-scrollbar{display:none}
 .hsc-rings{display:flex;align-items:stretch;gap:0}
 .hsc-ring-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 4px 4px}
 .hsc-vdivider{width:1px;background:var(--border2);align-self:stretch;flex-shrink:0;margin:4px 0}
-.hsc-ring-pct{font-size:36px;font-weight:900;letter-spacing:-2px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center}
+.hsc-ring-label-p{font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.hsc-ring-label-k{font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);text-align:center};letter-spacing:-2px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center}
 .hsc-ring-pct-k{font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--orange);line-height:1;text-align:center}
 .hsc-ring-sub{font-size:13px;color:var(--muted);font-weight:600;text-align:center;line-height:1.3}
 .hsc-rem-num{font-size:28px;font-weight:900;letter-spacing:-1px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center}
@@ -445,12 +446,39 @@ body::-webkit-scrollbar{display:none}
 .user-add-btn:active{border-color:var(--purple);color:var(--purple)}
 
 /* LOG SUMMARY */
-.log-summary{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px 18px;margin-top:4px;display:flex;align-items:center;justify-content:space-between}
+.meal-cat-btn{font-size:10px;font-weight:700;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;flex-shrink:0;transition:opacity .15s}
+.meal-cat-btn.dorucak{background:rgba(251,191,36,0.15);color:#fbbf24}
+.meal-cat-btn.uzina{background:rgba(52,211,153,0.15);color:#34d399}
+.meal-cat-btn.rucak{background:rgba(96,165,250,0.15);color:#60a5fa}
+.meal-group-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:12px 0 6px;display:flex;align-items:center;gap:8px}
+.meal-group-header::after{content:'';flex:1;height:1px;background:var(--border2)}
+.meal-group-header.dorucak{color:#fbbf24}
+.meal-group-header.uzina{color:#34d399}
+.meal-group-header.rucak{color:#60a5fa}
+.meal-group-header.none{color:var(--muted2)}
 .log-summary-label{font-size:12px;color:var(--muted);font-weight:500}
 .log-summary-vals{display:flex;gap:16px;align-items:center}
 .log-sum-kcal{font-size:14px;font-weight:700;color:var(--orange)}
 .log-sum-sep{font-size:12px;color:var(--muted2)}
 .log-sum-prot{font-size:14px;font-weight:700;color:var(--green)}
+.cat-sum-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.cat-sum-row:last-of-type{border-bottom:none}
+.cat-sum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;flex:1}
+.cat-sum-label.dorucak{color:#fbbf24}
+.cat-sum-label.uzina{color:#34d399}
+.cat-sum-label.rucak{color:#60a5fa}
+.cat-sum-label.none{color:var(--muted2)}
+.cat-sum-vals{display:flex;gap:0;font-size:11px;font-weight:700}
+.cat-sum-kcal{width:80px;text-align:right;color:var(--orange)}
+.cat-sum-prot{width:60px;text-align:right;color:var(--green)}
+.log-total-card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:16px 18px;margin-top:4px}
+.log-total-divider{height:1px;background:var(--border2);margin:12px 0}
+.log-total-bottom{display:flex;justify-content:space-between;align-items:center}
+.log-total-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.log-total-vals{display:flex;gap:14px;align-items:baseline}
+.log-total-kcal{font-size:22px;font-weight:900;color:var(--orange);letter-spacing:-1px}
+.log-total-prot{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-1px}
+.log-total-unit{font-size:12px;font-weight:600;color:var(--muted)}
 
 /* SLIDER */
 .slider-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
@@ -501,6 +529,7 @@ body::-webkit-scrollbar{display:none}
 
       <div class="hsc-rings">
         <div class="hsc-ring-col">
+          <div class="hsc-ring-label-p">Proteini</div>
           <div class="ring-container">
             <svg class="ring-svg" viewBox="0 0 150 150">
               <defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs>
@@ -520,6 +549,7 @@ body::-webkit-scrollbar{display:none}
         <div class="hsc-vdivider"></div>
 
         <div class="hsc-ring-col">
+          <div class="hsc-ring-label-k">Kalorije</div>
           <div class="ring-container">
             <svg class="ring-svg" viewBox="0 0 150 150">
               <defs><linearGradient id="gk" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
@@ -1821,18 +1851,41 @@ function openDayLog(ds, isToday){
   content.appendChild(sum);
 
   if(log.length){
+    var order=['dorucak','uzina','rucak','none'];
+    var groups={dorucak:[],uzina:[],rucak:[],none:[]};
     log.forEach(function(item){
-      var row=document.createElement('div');
-      row.style.cssText='background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between';
-      row.innerHTML=
-        '<div style="flex:1;min-width:0">'
-          +'<div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div>'
-        +'</div>'
-        +'<div style="display:flex;gap:10px;flex-shrink:0;margin-left:10px">'
-          +'<span style="font-size:12px;font-weight:700;color:var(--orange)">'+Math.round(item.kcal)+' kcal</span>'
-          +'<span style="font-size:12px;font-weight:700;color:var(--green)">'+Math.round(item.protein*10)/10+'g</span>'
-        +'</div>';
-      content.appendChild(row);
+      var cat=item.cat||'none';
+      if(!groups[cat]) cat='none';
+      groups[cat].push(item);
+    });
+    var catInfo={dorucak:{label:'Doručak',color:'#fbbf24'},uzina:{label:'Užina',color:'#34d399'},rucak:{label:'Ručak / Večera',color:'#60a5fa'},none:{label:'Ostalo',color:'var(--muted2)'}};
+    order.forEach(function(cat){
+      if(!groups[cat].length) return;
+      var catItems=groups[cat];
+      var cK=Math.round(catItems.reduce(function(s,it){return s+it.kcal;},0));
+      var cP=Math.round(catItems.reduce(function(s,it){return s+it.protein;},0)*10)/10;
+      var header=document.createElement('div');
+      header.style.cssText='font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:'+catInfo[cat].color+';padding:10px 0 6px;display:flex;align-items:center;gap:8px';
+      header.innerHTML=catInfo[cat].label
+        +'<div style="flex:1;height:1px;background:var(--border2)"></div>'
+        +'<span style="font-size:10px;font-weight:600;color:var(--orange);text-transform:none;letter-spacing:0">'+cK+' kcal</span>'
+        +'<span style="font-size:10px;color:var(--muted2)">·</span>'
+        +'<span style="font-size:10px;font-weight:600;color:var(--green);text-transform:none;letter-spacing:0">'+cP+'g</span>';
+      content.appendChild(header);
+      catItems.forEach(function(item){
+        var row=document.createElement('div');
+        row.style.cssText='background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between';
+        row.innerHTML=
+          '<div style="flex:1;min-width:0">'
+            +'<div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div>'
+          +'</div>'
+          +'<div style="display:flex;flex-shrink:0;margin-left:10px">'
+            +'<span style="font-size:12px;font-weight:700;color:var(--orange);width:80px;text-align:right">'+Math.round(item.kcal)+' kcal</span>'
+            +'<span style="font-size:12px;font-weight:700;color:var(--green);width:48px;text-align:right">'+Math.round(item.protein*10)/10+'g</span>'
+          +'</div>';
+        content.appendChild(row);
+      });
+      // mini suma je sada u headeru
     });
   } else {
     // Samo summary bez detalja
@@ -1958,6 +2011,35 @@ function doFactoryReset(){
   showPage('home');
   showToast('✅ Sve je resetovano','success');
 }
+function showCatPicker(e, i){
+  e.stopPropagation();
+  haptic();
+  var existing=document.getElementById('catPicker');
+  if(existing) existing.remove();
+  var picker=document.createElement('div');
+  picker.id='catPicker';
+  picker.style.cssText='position:fixed;z-index:400;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:8px;box-shadow:0 12px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;gap:4px;min-width:160px';
+  var rect=e.target.getBoundingClientRect();
+  picker.style.top=(rect.bottom+8)+'px';
+  picker.style.left=Math.min(rect.left,window.innerWidth-180)+'px';
+  var cats=[
+    {key:'dorucak',label:'Doručak',color:'#fbbf24'},
+    {key:'uzina',label:'Užina',color:'#34d399'},
+    {key:'rucak',label:'Ručak / Večera',color:'#60a5fa'},
+    {key:'none',label:'Bez kategorije',color:'var(--muted2)'}
+  ];
+  cats.forEach(function(c){
+    var btn=document.createElement('button');
+    btn.style.cssText='background:none;border:none;padding:10px 14px;text-align:left;font-size:13px;font-weight:700;color:'+c.color+';cursor:pointer;border-radius:10px;transition:background .12s';
+    btn.textContent=c.label;
+    btn.onclick=function(){setMealCat(i,c.key);picker.remove();};
+    btn.onmouseenter=function(){btn.style.background='var(--surface2)';};
+    btn.onmouseleave=function(){btn.style.background='none';};
+    picker.appendChild(btn);
+  });
+  document.body.appendChild(picker);
+  setTimeout(function(){document.addEventListener('click',function h(){picker.remove();document.removeEventListener('click',h);});},10);
+}
 function filterGrid(){
   renderGrid(document.getElementById('searchInput').value);
 }
@@ -1971,7 +2053,20 @@ function renderGrid(filter){
   filtered.forEach(function(o){
     var f=o.f,origIdx=o.origIdx,cnt=getPortions(f.name);
     var c=document.createElement('div');c.className='food-card'+(cnt>0?' active':'');c.id='card-'+origIdx;
-    c.onclick=function(e){if(!e.target.closest('.qbtn')&&!e.target.closest('.card-del')){haptic();adj(e,origIdx,1);}}
+    c.onclick=function(e){
+      if(!e.target.closest('.qbtn')&&!e.target.closest('.card-del')){
+        haptic();
+        var f=DB[origIdx];
+        foodLog.push({name:f.name,kcal:f.kcal,protein:f.protein,qty:1,_db:true});
+        window._logJustAdded=true;
+        freq[f.name]=(freq[f.name]||0)+1;saveFreq();
+        saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();
+        var cnt=getPortions(f.name);
+        var qc=document.getElementById('qc-'+origIdx),card=document.getElementById('card-'+origIdx);
+        if(qc){qc.textContent=cnt;qc.className='qcount'+(cnt>0?' has-val':'');}
+        if(card) card.className='food-card'+(cnt>0?' active':'');
+      }
+    }
     c.innerHTML='<button class="card-del" onclick="askDeleteFood(event,'+origIdx+')"><i data-lucide="x" style="width:12px;height:12px;color:#f4f4f8;stroke-width:2.5"></i></button>'
       +'<div class="fn">'+f.name+'</div><div class="fp">'+f.portion+'</div>'
       +'<div class="fstats"><span class="fkcal">'+f.kcal+' kcal</span><span class="fprot">'+f.protein+'g</span></div>'
@@ -2006,37 +2101,36 @@ function renderQuickAdd(){
 function quickAdd(name){
   var food=DB.find(function(f){return f.name===name;});
   if(!food) return;
-  var ex=foodLog.findIndex(function(it){return it.name===food.name&&it._db;});
-  if(ex>=0){
-    foodLog[ex].qty+=1;
-    foodLog[ex].kcal=food.kcal*foodLog[ex].qty;
-    foodLog[ex].protein=food.protein*foodLog[ex].qty;
-  } else {
-    foodLog.push({name:food.name,kcal:food.kcal,protein:food.protein,qty:1,_db:true});
-    window._logJustAdded=true;
-  }
+  foodLog.push({name:food.name,kcal:food.kcal,protein:food.protein,qty:1,_db:true});
+  window._logJustAdded=true;
   freq[name]=(freq[name]||0)+1; saveFreq();
   saveLog(); renderDashboard(); renderLog(); renderChart();renderKcalChart(); renderGrid();
   showToast('✅ Dodato: '+food.name,'success');
 }
 function adj(e,idx,delta){
   e.stopPropagation();haptic();
-  var f=DB[idx],ex=foodLog.findIndex(function(it){return it.name===f.name&&it._db;});
-  if(ex>=0){
-    foodLog[ex].qty+=delta;
-    if(foodLog[ex].qty<=0) foodLog.splice(ex,1);
-    else{foodLog[ex].kcal=f.kcal*foodLog[ex].qty;foodLog[ex].protein=f.protein*foodLog[ex].qty;}
-  } else {
-    if(delta<1) return;
+  var f=DB[idx];
+  if(delta>0){
     foodLog.push({name:f.name,kcal:f.kcal,protein:f.protein,qty:1,_db:true});
     window._logJustAdded=true;
     freq[f.name]=(freq[f.name]||0)+1;saveFreq();
+  } else {
+    // Minus — ukloni poslednji unos sa tim imenom
+    var ex=foodLog.map(function(it,i){return {it:it,i:i};}).filter(function(o){return o.it.name===f.name&&o.it._db;}).pop();
+    if(ex) foodLog.splice(ex.i,1);
   }
   saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();
   var cnt=getPortions(f.name);
   var qc=document.getElementById('qc-'+idx),card=document.getElementById('card-'+idx);
   if(qc){qc.textContent=cnt;qc.className='qcount'+(cnt>0?' has-val':'');}
   if(card) card.className='food-card'+(cnt>0?' active':'');
+}
+var MEAL_CATS={dorucak:{label:'Doručak',color:'#fbbf24'},uzina:{label:'Užina',color:'#34d399'},rucak:{label:'Ručak / Večera',color:'#60a5fa'},none:{label:'Ostalo',color:'var(--muted2)'}};
+function setMealCat(i, cat){
+  haptic();
+  foodLog[i].cat=cat;
+  saveLog();
+  renderLog();
 }
 function renderLog(){
   var el=document.getElementById('logList');
@@ -2049,50 +2143,81 @@ function renderLog(){
     return;
   }
   el.innerHTML='';
+
+  // Grupiši po kategoriji
+  var order=['dorucak','uzina','rucak','none'];
+  var groups={dorucak:[],uzina:[],rucak:[],none:[]};
   foodLog.forEach(function(item,i){
-    var wrap=document.createElement('div');
-    wrap.className='log-item';
-    wrap.style.marginBottom='8px';
-    wrap.innerHTML='<div class="log-item-bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>'
-      +'<div class="log-item-inner"><div class="log-info"><div class="log-name">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div><div class="log-macros"><span class="log-kcal">'+Math.round(item.kcal)+' kcal</span><span class="log-prot">'+Math.round(item.protein*10)/10+'g prot</span></div></div>'
-      +'<button class="btn-del" onclick="delItem('+i+')">Obriši</button></div>';
-    // Swipe logic
-    (function(idx, wrapEl){
-      var startX=0, curX=0, swiping=false;
-      var inner=wrapEl.querySelector('.log-item-inner');
-      wrapEl.addEventListener('touchstart',function(e){
-        startX=e.touches[0].clientX; curX=startX; swiping=true;
-      },{passive:true});
-      wrapEl.addEventListener('touchmove',function(e){
-        if(!swiping) return;
-        curX=e.touches[0].clientX;
-        var dx=curX-startX;
-        if(dx>0) return; // solo levo
-        var clamped=Math.max(dx,-90);
-        inner.style.transform='translateX('+clamped+'px)';
-        wrapEl.classList.add('swiping');
-      },{passive:true});
-      wrapEl.addEventListener('touchend',function(){
-        swiping=false;
-        var dx=curX-startX;
-        if(dx<-60){
-          inner.style.transform='';
-          wrapEl.classList.remove('swiping');
-          delItem(idx);
-        } else {
-          inner.style.transform='';
-          wrapEl.classList.remove('swiping');
-        }
-      });
-    })(i, wrap);
-    el.appendChild(wrap);
+    var cat=item.cat||'none';
+    if(!groups[cat]) cat='none';
+    groups[cat].push({item:item,i:i});
   });
+
+  order.forEach(function(cat){
+    var items=groups[cat];
+    if(!items.length) return;
+    var catInfo=MEAL_CATS[cat];
+
+    // Spoji iste namirnice unutar iste kategorije
+    var merged=[];
+    items.forEach(function(obj){
+      var ex=merged.find(function(m){return m.name===obj.item.name;});
+      if(ex){
+        ex.qty+=1;
+        ex.indices.push(obj.i);
+        var base=DB.find(function(f){return f.name===obj.item.name;});
+        ex.kcal=base?base.kcal*ex.qty:ex.kcal+obj.item.kcal;
+        ex.protein=base?base.protein*ex.qty:ex.protein+obj.item.protein;
+      } else {
+        merged.push({name:obj.item.name,kcal:obj.item.kcal,protein:obj.item.protein,qty:1,indices:[obj.i],origIdx:obj.i});
+      }
+    });
+
+    // Group header
+    var header=document.createElement('div');
+    header.className='meal-group-header '+cat;
+    header.textContent=catInfo.label;
+    el.appendChild(header);
+
+    merged.forEach(function(obj){
+      var wrap=document.createElement('div');
+      wrap.className='log-item';
+      wrap.style.marginBottom='8px';
+      var catBtnHtml='<button class="meal-cat-btn '+cat+'" onclick="showCatPicker(event,'+obj.origIdx+')">'+
+        (cat==='none'?'+ grupiši':catInfo.label)+'</button>';
+      wrap.innerHTML='<div class="log-item-bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>'
+        +'<div class="log-item-inner">'
+          +'<div class="log-info"><div class="log-name">'+(obj.qty>1?obj.qty+'× ':'')+obj.name+'</div>'
+          +'<div class="log-macros"><span class="log-kcal">'+Math.round(obj.kcal)+' kcal</span><span class="log-prot">'+Math.round(obj.protein*10)/10+'g prot</span></div></div>'
+          +catBtnHtml
+          +'<button class="btn-del" onclick="delItemGroup('+JSON.stringify(obj.indices)+')">Obriši</button>'
+        +'</div>';
+      (function(indices, wrapEl){
+        var startX=0, curX=0, swiping=false;
+        var inner=wrapEl.querySelector('.log-item-inner');
+        wrapEl.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;curX=startX;swiping=true;},{passive:true});
+        wrapEl.addEventListener('touchmove',function(e){
+          if(!swiping) return;
+          curX=e.touches[0].clientX;
+          var dx=curX-startX;
+          if(dx>0) return;
+          inner.style.transform='translateX('+Math.max(dx,-90)+'px)';
+          wrapEl.classList.add('swiping');
+        },{passive:true});
+        wrapEl.addEventListener('touchend',function(){
+          swiping=false;
+          var dx=curX-startX;
+          if(dx<-60){inner.style.transform='';wrapEl.classList.remove('swiping');delItemGroup(indices);}
+          else{inner.style.transform='';wrapEl.classList.remove('swiping');}
+        });
+      })(obj.indices, wrap);
+      el.appendChild(wrap);
+    });
+  });
+
   var wraps=el.querySelectorAll('.log-item');
   var last=wraps[wraps.length-1];
-  if(last&&window._logJustAdded){
-    last.querySelector('.log-item-inner').classList.add('added');
-    window._logJustAdded=false;
-  }
+  if(last&&window._logJustAdded){last.querySelector('.log-item-inner').classList.add('added');window._logJustAdded=false;}
   renderLogSummary();
 }
 function renderLogSummary(){
@@ -2100,14 +2225,45 @@ function renderLogSummary(){
   if(!foodLog.length){el.style.display='none';return;}
   var tK=Math.round(foodLog.reduce(function(s,it){return s+it.kcal;},0));
   var tP=Math.round(foodLog.reduce(function(s,it){return s+it.protein;},0)*10)/10;
+
+  var cats={dorucak:{label:'Doručak',color:'dorucak'},uzina:{label:'Užina',color:'uzina'},rucak:{label:'Ručak / Večera',color:'rucak'}};
+  var catRows='';
+  Object.keys(cats).forEach(function(cat){
+    var items=foodLog.filter(function(it){return (it.cat||'none')===cat;});
+    if(!items.length) return;
+    var cK=Math.round(items.reduce(function(s,it){return s+it.kcal;},0));
+    var cP=Math.round(items.reduce(function(s,it){return s+it.protein;},0)*10)/10;
+    catRows+='<div class="cat-sum-row">'
+      +'<span class="cat-sum-label '+cats[cat].color+'">'+cats[cat].label+'</span>'
+      +'<div class="cat-sum-vals">'
+        +'<span class="cat-sum-kcal">'+cK+' kcal</span>'
+        +'<span class="cat-sum-prot">'+cP+'g</span>'
+      +'</div>'
+    +'</div>';
+  });
+
   el.style.display='block';
-  el.innerHTML='<div class="log-summary">'
-    +'<span class="log-summary-label">Ukupno danas</span>'
-    +'<div class="log-summary-vals">'
-    +'<span class="log-sum-kcal">'+tK+' kcal</span>'
-    +'<span class="log-sum-sep">·</span>'
-    +'<span class="log-sum-prot">'+tP+'g prot</span>'
-    +'</div></div>';
+  el.innerHTML='<div class="log-total-card">'
+    +(catRows?catRows+'<div class="log-total-divider"></div>':'')
+    +'<div class="log-total-bottom">'
+      +'<span class="log-total-label">Ukupno danas</span>'
+      +'<div class="log-total-vals">'
+        +'<span class="log-total-kcal">'+tK+'<span class="log-total-unit"> kcal</span></span>'
+        +'<span style="color:var(--muted2);font-size:16px">·</span>'
+        +'<span class="log-total-prot">'+tP+'<span class="log-total-unit">g</span></span>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+function delItemGroup(indices){
+  var name=foodLog[indices[0]]?foodLog[indices[0]].name:'stavka';
+  openOverlay('Obrisati "'+name+'"?','Stavka će biti uklonjena iz današnjeg unosa.',function(){
+    // Briši od najvećeg indexa ka manjem da ne poremeti redosled
+    indices.slice().sort(function(a,b){return b-a;}).forEach(function(i){
+      foodLog.splice(i,1);
+    });
+    saveLog();renderDashboard();renderLog();renderChart();renderKcalChart();renderGrid(document.getElementById('searchInput').value);
+  });
 }
 function delItem(i){
   var item=foodLog[i];
