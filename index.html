@@ -461,23 +461,27 @@ body::-webkit-scrollbar{display:none}
 .log-sum-kcal{font-size:14px;font-weight:700;color:var(--orange)}
 .log-sum-sep{font-size:12px;color:var(--muted2)}
 .log-sum-prot{font-size:14px;font-weight:700;color:var(--green)}
-.cat-sum-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.cat-sum-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
 .cat-sum-row:last-of-type{border-bottom:none}
 .cat-sum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;flex:1}
 .cat-sum-label.dorucak{color:#fbbf24}
 .cat-sum-label.uzina{color:#34d399}
 .cat-sum-label.rucak{color:#60a5fa}
 .cat-sum-label.none{color:var(--muted2)}
-.cat-sum-vals{display:flex;gap:0;font-size:11px;font-weight:700}
-.cat-sum-kcal{width:80px;text-align:right;color:var(--orange)}
-.cat-sum-prot{width:60px;text-align:right;color:var(--green)}
+.cat-sum-right{display:flex;align-items:center;gap:8px;flex-shrink:0;padding-right:52px}
+.cat-sum-vals{display:flex;gap:0;flex-shrink:0}
+.cat-sum-kcal{font-size:12px;font-weight:700;color:var(--orange);width:116px;text-align:right}
+.cat-sum-dot{font-size:11px;color:var(--muted2)}
+.cat-sum-prot{font-size:12px;font-weight:700;color:var(--green);width:70px;text-align:right}
+.log-total-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:4px}
+.log-total-vals{display:flex;align-items:baseline;gap:0}
 .log-total-card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:16px 18px;margin-top:4px}
 .log-total-divider{height:1px;background:var(--border2);margin:12px 0}
 .log-total-bottom{display:flex;justify-content:space-between;align-items:center}
 .log-total-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
-.log-total-vals{display:flex;gap:14px;align-items:baseline}
-.log-total-kcal{font-size:22px;font-weight:900;color:var(--orange);letter-spacing:-1px}
-.log-total-prot{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-1px}
+.log-total-vals{display:flex;align-items:baseline;gap:0}
+.log-total-kcal{font-size:22px;font-weight:900;color:var(--orange);letter-spacing:-1px;text-align:right;width:116px}
+.log-total-prot{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-1px;text-align:right;width:70px}
 .log-total-unit{font-size:12px;font-weight:600;color:var(--muted)}
 
 /* SLIDER */
@@ -1377,7 +1381,7 @@ function renderDashboard(){
   document.getElementById('ringG').textContent=Math.round(tP);
   document.getElementById('protPct').textContent=pPct+'%';
   var protRemVal=Math.max(0,Math.round(GOAL_PROT-tP));
-  document.getElementById('protRemNum').innerHTML=pGoalReached?'<span style="font-size:20px">🎯</span>':(protRemVal+'<span class="hsc-rem-unit">g</span>');
+  document.getElementById('protRemNum').innerHTML=pGoalReached?'<span style="font-size:24px;-webkit-text-fill-color:initial">✅</span>':(protRemVal+'<span class="hsc-rem-unit">g</span>');
   document.getElementById('kcalCur').textContent=Math.round(tK);
   document.getElementById('kcalPct').textContent=Math.min(100,Math.round(kPct))+'%';
   document.getElementById('kcalPct').style.color=kOver?'var(--red)':'';
@@ -1859,20 +1863,41 @@ function openDayLog(ds, isToday){
       groups[cat].push(item);
     });
     var catInfo={dorucak:{label:'Doručak',color:'#fbbf24'},uzina:{label:'Užina',color:'#34d399'},rucak:{label:'Ručak / Večera',color:'#60a5fa'},none:{label:'Ostalo',color:'var(--muted2)'}};
+    var hasCats=groups.dorucak.length||groups.uzina.length||groups.rucak.length;
+
     order.forEach(function(cat){
       if(!groups[cat].length) return;
       var catItems=groups[cat];
+
+      // Spoji iste namirnice unutar kategorije
+      var merged=[];
+      catItems.forEach(function(item){
+        var ex=merged.find(function(m){return m.name===item.name;});
+        if(ex){
+          ex.qty+=1;
+          var base=DB.find(function(f){return f.name===item.name;});
+          ex.kcal=base?base.kcal*ex.qty:ex.kcal+item.kcal;
+          ex.protein=base?base.protein*ex.qty:ex.protein+item.protein;
+        } else {
+          merged.push(Object.assign({},item,{qty:item.qty||1}));
+        }
+      });
+
       var cK=Math.round(catItems.reduce(function(s,it){return s+it.kcal;},0));
       var cP=Math.round(catItems.reduce(function(s,it){return s+it.protein;},0)*10)/10;
-      var header=document.createElement('div');
-      header.style.cssText='font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:'+catInfo[cat].color+';padding:10px 0 6px;display:flex;align-items:center;gap:8px';
-      header.innerHTML=catInfo[cat].label
-        +'<div style="flex:1;height:1px;background:var(--border2)"></div>'
-        +'<span style="font-size:10px;font-weight:600;color:var(--orange);text-transform:none;letter-spacing:0">'+cK+' kcal</span>'
-        +'<span style="font-size:10px;color:var(--muted2)">·</span>'
-        +'<span style="font-size:10px;font-weight:600;color:var(--green);text-transform:none;letter-spacing:0">'+cP+'g</span>';
-      content.appendChild(header);
-      catItems.forEach(function(item){
+
+      // Prikaži header samo ako ima kategorisanih stavki, ili ako je "none" ali ima i druge kategorije
+      if(hasCats||cat!=='none'){
+        var header=document.createElement('div');
+        header.style.cssText='font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:'+catInfo[cat].color+';padding:10px 0 6px;display:flex;align-items:center';
+        header.innerHTML=catInfo[cat].label
+          +'<div style="flex:1;height:1px;background:var(--border2);margin:0 8px"></div>'
+          +'<span style="font-size:10px;font-weight:600;color:var(--orange);text-transform:none;letter-spacing:0;width:90px;text-align:right">'+cK+' kcal</span>'
+          +'<span style="font-size:10px;font-weight:600;color:var(--green);text-transform:none;letter-spacing:0;width:44px;text-align:right">'+cP+'g</span>';
+        content.appendChild(header);
+      }
+
+      merged.forEach(function(item){
         var row=document.createElement('div');
         row.style.cssText='background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between';
         row.innerHTML=
@@ -1880,12 +1905,11 @@ function openDayLog(ds, isToday){
             +'<div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div>'
           +'</div>'
           +'<div style="display:flex;flex-shrink:0;margin-left:10px">'
-            +'<span style="font-size:12px;font-weight:700;color:var(--orange);width:80px;text-align:right">'+Math.round(item.kcal)+' kcal</span>'
-            +'<span style="font-size:12px;font-weight:700;color:var(--green);width:48px;text-align:right">'+Math.round(item.protein*10)/10+'g</span>'
+            +'<span style="font-size:12px;font-weight:700;color:var(--orange);width:90px;text-align:right">'+Math.round(item.kcal)+' kcal</span>'
+            +'<span style="font-size:12px;font-weight:700;color:var(--green);width:44px;text-align:right">'+Math.round(item.protein*10)/10+'g</span>'
           +'</div>';
         content.appendChild(row);
       });
-      // mini suma je sada u headeru
     });
   } else {
     // Samo summary bez detalja
@@ -2226,7 +2250,7 @@ function renderLogSummary(){
   var tK=Math.round(foodLog.reduce(function(s,it){return s+it.kcal;},0));
   var tP=Math.round(foodLog.reduce(function(s,it){return s+it.protein;},0)*10)/10;
 
-  var cats={dorucak:{label:'Doručak',color:'dorucak'},uzina:{label:'Užina',color:'uzina'},rucak:{label:'Ručak / Večera',color:'rucak'}};
+  var cats={dorucak:{label:'Doručak',color:'dorucak'},uzina:{label:'Užina',color:'uzina'},rucak:{label:'Ruč / Več',color:'rucak'}};
   var catRows='';
   Object.keys(cats).forEach(function(cat){
     var items=foodLog.filter(function(it){return (it.cat||'none')===cat;});
@@ -2234,7 +2258,7 @@ function renderLogSummary(){
     var cK=Math.round(items.reduce(function(s,it){return s+it.kcal;},0));
     var cP=Math.round(items.reduce(function(s,it){return s+it.protein;},0)*10)/10;
     catRows+='<div class="cat-sum-row">'
-      +'<span class="cat-sum-label '+cats[cat].color+'">'+cats[cat].label+'</span>'
+      +'<span class="cat-sum-label '+cat+'">'+cats[cat].label+'</span>'
       +'<div class="cat-sum-vals">'
         +'<span class="cat-sum-kcal">'+cK+' kcal</span>'
         +'<span class="cat-sum-prot">'+cP+'g</span>'
@@ -2249,7 +2273,7 @@ function renderLogSummary(){
       +'<span class="log-total-label">Ukupno danas</span>'
       +'<div class="log-total-vals">'
         +'<span class="log-total-kcal">'+tK+'<span class="log-total-unit"> kcal</span></span>'
-        +'<span style="color:var(--muted2);font-size:16px">·</span>'
+        
         +'<span class="log-total-prot">'+tP+'<span class="log-total-unit">g</span></span>'
       +'</div>'
     +'</div>'
