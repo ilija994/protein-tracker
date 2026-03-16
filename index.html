@@ -21,7 +21,7 @@
   --grad-p:linear-gradient(135deg,#a78bfa,#60a5fa);--grad-k:linear-gradient(90deg,#f97316,#f59e0b);
   --grad-g:linear-gradient(135deg,#34d399,#60a5fa);--grad-r:linear-gradient(135deg,#f87171,#f97316);
   --green:#34d399;--orange:#f97316;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
-  --nav-bg:#0a0a0fee;--dialog-bg:#1c1c26;--toast-bg:#1c1c26;
+  --nav-bg:#13131aee;--dialog-bg:#1c1c26;--toast-bg:#1c1c26;
   --card-weight-bg:linear-gradient(145deg,#1a1530,#13131a);--card-fat-bg:linear-gradient(145deg,#2a1520,#13131a);
 }
 body.light-mode{
@@ -31,35 +31,60 @@ body.light-mode{
   --card-weight-bg:linear-gradient(145deg,#ede8ff,#f0f0f5);--card-fat-bg:linear-gradient(145deg,#ffe8ec,#f0f0f5);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Geist',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:72px;-webkit-font-smoothing:antialiased;overflow-x:hidden;-ms-overflow-style:none;scrollbar-width:none}
+body{font-family:'Geist',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px;-webkit-font-smoothing:antialiased;overflow-x:hidden;-ms-overflow-style:none;scrollbar-width:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(167,139,250,0.15),transparent),
+radial-gradient(ellipse 50% 40% at 100% 50%,rgba(96,165,250,0.1),transparent),
+radial-gradient(ellipse 50% 40% at 0% 100%,rgba(52,211,153,0.07),transparent)}
+body.light-mode::before{background:
+radial-gradient(ellipse 70% 40% at 50% 0%,rgba(167,139,250,0.1),transparent),
+radial-gradient(ellipse 50% 40% at 100% 50%,rgba(96,165,250,0.07),transparent),
+radial-gradient(ellipse 50% 40% at 0% 100%,rgba(52,211,153,0.05),transparent)}
+.app{position:relative;z-index:1;max-width:430px;margin:0 auto}
 body::-webkit-scrollbar{display:none}
-.app{max-width:430px;margin:0 auto}
 
 /* PAGE SYSTEM */
 .page{display:none;animation:pageIn .28s cubic-bezier(.4,0,.2,1)}
 .page.active{display:block}
 @keyframes pageIn{from{opacity:0;transform:translateY(14px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border2);padding-bottom:env(safe-area-inset-bottom,0)}
-.nav-inner{display:flex;align-items:stretch;height:60px;max-width:430px;margin:0 auto}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;padding:8px 4px;-webkit-tap-highlight-color:transparent;position:relative}
-.nav-btn svg{width:22px;height:22px;color:var(--muted2);transition:color .2s}
-.nav-btn span{font-size:10px;font-weight:600;color:var(--muted2);transition:color .2s;letter-spacing:.2px}
-.nav-btn.active svg{color:var(--purple)}
-.nav-btn.active span{color:var(--purple)}
-.nav-btn.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--grad-p);border-radius:2px 2px 0 0}
+/* BOTTOM NAV — floating pill */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 12px) 16px;pointer-events:none}
+.nav-inner{display:flex;align-items:center;height:62px;max-width:398px;margin:0 auto;background:var(--surface);border:1px solid var(--border2);border-radius:99px;padding:6px;gap:4px;box-shadow:0 8px 32px rgba(0,0,0,0.35),0 2px 8px rgba(0,0,0,0.2);pointer-events:all;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;padding:6px 4px;-webkit-tap-highlight-color:transparent;position:relative;border-radius:99px;transition:background .18s}
+.nav-btn svg{width:20px;height:20px;color:var(--muted2);transition:color .2s}
+.nav-btn span{font-size:9px;font-weight:600;color:var(--muted2);transition:color .2s;letter-spacing:.2px}
+.nav-btn.active{background:var(--grad-p)}
+.nav-btn.active svg{color:#fff}
+.nav-btn.active span{color:#fff}
 
 /* HERO HEADER */
 .hero-header{padding:56px 24px 20px;position:relative;overflow:hidden}
-.hero-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:280px;height:200px;background:radial-gradient(ellipse,#a78bfa15 0%,transparent 70%);pointer-events:none}
+.hero-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:320px;height:240px;background:radial-gradient(ellipse,#a78bfa20 0%,transparent 70%);pointer-events:none}
 .hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .hero-brand{display:flex;align-items:center;gap:10px}
-.hero-icon{width:34px;height:34px;border-radius:10px;background:var(--grad-p);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px #a78bfa30}
+.hero-icon{width:36px;height:36px;border-radius:11px;background:var(--grad-p);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px #a78bfa40}
 .hero-icon svg{width:18px;height:18px}
 .hero-title{font-size:17px;font-weight:800;letter-spacing:-.3px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-greeting{font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-top:18px;line-height:1.1}
-.hero-date{font-size:14px;color:var(--muted);margin-top:6px;font-weight:500;letter-spacing:-.1px}
+.hero-greeting{font-size:28px;font-weight:900;letter-spacing:-.8px;color:var(--text);margin-top:22px;line-height:1.1}
+.hero-date{font-size:13px;color:var(--muted);margin-top:6px;font-weight:500;letter-spacing:.1px;display:flex;align-items:center;gap:6px}
+.hero-date::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--grad-p);flex-shrink:0}
+.hero-cal{margin-top:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-24px;margin-right:-24px;padding:0 24px}
+.hero-cal::-webkit-scrollbar{display:none}
+.hero-cal-inner{display:flex;gap:8px;padding-bottom:4px}
+.cal-day{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:48px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cal-day-name{font-size:11px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.4px}
+.cal-day-num{width:44px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--muted);background:transparent;transition:background .15s,color .15s;position:relative}
+.cal-day.today .cal-day-num{background:var(--surface2);color:var(--text);font-weight:800}
+.cal-day.today .cal-day-name{color:var(--purple)}
+.cal-day.has-data .cal-day-num::after{content:'';position:absolute;top:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--purple)}
+.cal-day.today.has-data .cal-day-num::after{background:var(--purple)}
+.cal-day.goal-reached .cal-day-num{background:linear-gradient(135deg,#a78bfa,#60a5fa);color:#fff;box-shadow:0 4px 14px rgba(167,139,250,0.4)}
+.cal-day.goal-reached .cal-day-name{color:var(--purple)}
+.hero-weather{margin-top:10px;display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--text)}
+.hero-weather-icon{font-size:16px;line-height:1}
+.hero-weather-temp{font-size:15px;font-weight:800;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-weather-desc{font-size:12px;color:var(--muted);font-weight:500}
 
 /* PAGE TITLES */
 .page-header{padding:56px 24px 20px;display:flex;align-items:center;gap:14px}
@@ -72,23 +97,37 @@ body::-webkit-scrollbar{display:none}
 
 /* DASHBOARD */
 .dashboard{padding:0 20px 4px}
-.ring-section{display:flex;align-items:center;gap:20px;background:var(--surface);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:24px;border:1px solid var(--border2);padding:24px;margin-bottom:14px;position:relative;overflow:hidden}
-.ring-section::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(ellipse,#a78bfa0d 0%,transparent 70%);pointer-events:none}
-.ring-container{position:relative;flex-shrink:0;width:130px;height:130px}
-.ring-svg{width:130px;height:130px;transform:rotate(-90deg)}
-.ring-track{fill:none;stroke:var(--surface3);stroke-width:11}
-.ring-fill{fill:none;stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 6px rgba(167,139,250,0.6))}
-.ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-.ring-g{font-size:34px;font-weight:900;line-height:1;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.ring-unit{font-size:11px;color:var(--muted);margin-top:1px;font-weight:500}
-.ring-goal-txt{font-size:11px;color:var(--muted2);margin-top:1px}
-.ring-stats{flex:1;min-width:0}
-.ring-stats-label{font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px}
-.ring-big{font-size:28px;font-weight:800;letter-spacing:-.5px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
-.ring-pct-label{font-size:13px;color:var(--muted);margin-top:4px}
-.ring-rem{margin-top:14px;background:var(--surface2);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between}
+.hero-stats-card{background:var(--surface);border:1px solid var(--border2);border-radius:28px;padding:20px 16px 20px;margin-bottom:14px;position:relative;overflow:visible;cursor:pointer;transition:transform .1s}
+.hero-stats-card:active{transform:scale(.99)}
+.hsc-glow-p{display:none}
+.hsc-glow-o{display:none}
+.hsc-rings{display:flex;align-items:stretch;gap:0}
+.hsc-ring-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 4px 4px}
+.hsc-vdivider{width:1px;background:var(--border2);align-self:stretch;flex-shrink:0;margin:4px 0}
+.hsc-ring-pct{font-size:36px;font-weight:900;letter-spacing:-2px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center}
+.hsc-ring-pct-k{font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--orange);line-height:1;text-align:center}
+.hsc-ring-sub{font-size:13px;color:var(--muted);font-weight:600;text-align:center;line-height:1.3}
+.hsc-rem-num{font-size:28px;font-weight:900;letter-spacing:-1px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center}
+.hsc-rem-num-k{font-size:28px;font-weight:900;letter-spacing:-1px;color:var(--orange);line-height:1;text-align:center}
+.hsc-rem-unit{font-size:14px;font-weight:700;letter-spacing:0}
+.hsc-rem-label{font-size:10px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center}
+.ring-container{position:relative;flex-shrink:0;width:150px;height:150px}
+.ring-svg{width:150px;height:150px;transform:rotate(-90deg)}
+.ring-track{fill:none;stroke:var(--surface3);stroke-width:12}
+.ring-fill{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(167,139,250,0.6))}
+.ring-fill-k{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(249,115,22,0.5))}
+.ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;width:110px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-g{font-size:38px;font-weight:900;line-height:1;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-2px;text-indent:-2px}
+.ring-g-k{font-size:34px;font-weight:900;line-height:1;color:var(--orange);letter-spacing:0}
+.ring-pct-inner{font-size:13px;font-weight:700;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:2px;opacity:0.3;text-align:center;display:block;width:100%}
+.ring-pct-inner-k{font-size:13px;font-weight:700;color:var(--orange);margin-top:2px;opacity:0.3;text-align:center;display:block;width:100%}
+.ring-unit{font-size:10px;color:var(--muted2);margin-top:3px;font-weight:500}
+.ring-goal-txt{font-size:9px;color:var(--muted2);margin-top:1px}
+.ring-big{font-size:36px;font-weight:900;letter-spacing:-2px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.ring-pct-label{font-size:12px;color:var(--muted);margin-top:3px}
+.ring-rem{margin-top:10px;background:var(--surface2);border-radius:10px;padding:7px 12px;display:flex;align-items:center;justify-content:space-between}
 .ring-rem-label{font-size:12px;color:var(--muted)}
-.ring-rem-val{font-size:13px;font-weight:700;color:var(--green)}
+.ring-rem-val{font-size:13px;font-weight:800;color:var(--green)}
 .kcal-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:18px 20px;margin-bottom:14px}
 .kcal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .kcal-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-weight:500}
@@ -110,7 +149,6 @@ body::-webkit-scrollbar{display:none}
 .section-badge{font-size:11px;font-weight:600;color:var(--purple);background:#a78bfa18;border-radius:6px;padding:3px 8px}
 .chart-bars{display:flex;align-items:flex-end;gap:6px;height:130px;margin-bottom:0;position:relative}
 .chart-goal-line{position:absolute;left:0;right:0;border-top:1px dashed rgba(167,139,250,0.35);pointer-events:none;transition:bottom .6s cubic-bezier(.4,0,.2,1)}
-.chart-goal-line::after{content:'cilj';position:absolute;right:0;top:-16px;font-size:9px;color:rgba(167,139,250,0.6);font-weight:600;letter-spacing:.3px}
 .chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;cursor:default}
 .bar-outer{flex:1;width:100%;display:flex;align-items:flex-end;border-radius:8px 8px 0 0;background:var(--surface3);overflow:hidden;position:relative;transition:transform .1s}
 .bar-inner{width:100%;border-radius:8px 8px 0 0;transition:height .7s cubic-bezier(.34,1.56,.64,1);position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
@@ -120,7 +158,7 @@ body::-webkit-scrollbar{display:none}
 .bar-inner.today-partial{background:linear-gradient(to top,#7c3aed,#a78bfa);box-shadow:0 -4px 16px rgba(167,139,250,0.4)}
 .bar-inner.today-done{background:linear-gradient(to top,#059669,#34d399);box-shadow:0 -4px 20px rgba(52,211,153,0.5)}
 .bar-prot-label{font-size:8px;font-weight:700;color:rgba(255,255,255,0.85);line-height:1;display:none}
-.bar-inner.partial .bar-prot-label,.bar-inner.done .bar-prot-label,.bar-inner.today-partial .bar-prot-label,.bar-inner.today-done .bar-prot-label{display:block}
+.bar-inner.partial .bar-prot-label,.bar-inner.done .bar-prot-label,.bar-inner.today-partial .bar-prot-label,.bar-inner.today-done .bar-prot-label,.bar-inner.kcal-partial .bar-prot-label,.bar-inner.kcal-over .bar-prot-label,.bar-inner.today-kcal .bar-prot-label,.bar-inner.today-over .bar-prot-label{display:block}
 .bar-day-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;width:100%}
 .bar-day{font-size:10px;color:var(--muted2);text-align:center;font-weight:500}
 .bar-day.today{color:var(--purple);font-weight:700}
@@ -184,9 +222,9 @@ body::-webkit-scrollbar{display:none}
 .mh-header-count{font-size:11px;color:var(--muted)}
 .mh-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px;min-height:44px}
 .mh-row:last-child{border-bottom:none}
-.mh-date-badge{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:6px;padding:4px 8px;white-space:nowrap;flex-shrink:0}
-.mh-row-vals{flex:1;display:flex;gap:12px;align-items:center}
-.mh-rv{display:flex;align-items:center;gap:6px}
+.mh-date-badge{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:6px;padding:4px 8px;white-space:nowrap;flex-shrink:0;width:80px;text-align:center}
+.mh-row-vals{flex:1;display:flex;align-items:center;justify-content:center;gap:0}
+.mh-rv{display:flex;align-items:center;gap:6px;width:90px;justify-content:center}
 .mh-rv-dot{width:6px;height:6px;border-radius:50%}
 .mh-rv-dot.w{background:var(--purple)}
 .mh-rv-dot.f{background:var(--red)}
@@ -241,10 +279,10 @@ body::-webkit-scrollbar{display:none}
 .qa-chip-prot{font-size:11px;font-weight:700;color:var(--green)}
 .qa-chip-plus{font-size:16px;color:var(--purple);font-weight:300;line-height:1}
 .search-wrap{padding:0 0 14px;position:relative}
-.search-wrap svg.si{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.35;pointer-events:none}
 .search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:13px 16px 13px 42px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;transition:border-color .18s}
 .search-wrap input:focus{border-color:#a78bfa55}
 .search-wrap input::placeholder{color:var(--muted2)}
+.search-icon{position:absolute;left:13px;top:13px;width:17px;height:17px;opacity:.7;pointer-events:none;color:var(--purple)}
 .btn-scan{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-bottom:14px;background:var(--surface2);border:1px solid #a78bfa30;border-radius:14px;padding:14px;color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:background .18s,border-color .18s}
 .btn-scan:active{background:var(--surface2);border-color:#a78bfa55}
 .btn-scan svg{width:20px;height:20px;color:var(--purple)}
@@ -360,13 +398,16 @@ body::-webkit-scrollbar{display:none}
 .toast.error{border-color:#f8717130;color:var(--red)}
 
 /* SPLASH */
-.splash{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s ease,transform .4s ease}
-.splash.hide{opacity:0;transform:scale(1.04);pointer-events:none}
-.splash-icon{width:72px;height:72px;border-radius:22px;background:var(--grad-p);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px #a78bfa40;animation:splashPulse 1.4s ease-in-out infinite}
-.splash-icon svg{width:36px;height:36px;color:#fff}
-.splash-title{font-size:24px;font-weight:800;letter-spacing:-.5px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.splash-sub{font-size:13px;color:var(--muted)}
-@keyframes splashPulse{0%,100%{box-shadow:0 8px 32px #a78bfa40}50%{box-shadow:0 8px 48px #a78bfa70}}
+.splash{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .5s ease,transform .5s ease}
+.splash::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(167,139,250,0.18),transparent);pointer-events:none}
+.splash.hide{opacity:0;transform:scale(1.06);pointer-events:none}
+.splash-icon{width:80px;height:80px;border-radius:24px;background:var(--grad-p);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px #a78bfa50;animation:splashPulse 1.6s ease-in-out infinite;position:relative;z-index:1}
+.splash-icon svg{width:40px;height:40px;color:#fff}
+.splash-title{font-size:26px;font-weight:900;letter-spacing:-.6px;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1}
+.splash-sub{font-size:13px;color:var(--muted);position:relative;z-index:1;display:flex;align-items:center;gap:8px}
+.splash-sub::before{content:'';width:16px;height:2px;background:var(--grad-p);border-radius:2px;animation:splashDot 1.6s ease-in-out infinite}
+@keyframes splashPulse{0%,100%{box-shadow:0 12px 40px #a78bfa50;transform:scale(1)}50%{box-shadow:0 16px 56px #a78bfa70;transform:scale(1.04)}}
+@keyframes splashDot{0%,100%{opacity:.4;width:16px}50%{opacity:1;width:28px}}
 
 /* EMPTY STATE */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;gap:12px}
@@ -450,43 +491,53 @@ body::-webkit-scrollbar{display:none}
       </div>
     </div>
     <div class="hero-greeting" id="pozdrav"></div>
-    <div class="hero-date" id="datum"></div>
+    <div class="hero-cal" id="heroCal"><div class="hero-cal-inner" id="heroCalInner"></div></div>
   </div>
 
   <div class="dashboard">
-    <div class="ring-section">
-      <div class="ring-container">
-        <svg class="ring-svg" viewBox="0 0 130 130">
-          <defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs>
-          <circle class="ring-track" cx="65" cy="65" r="54"/>
-          <circle class="ring-fill" id="ringFill" cx="65" cy="65" r="54" stroke="url(#gp)" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
-        </svg>
-        <div class="ring-text">
-          <div class="ring-g" id="ringG">0</div>
-          <div class="ring-unit">g proteina</div>
-          <div class="ring-goal-txt" id="ringGoalTxt">/ 160 g</div>
+    <div class="hero-stats-card" onclick="haptic();showPage('food');setTimeout(function(){var el=document.getElementById('logList');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80)">
+      <div class="hsc-glow-p"></div>
+      <div class="hsc-glow-o"></div>
+
+      <div class="hsc-rings">
+        <div class="hsc-ring-col">
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 150 150">
+              <defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs>
+              <circle class="ring-track" cx="75" cy="75" r="62"/>
+              <circle class="ring-fill" id="ringFill" cx="75" cy="75" r="62" stroke="url(#gp)" stroke-dasharray="390" stroke-dashoffset="390"/>
+            </svg>
+            <div class="ring-text">
+              <div class="ring-g" id="ringG">0</div>
+              <div class="ring-pct-inner" id="protPct">0%</div>
+              <div class="ring-unit" id="ringGoalTxt">/ 160g</div>
+            </div>
+          </div>
+          <div class="hsc-rem-num" id="protRemNum">160<span class="hsc-rem-unit">g</span></div>
+          <div class="hsc-rem-label">preostalo</div>
+        </div>
+
+        <div class="hsc-vdivider"></div>
+
+        <div class="hsc-ring-col">
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 150 150">
+              <defs><linearGradient id="gk" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
+              <circle class="ring-track" cx="75" cy="75" r="62"/>
+              <circle class="ring-fill-k" id="kcalRingFill" cx="75" cy="75" r="62" stroke="url(#gk)" stroke-dasharray="390" stroke-dashoffset="390"/>
+            </svg>
+            <div class="ring-text">
+              <div class="ring-g-k" id="kcalCur">0</div>
+              <div class="ring-pct-inner-k" id="kcalPct">0%</div>
+              <div class="ring-unit" id="kcalGoalTxt">/ 2000</div>
+            </div>
+          </div>
+          <div class="hsc-rem-num-k" id="kcalRemNum">2000<span class="hsc-rem-unit">kcal</span></div>
+          <div class="hsc-rem-label">preostalo</div>
         </div>
       </div>
-      <div class="ring-stats">
-        <div class="ring-stats-label">Proteini</div>
-        <div class="ring-big" id="protPct">0%</div>
-        <div class="ring-pct-label">dnevnog cilja</div>
-        <div class="ring-rem">
-          <span class="ring-rem-label">Preostalo</span>
-          <span class="ring-rem-val" id="protRem">160 g</span>
-        </div>
-      </div>
-    </div>
-    <div class="kcal-card" onclick="haptic();showPage('food');setTimeout(function(){var el=document.getElementById('logList');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80)" style="cursor:pointer">
-      <div class="kcal-top">
-        <div>
-          <div class="kcal-label">Kalorije <span style="font-size:10px;color:var(--muted2);font-weight:400;text-transform:none;letter-spacing:0">— tap za detalje</span></div>
-          <div class="kcal-val"><span id="kcalCur">0</span> <span class="kgoal" id="kcalGoalTxt">/ 2130</span></div>
-        </div>
-        <div class="kcal-badge" id="kcalRemBadge"><div class="kb-val" id="kcalRem">2130</div><div class="kb-label" id="kcalRemLabel">preostalo</div></div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" id="kcalBar" style="width:0%"></div></div>
-      <div id="kcalWarn" style="display:none;align-items:center;gap:6px;margin-top:10px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);border-radius:10px;padding:8px 12px">
+
+      <div id="kcalWarn" style="display:none;align-items:center;gap:6px;margin-top:14px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);border-radius:10px;padding:8px 12px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:var(--red);flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span style="font-size:12px;font-weight:600;color:var(--red)">Prekoračen dnevni kalorijski cilj</span>
       </div>
@@ -495,21 +546,21 @@ body::-webkit-scrollbar{display:none}
       <i data-lucide="trash-2" style="width:15px;height:15px;opacity:.8"></i>
       Obriši današnji unos
     </button>
-    <div class="chart-card" onclick="haptic();openHistoryOverlay('prot')" style="cursor:pointer">
+    <div class="chart-card">
       <div class="section-header">
         <div class="section-heading">Proteini — 7 dana</div>
-        <div class="section-badge" id="chartBadge">Cilj: 160 g</div>
+        <div class="section-badge" id="chartBadge" onclick="haptic();openHistoryOverlay('prot')" style="cursor:pointer">Cilj: 160 g</div>
       </div>
       <div class="chart-bars" id="chartBars"></div>
-      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted2);font-weight:500">Tap za punu istoriju →</div>
+      <div onclick="haptic();openHistoryOverlay('prot')" style="text-align:center;margin-top:10px;font-size:11px;color:var(--purple);font-weight:600;cursor:pointer;padding:4px 0">Prikaži celu istoriju →</div>
     </div>
-    <div class="chart-card" style="margin-top:10px;cursor:pointer" onclick="haptic();openHistoryOverlay('kcal')">
+    <div class="chart-card" style="margin-top:10px">
       <div class="section-header">
         <div class="section-heading">Kalorije — 7 dana</div>
-        <div class="section-badge" id="kcalChartBadge" style="color:var(--orange);background:rgba(249,115,22,0.1)">Cilj: 2130</div>
+        <div class="section-badge" id="kcalChartBadge" onclick="haptic();openHistoryOverlay('kcal')" style="color:var(--orange);background:rgba(249,115,22,0.1);cursor:pointer">Cilj: 2130</div>
       </div>
       <div class="chart-bars" id="kcalChartBars"></div>
-      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted2);font-weight:500">Tap za punu istoriju →</div>
+      <div onclick="haptic();openHistoryOverlay('kcal')" style="text-align:center;margin-top:10px;font-size:11px;color:var(--orange);font-weight:600;cursor:pointer;padding:4px 0">Prikaži celu istoriju →</div>
     </div>
   </div>
 </div>
@@ -524,7 +575,7 @@ body::-webkit-scrollbar{display:none}
   </div>
   <div style="padding:0 20px 20px">
     <div class="search-wrap">
-      <i data-lucide="search" class="si" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;opacity:.7;pointer-events:none;color:var(--purple)"></i>
+      <i data-lucide="search" class="search-icon" style="position:absolute;left:13px;top:13px;width:17px;height:17px;opacity:.7;pointer-events:none;color:var(--purple)"></i>
       <input type="text" id="searchInput" placeholder="Pretraži namirnicu…" oninput="filterGrid()">
     </div>
     <div class="quick-add-wrap" id="quickAddWrap" style="display:none">
@@ -601,6 +652,10 @@ body::-webkit-scrollbar{display:none}
       <div class="mc-progress" id="metricsProgress" style="display:none">
         <span class="mc-progress-label">Ukupno od prvog merenja</span>
         <span class="mc-progress-val" id="mcProgressVal"></span>
+      </div>
+      <div class="mc-progress" id="metricsLastDelta" style="display:none;border-top:1px solid var(--border);margin-top:0;padding-top:10px">
+        <span class="mc-progress-label">Poslednja 2 unosa</span>
+        <span class="mc-progress-val" id="mcLastDeltaVal"></span>
       </div>
     </div>
     <div class="metrics-form-card">
@@ -742,10 +797,19 @@ body::-webkit-scrollbar{display:none}
         <div class="io-drop-sub">ili klikni da izabereš</div>
       </div>
     </div>
+
+    <div class="sec-title" style="margin-bottom:12px;margin-top:8px;color:var(--red)">Opasna zona</div>
+    <div class="notif-card" style="border-color:rgba(248,113,113,0.2);margin-bottom:20px">
+      <div class="notif-row" style="margin-bottom:0">
+        <div>
+          <div class="ni-title">Vrati sve na nulu</div>
+          <div class="ni-sub">Briše sve podatke — kao prvi put</div>
+        </div>
+        <button onclick="askFactoryReset()" style="background:#f8717118;border:1px solid #f8717140;border-radius:10px;padding:8px 14px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Reset</button>
+      </div>
+    </div>
   </div>
 </div>
-
-</div><!-- /.app -->
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
@@ -827,6 +891,17 @@ body::-webkit-scrollbar{display:none}
   <div style="flex:1;overflow-y:auto;padding:16px 20px 32px">
     <div id="historyOverlayList"></div>
   </div>
+</div>
+
+<!-- DAY LOG OVERLAY -->
+<div class="scanner-overlay" id="dayLogOverlay" style="background:var(--bg)">
+  <div class="scanner-header" style="border-bottom:1px solid var(--border)">
+    <button class="scanner-close" onclick="closeDayLog()" style="background:var(--surface2)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--text)"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <span class="scanner-title" id="dayLogTitle" style="color:var(--text)"></span>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 32px" id="dayLogContent"></div>
 </div>
 
 <!-- CONFIRM DIALOG -->
@@ -1132,16 +1207,29 @@ function archiveDay(ds,dl){
   var kkeys=Object.keys(kh).sort();
   if(kkeys.length>365) kkeys.slice(0,kkeys.length-365).forEach(function(k){delete kh[k];});
   localStorage.setItem(sk('fitkcalhistory'),JSON.stringify(kh));
+  // Sačuvaj kompletan log za prikaz u kalendaru
+  var lh=JSON.parse(localStorage.getItem(sk('fitloghistory'))||'{}');
+  if(dl.length) lh[ds]=dl;
+  var lkeys=Object.keys(lh).sort();
+  if(lkeys.length>365) lkeys.slice(0,lkeys.length-365).forEach(function(k){delete lh[k];});
+  localStorage.setItem(sk('fitloghistory'),JSON.stringify(lh));
 }
 function saveDB(){localStorage.setItem(sk('fitdb'),JSON.stringify(DB));}
 function saveLog(){localStorage.setItem(sk('fitlog'),JSON.stringify({date:todayStr(),log:foodLog}));}
 function saveFreq(){localStorage.setItem(sk('fitfreq'),JSON.stringify(freq));}
+function updateGoalDisplays(){
+  document.getElementById('ringGoalTxt').textContent='cilj: '+GOAL_PROT+'g';
+  document.getElementById('chartBadge').textContent='Cilj: '+GOAL_PROT+' g';
+  document.getElementById('kcalGoalTxt').textContent='cilj: '+GOAL_KCAL;
+  document.getElementById('kcalChartBadge').textContent='Cilj: '+GOAL_KCAL;
+  document.getElementById('setKcal').value=GOAL_KCAL;
+  document.getElementById('setProt').value=GOAL_PROT;
+}
 function loadGoals(){
   var g=JSON.parse(localStorage.getItem(sk('fitgoals'))||'{}');
   if(g.kcal) GOAL_KCAL=g.kcal;
   if(g.prot) GOAL_PROT=g.prot;
-  document.getElementById('setKcal').value=GOAL_KCAL;
-  document.getElementById('setProt').value=GOAL_PROT;
+  updateGoalDisplays();
 }
 function saveGoals(){
   var k=parsePosNum(document.getElementById('setKcal').value);
@@ -1149,11 +1237,35 @@ function saveGoals(){
   if(!k||!p) return;
   GOAL_KCAL=k;GOAL_PROT=p;
   localStorage.setItem(sk('fitgoals'),JSON.stringify({kcal:k,prot:p}));
-  renderDashboard();renderChart();renderKcalChart();
-  document.getElementById('ringGoalTxt').textContent='/ '+GOAL_PROT+' g';
-  document.getElementById('chartBadge').textContent='Cilj: '+GOAL_PROT+' g';
-  document.getElementById('kcalGoalTxt').textContent='/ '+GOAL_KCAL;
+  updateGoalDisplays();
+  renderDashboard();renderChart();renderKcalChart();renderCalendar();
   showToast('✅ Ciljevi sačuvani','success');
+}
+function doImport(){
+  if(!pendingImportData) return;
+  var d=pendingImportData;
+  if(d.goals){GOAL_KCAL=d.goals.kcal||GOAL_KCAL;GOAL_PROT=d.goals.prot||GOAL_PROT;localStorage.setItem(sk('fitgoals'),JSON.stringify({kcal:GOAL_KCAL,prot:GOAL_PROT}));}
+  if(d.db){DB=d.db;saveDB();}
+  if(d.freq){freq=d.freq;saveFreq();}
+  if(d.history){history=d.history;localStorage.setItem(sk('fithistory'),JSON.stringify(history));}
+  if(d.kcalHistory){localStorage.setItem(sk('fitkcalhistory'),JSON.stringify(d.kcalHistory));}
+  if(d.logHistory){localStorage.setItem(sk('fitloghistory'),JSON.stringify(d.logHistory));}
+  if(d.bodyMetrics){bodyMetrics=d.bodyMetrics;localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));}
+  // Ako je todayLog od prethodnog dana — arhiviraj ga
+  if(d.todayLog){
+    if(d.todayLog.date===todayStr()){
+      foodLog=d.todayLog.log;saveLog();
+    } else if(d.todayLog.date&&d.todayLog.log&&d.todayLog.log.length){
+      archiveDay(d.todayLog.date,d.todayLog.log);
+      foodLog=[];saveLog();
+    }
+  }
+  // Reload history iz localStorage nakon arhiviranja
+  history=JSON.parse(localStorage.getItem(sk('fithistory'))||'{}');
+  closeImportOverlay();
+  updateGoalDisplays();
+  renderDashboard();renderChart();renderKcalChart();renderMetrics();renderLog();renderGrid();
+  showToast('✅ Uvoz uspešan!','success');
 }
 function haptic(){if(navigator.vibrate) navigator.vibrate(8);}
 
@@ -1174,7 +1286,7 @@ function exportMetricsCSV(){
   downloadCSV(rows,'telesna_merenja.csv');showToast('📤 Izvoz uspešan','success');
 }
 function exportFullJSON(){
-  var payload={version:2,exportDate:new Date().toISOString(),goals:{kcal:GOAL_KCAL,prot:GOAL_PROT},db:DB,freq:freq,history:history,bodyMetrics:bodyMetrics,todayLog:{date:todayStr(),log:foodLog}};
+  var payload={version:2,exportDate:new Date().toISOString(),goals:{kcal:GOAL_KCAL,prot:GOAL_PROT},db:DB,freq:freq,history:history,kcalHistory:JSON.parse(localStorage.getItem(sk('fitkcalhistory'))||'{}'),logHistory:JSON.parse(localStorage.getItem(sk('fitloghistory'))||'{}'),bodyMetrics:bodyMetrics,todayLog:{date:todayStr(),log:foodLog}};
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8;'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');a.href=url;a.download='protein_tracker_backup_'+todayStr()+'.json';a.click();
@@ -1196,7 +1308,9 @@ function handleImport(input){
       var data=JSON.parse(e.target.result);
       if(!data.version||!data.goals){showToast('❌ Neispravan fajl','error');input.value='';return;}
       pendingImportData=data;
-      document.getElementById('importDlgSub').textContent='Backup od '+data.exportDate.slice(0,10)+' — zamenuje sve podatke.';
+      var ed=data.exportDate.slice(0,10);
+      var edFmt=ed.slice(8)+'.'+ed.slice(5,7)+'.'+ed.slice(0,4);
+      document.getElementById('importDlgSub').textContent='Backup od '+edFmt+' — zamenuje sve podatke.';
       document.getElementById('overlayImport').classList.add('open');
     }catch(err){showToast('❌ Greška pri čitanju fajla','error');}
     input.value='';
@@ -1204,20 +1318,6 @@ function handleImport(input){
   reader.readAsText(file);
 }
 function closeImportOverlay(){document.getElementById('overlayImport').classList.remove('open');pendingImportData=null;}
-function doImport(){
-  if(!pendingImportData) return;
-  var d=pendingImportData;
-  if(d.goals){GOAL_KCAL=d.goals.kcal||GOAL_KCAL;GOAL_PROT=d.goals.prot||GOAL_PROT;localStorage.setItem(sk('fitgoals'),JSON.stringify({kcal:GOAL_KCAL,prot:GOAL_PROT}));}
-  if(d.db){DB=d.db;saveDB();}
-  if(d.freq){freq=d.freq;saveFreq();}
-  if(d.history){history=d.history;localStorage.setItem(sk('fithistory'),JSON.stringify(history));}
-  if(d.bodyMetrics){bodyMetrics=d.bodyMetrics;localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));}
-  if(d.todayLog&&d.todayLog.date===todayStr()){foodLog=d.todayLog.log;saveLog();}
-  closeImportOverlay();
-  renderDashboard();renderChart();renderKcalChart();renderMetrics();renderLog();renderGrid();loadGoals();
-  showToast('✅ Uvoz uspešan!','success');
-}
-
 // ===== DATUM =====
 function setDatum(){
   var d=new Date();
@@ -1227,7 +1327,8 @@ function setDatum(){
   var poz=h>=5&&h<12?'Dobro jutro':h>=12&&h<18?'Dobar dan':'Dobro veče';
   var name=getUserName(currentUser);
   document.getElementById('pozdrav').textContent=poz+', '+name+'. 👋';
-  document.getElementById('datum').textContent=dn[d.getDay()]+', '+d.getDate()+'. '+mn[d.getMonth()]+' '+d.getFullYear()+'.';
+  var datumEl=document.getElementById('datum');
+  if(datumEl) datumEl.textContent=dn[d.getDay()]+', '+d.getDate()+'. '+mn[d.getMonth()]+' '+d.getFullYear()+'.';
 }
 
 // ===== RENDER =====
@@ -1241,18 +1342,20 @@ function renderDashboard(){
   var pGoalReached=tP>=GOAL_PROT;
   var wasReached=renderDashboard._wasReached||false;
 
-  document.getElementById('ringFill').style.strokeDashoffset=339.3-(339.3*pPct/100);
+  document.getElementById('ringFill').style.strokeDashoffset=390-(390*pPct/100);
+  document.getElementById('kcalRingFill').style.strokeDashoffset=390-(390*Math.min(100,kPct)/100);
   document.getElementById('ringG').textContent=Math.round(tP);
   document.getElementById('protPct').textContent=pPct+'%';
-  document.getElementById('protRem').textContent=pGoalReached?'Cilj ispunjen! 🎯':Math.max(0,Math.round(GOAL_PROT-tP))+' g';
-  document.getElementById('protRem').style.color=pGoalReached?'var(--green)':'';
+  var protRemVal=Math.max(0,Math.round(GOAL_PROT-tP));
+  document.getElementById('protRemNum').innerHTML=pGoalReached?'<span style="font-size:20px">🎯</span>':(protRemVal+'<span class="hsc-rem-unit">g</span>');
   document.getElementById('kcalCur').textContent=Math.round(tK);
-  document.getElementById('kcalCur').style.color=kOver?'var(--red)':'';
-  document.getElementById('kcalBar').style.width=Math.min(100,kPct)+'%';
-  document.getElementById('kcalBar').style.background=kOver?'linear-gradient(90deg,#f87171,#ef4444)':'';
-  document.getElementById('kcalRem').textContent=kOver?Math.round(tK-GOAL_KCAL):Math.max(0,Math.round(GOAL_KCAL-tK));
-  document.getElementById('kcalRemLabel').textContent=kOver?'previše':'preostalo';
-  document.getElementById('kcalRem').style.color=kOver?'var(--red)':'';
+  document.getElementById('kcalPct').textContent=Math.min(100,Math.round(kPct))+'%';
+  document.getElementById('kcalPct').style.color=kOver?'var(--red)':'';
+  var kcalRemVal=kOver?Math.round(tK-GOAL_KCAL):Math.max(0,Math.round(GOAL_KCAL-tK));
+  document.getElementById('kcalRemNum').innerHTML=(kOver?'+':'')+kcalRemVal+'<span class="hsc-rem-unit">kcal</span>';
+  document.getElementById('kcalRemNum').style.color=kOver?'var(--red)':'';
+  document.querySelectorAll('.hsc-rem-label')[1].textContent=kOver?'previše':'preostalo';
+  document.getElementById('kcalRingFill').style.stroke=kOver?'#f87171':'url(#gk)';
   var warn=document.getElementById('kcalWarn');
   if(warn) warn.style.display=kOver?'flex':'none';
 
@@ -1436,7 +1539,7 @@ function renderMetrics(){
     progressWrap.style.display='none'; renderMetricsHistory(); return;
   }
 
-  var W=320, H=100, pad=18;
+  var W=320, H=110, padX=4, padY=28;
   var maxV=Math.max.apply(null,hasVals), minV=Math.min.apply(null,hasVals);
   var range=maxV-minV||1;
   var isWeight=metricView==='w';
@@ -1446,8 +1549,8 @@ function renderMetrics(){
   // Build points
   var pts=data.map(function(m,i){
     var v=isWeight?m.weight:m.fat;
-    var x=data.length===1?W/2:pad+(i/(data.length-1))*(W-pad*2);
-    var y=v!=null?H-pad-((v-minV)/range)*(H-pad*2):null;
+    var x=data.length===1?W/2:padX+(i/(data.length-1))*(W-padX*2);
+    var y=v!=null?H-padY-((v-minV)/range)*(H-padY*2)+padY/2:null;
     return {x:x,y:y,v:v,date:m.date};
   });
 
@@ -1490,10 +1593,7 @@ function renderMetrics(){
     var isLast=i===validPts.length-1;
     svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(isLast?5:4)+'" fill="'+(isLast?color:'var(--surface2)')+'" stroke="'+color+'" stroke-width="2" style="cursor:pointer" onclick="showMetricTooltip(this,\''+p.v+'\',\''+p.date+'\',\''+color+'\')" />';
     if(isLast){
-      var tx=p.x>W-50?p.x-12:p.x+12;
-      var ty=p.y-16;
-      var anchor=p.x>W-50?'end':'start';
-      svg+='<text x="'+tx+'" y="'+ty+'" text-anchor="'+anchor+'" font-size="15" fill="'+color+'" font-weight="900" style="filter:drop-shadow(0 1px 4px rgba(0,0,0,0.7))">'+p.v+'</text>';
+      svg+='<text x="'+(W-4)+'" y="20" text-anchor="end" font-size="22" fill="'+color+'" font-weight="900" stroke="var(--surface2)" stroke-width="3" paint-order="stroke">'+p.v+'</text>';
     }
   });
   svg+='</svg>';
@@ -1504,7 +1604,7 @@ function renderMetrics(){
   data.forEach(function(m){
     var s=document.createElement('span');
     s.className='mc-dot-label';
-    s.textContent=m.date.slice(5).replace('-','.');
+    s.textContent=m.date.slice(8)+'.'+m.date.slice(5,7)+'.';
     labelsEl.appendChild(s);
   });
 
@@ -1523,6 +1623,27 @@ function renderMetrics(){
     progressWrap.style.display='none';
   }
 
+  // Delta poslednja 2 unosa
+  var lastDeltaWrap=document.getElementById('metricsLastDelta');
+  var lastDeltaVal=document.getElementById('mcLastDeltaVal');
+  var allEntries=bodyMetrics.filter(function(m){return isWeight?m.weight!=null:m.fat!=null;});
+  if(allEntries.length>=2){
+    var prev2=isWeight?allEntries[allEntries.length-2].weight:allEntries[allEntries.length-2].fat;
+    var last2=isWeight?allEntries[allEntries.length-1].weight:allEntries[allEntries.length-1].fat;
+    var d2=Math.round((last2-prev2)*10)/10;
+    var u2=isWeight?' kg':'%';
+    var prevDate=allEntries[allEntries.length-2].date;
+    var lastDate=allEntries[allEntries.length-1].date;
+    var prevFmt=prevDate.slice(8)+'.'+prevDate.slice(5,7)+'.';
+    var lastFmt=lastDate.slice(8)+'.'+lastDate.slice(5,7)+'.';
+    lastDeltaVal.textContent=(d2>0?'+':'')+d2+u2;
+    lastDeltaVal.className='mc-progress-val '+(d2<0?'positive':d2>0?'negative':'neutral');
+    lastDeltaWrap.querySelector('.mc-progress-label').textContent=prevFmt+' → '+lastFmt;
+    lastDeltaWrap.style.display='flex';
+  } else {
+    lastDeltaWrap.style.display='none';
+  }
+
   renderMetricsHistory();
 }
 function renderMetricsHistory(){
@@ -1534,7 +1655,7 @@ function renderMetricsHistory(){
   bodyMetrics.slice().reverse().slice(0,20).forEach(function(m){
     var realIdx=bodyMetrics.indexOf(m);
     var row=document.createElement('div');row.className='mh-row';
-    var dateStr=m.date.slice(5).replace('-','.') + '. ' + m.date.slice(0,4);
+    var dateStr=m.date.slice(8)+'.'+m.date.slice(5,7)+'. '+m.date.slice(0,4);
     row.innerHTML='<span class="mh-date-badge">'+dateStr+'</span>'
       +'<div class="mh-row-vals">'
       +(m.weight!=null?'<div class="mh-rv"><div class="mh-rv-dot w"></div><span class="mh-rv-val">'+m.weight+'</span><span class="mh-rv-unit">kg</span></div>':'')
@@ -1550,12 +1671,12 @@ function renderMetricsHistory(){
 function deleteMetric(i){
   haptic();
   var m=bodyMetrics[i];
-  var dateStr=m.date.slice(5).replace('-','.')+'. '+m.date.slice(0,4);
+  var dateStr=m.date.slice(8)+'.'+m.date.slice(5,7)+'. '+m.date.slice(0,4);
   openOverlay('Obrisati merenje?',dateStr,function(){
     var removed=bodyMetrics.splice(i,1)[0];
     localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
     renderMetrics();
-    showToastUndo('Obrisano merenje: '+removed.date.slice(5).replace('-','.'), function(){
+    showToastUndo('Obrisano merenje: '+removed.date.slice(8)+'.'+removed.date.slice(5,7)+'.', function(){
       bodyMetrics.splice(i,0,removed);
       bodyMetrics.sort(function(a,b){return a.date.localeCompare(b.date);});
       localStorage.setItem(sk('fitbody'),JSON.stringify(bodyMetrics));
@@ -1622,6 +1743,111 @@ function showMetricTooltip(el, val, date, color){
   tt.style.width=ttW+'px';
   clearTimeout(tt._timer);
   tt._timer=setTimeout(function(){tt.style.opacity='0';setTimeout(function(){tt.style.display='none';},150);},2000);
+}
+function renderCalendar(){
+  var inner=document.getElementById('heroCalInner');
+  if(!inner) return;
+  var dn=['Ned','Pon','Uto','Sre','Čet','Pet','Sub'];
+  var today=new Date();
+  var todayDS=todayStr();
+  var ph=JSON.parse(localStorage.getItem(sk('fithistory'))||'{}');
+  var days=[];
+  for(var x=13;x>=-7;x--){
+    var d=new Date(today);
+    d.setDate(today.getDate()-x);
+    days.push(d);
+  }
+  inner.innerHTML='';
+  days.forEach(function(d){
+    var ds=d.toISOString().slice(0,10);
+    var isToday=ds===todayDS;
+    var prot=isToday
+      ?foodLog.reduce(function(s,it){return s+it.protein;},0)
+      :(ph[ds]||0);
+    var hasData=prot>0;
+    var goalReached=prot>=GOAL_PROT;
+    var el=document.createElement('div');
+    el.className='cal-day'+(isToday?' today':'')+(goalReached?' goal-reached':hasData?' has-data':'');
+    el.innerHTML='<div class="cal-day-name">'+dn[d.getDay()]+'</div><div class="cal-day-num">'+d.getDate()+'</div>';
+    if(hasData||isToday) el.onclick=(function(ds,isToday){return function(){haptic();openDayLog(ds,isToday);};})(ds,isToday);
+    inner.appendChild(el);
+  });
+  setTimeout(function(){
+    var todayEl=inner.querySelector('.cal-day.today');
+    if(todayEl){
+      var cal=document.getElementById('heroCal');
+      cal.scrollLeft=todayEl.offsetLeft-cal.offsetWidth/2+todayEl.offsetWidth/2;
+    }
+  },50);
+}
+function openDayLog(ds, isToday){
+  var parts=ds.split('-');
+  var dateLabel=parts[2]+'.'+parts[1]+'.'+parts[0];
+  document.getElementById('dayLogTitle').textContent=isToday?'Danas — '+dateLabel:dateLabel;
+
+  var log=[];
+  if(isToday){
+    log=foodLog;
+  } else {
+    var lh=JSON.parse(localStorage.getItem(sk('fitloghistory'))||'{}');
+    log=lh[ds]||[];
+  }
+
+  var prot=isToday
+    ?foodLog.reduce(function(s,it){return s+it.protein;},0)
+    :(JSON.parse(localStorage.getItem(sk('fithistory'))||'{}')[ds]||0);
+  var kcalH=JSON.parse(localStorage.getItem(sk('fitkcalhistory'))||'{}');
+  var kcal=isToday
+    ?foodLog.reduce(function(s,it){return s+it.kcal;},0)
+    :(kcalH[ds]||0);
+
+  var content=document.getElementById('dayLogContent');
+  content.innerHTML='';
+
+  // Summary kartica
+  var sum=document.createElement('div');
+  sum.style.cssText='background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:16px 18px;margin-bottom:16px;display:flex;gap:20px;align-items:center';
+  sum.innerHTML=
+    '<div style="flex:1;text-align:center">'
+      +'<div style="font-size:26px;font-weight:900;background:var(--grad-p);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px">'+Math.round(prot)+'<span style="font-size:14px">g</span></div>'
+      +'<div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Proteini</div>'
+    +'</div>'
+    +'<div style="width:1px;height:40px;background:var(--border2)"></div>'
+    +'<div style="flex:1;text-align:center">'
+      +'<div style="font-size:26px;font-weight:900;color:var(--orange);letter-spacing:-1px">'+Math.round(kcal)+'<span style="font-size:14px;font-weight:600">kcal</span></div>'
+      +'<div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Kalorije</div>'
+    +'</div>'
+    +(prot>=GOAL_PROT?'<div style="font-size:20px">🎯</div>':'');
+  content.appendChild(sum);
+
+  if(log.length){
+    log.forEach(function(item){
+      var row=document.createElement('div');
+      row.style.cssText='background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between';
+      row.innerHTML=
+        '<div style="flex:1;min-width:0">'
+          +'<div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(item.qty>1?item.qty+'× ':'')+item.name+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:10px;flex-shrink:0;margin-left:10px">'
+          +'<span style="font-size:12px;font-weight:700;color:var(--orange)">'+Math.round(item.kcal)+' kcal</span>'
+          +'<span style="font-size:12px;font-weight:700;color:var(--green)">'+Math.round(item.protein*10)/10+'g</span>'
+        +'</div>';
+      content.appendChild(row);
+    });
+  } else {
+    // Samo summary bez detalja
+    var note=document.createElement('div');
+    note.style.cssText='text-align:center;color:var(--muted2);font-size:13px;padding:20px 0';
+    note.textContent='Detalji unosa nisu sačuvani za ovaj dan';
+    content.appendChild(note);
+  }
+
+  document.getElementById('dayLogOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDayLog(){
+  document.getElementById('dayLogOverlay').classList.remove('open');
+  document.body.style.overflow='';
 }
 function updateNotifStatus(enabled){
   var time=document.getElementById('notifTime').value;
@@ -1702,6 +1928,35 @@ function openHistoryOverlay(type){
 function closeHistoryOverlay(){
   document.getElementById('historyOverlay').classList.remove('open');
   document.body.style.overflow='';
+}
+function askFactoryReset(){
+  haptic();
+  openOverlay('Vrati sve na nulu?','Svi podaci će biti trajno obrisani — hrana, istorija, merenja, ciljevi. Ova akcija se ne može poništiti.',function(){
+    doFactoryReset();
+  },'Obriši sve');
+}
+function doFactoryReset(){
+  // Briše sve ključeve za trenutnog korisnika
+  var keys=Object.keys(localStorage);
+  keys.forEach(function(k){
+    if(k.startsWith(currentUser+'_')||k==='fitusers'||k==='fitcurrentuser') return;
+    localStorage.removeItem(k);
+  });
+  // Briši user-specific ključeve
+  ['fitdb','fitfreq','fithistory','fitkcalhistory','fitbody','fitlog','fitgoals','fitnotif','scannerConfirm'].forEach(function(k){
+    localStorage.removeItem(sk(k));
+  });
+  // Reset varijabli
+  GOAL_KCAL=2130; GOAL_PROT=160;
+  DB=BASE_DB.map(function(f){return Object.assign({},f,{custom:false});});
+  freq={}; history={}; bodyMetrics={}; foodLog=[];
+  saveDB(); saveLog(); saveFreq();
+  renderDashboard._wasReached=false;
+  loadData(); loadGoals(); setDatum(); loadTheme(); loadScannerConfirm();
+  updateGoalDisplays();
+  renderDashboard();renderChart();renderKcalChart();renderMetrics();renderLog();renderGrid();renderQuickAdd();renderUserCards();
+  showPage('home');
+  showToast('✅ Sve je resetovano','success');
 }
 function filterGrid(){
   renderGrid(document.getElementById('searchInput').value);
@@ -2127,6 +2382,7 @@ renderDashboard();renderChart();renderKcalChart();renderMetrics();loadNotifSetti
 renderUserCards();
 initPullToRefresh();
 checkBackupReminder();
+renderCalendar();
 setTimeout(hideSplash, 800);
 setTimeout(function(){if(window.lucide) lucide.createIcons();}, 100);
 if('serviceWorker' in navigator){
