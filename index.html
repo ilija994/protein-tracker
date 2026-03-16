@@ -182,10 +182,10 @@ body::-webkit-scrollbar{display:none}
 .mh-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .mh-header-title{font-size:14px;font-weight:700}
 .mh-header-count{font-size:11px;color:var(--muted)}
-.mh-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);gap:14px}
+.mh-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px;min-height:44px}
 .mh-row:last-child{border-bottom:none}
-.mh-date-badge{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:6px;padding:4px 8px;white-space:nowrap}
-.mh-row-vals{flex:1;display:flex;gap:16px}
+.mh-date-badge{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:6px;padding:4px 8px;white-space:nowrap;flex-shrink:0}
+.mh-row-vals{flex:1;display:flex;gap:12px;align-items:center}
 .mh-rv{display:flex;align-items:center;gap:6px}
 .mh-rv-dot{width:6px;height:6px;border-radius:50%}
 .mh-rv-dot.w{background:var(--purple)}
@@ -495,19 +495,21 @@ body::-webkit-scrollbar{display:none}
       <i data-lucide="trash-2" style="width:15px;height:15px;opacity:.8"></i>
       Obriši današnji unos
     </button>
-    <div class="chart-card">
+    <div class="chart-card" onclick="haptic();openHistoryOverlay('prot')" style="cursor:pointer">
       <div class="section-header">
         <div class="section-heading">Proteini — 7 dana</div>
         <div class="section-badge" id="chartBadge">Cilj: 160 g</div>
       </div>
       <div class="chart-bars" id="chartBars"></div>
+      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted2);font-weight:500">Tap za punu istoriju →</div>
     </div>
-    <div class="chart-card" style="margin-top:10px">
+    <div class="chart-card" style="margin-top:10px;cursor:pointer" onclick="haptic();openHistoryOverlay('kcal')">
       <div class="section-header">
         <div class="section-heading">Kalorije — 7 dana</div>
         <div class="section-badge" id="kcalChartBadge" style="color:var(--orange);background:rgba(249,115,22,0.1)">Cilj: 2130</div>
       </div>
       <div class="chart-bars" id="kcalChartBars"></div>
+      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted2);font-weight:500">Tap za punu istoriju →</div>
     </div>
   </div>
 </div>
@@ -814,6 +816,19 @@ body::-webkit-scrollbar{display:none}
   </div>
 </div>
 
+<!-- HISTORY OVERLAY -->
+<div class="scanner-overlay" id="historyOverlay" style="background:var(--bg)">
+  <div class="scanner-header" style="border-bottom:1px solid var(--border)">
+    <button class="scanner-close" onclick="closeHistoryOverlay()" style="background:var(--surface2)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--text)"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <span class="scanner-title" id="historyOverlayTitle" style="color:var(--text)">Istorija proteina</span>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px 20px 32px">
+    <div id="historyOverlayList"></div>
+  </div>
+</div>
+
 <!-- CONFIRM DIALOG -->
 <div class="overlay" id="overlayConfirm">
   <div class="dialog">
@@ -1110,13 +1125,12 @@ function loadData(){
 function archiveDay(ds,dl){
   history[ds]=Math.round(dl.reduce(function(s,it){return s+it.protein;},0));
   var keys=Object.keys(history).sort();
-  if(keys.length>30) keys.slice(0,keys.length-30).forEach(function(k){delete history[k];});
+  if(keys.length>365) keys.slice(0,keys.length-365).forEach(function(k){delete history[k];});
   localStorage.setItem(sk('fithistory'),JSON.stringify(history));
-  // Arhiviraj i kalorije
   var kh=JSON.parse(localStorage.getItem(sk('fitkcalhistory'))||'{}');
   kh[ds]=Math.round(dl.reduce(function(s,it){return s+it.kcal;},0));
   var kkeys=Object.keys(kh).sort();
-  if(kkeys.length>30) kkeys.slice(0,kkeys.length-30).forEach(function(k){delete kh[k];});
+  if(kkeys.length>365) kkeys.slice(0,kkeys.length-365).forEach(function(k){delete kh[k];});
   localStorage.setItem(sk('fitkcalhistory'),JSON.stringify(kh));
 }
 function saveDB(){localStorage.setItem(sk('fitdb'),JSON.stringify(DB));}
@@ -1224,10 +1238,14 @@ function renderDashboard(){
   var pPct=Math.min(100,Math.round(tP/GOAL_PROT*100));
   var kPct=Math.min(100,Math.round(tK/GOAL_KCAL*100));
   var kOver=tK>GOAL_KCAL;
+  var pGoalReached=tP>=GOAL_PROT;
+  var wasReached=renderDashboard._wasReached||false;
+
   document.getElementById('ringFill').style.strokeDashoffset=339.3-(339.3*pPct/100);
   document.getElementById('ringG').textContent=Math.round(tP);
   document.getElementById('protPct').textContent=pPct+'%';
-  document.getElementById('protRem').textContent=Math.max(0,Math.round(GOAL_PROT-tP))+' g';
+  document.getElementById('protRem').textContent=pGoalReached?'Cilj ispunjen! 🎯':Math.max(0,Math.round(GOAL_PROT-tP))+' g';
+  document.getElementById('protRem').style.color=pGoalReached?'var(--green)':'';
   document.getElementById('kcalCur').textContent=Math.round(tK);
   document.getElementById('kcalCur').style.color=kOver?'var(--red)':'';
   document.getElementById('kcalBar').style.width=Math.min(100,kPct)+'%';
@@ -1237,13 +1255,35 @@ function renderDashboard(){
   document.getElementById('kcalRem').style.color=kOver?'var(--red)':'';
   var warn=document.getElementById('kcalWarn');
   if(warn) warn.style.display=kOver?'flex':'none';
+
+  // Motivaciona poruka kada se pređe cilj proteina
+  if(pGoalReached && !wasReached){
+    var msgs=[
+      '💪 Cilj prebačen! Odličan rad danas!',
+      '🔥 Maksimirano! Proteini na maksimumu!',
+      '🏆 Cilj dostignut! Ti si šampion!',
+      '⚡ Prebačen! Mišići ti zahvaljuju!',
+      '🎯 Bullseye! Cilj proteina ispunjen!',
+      '💥 Legenda! Proteini — check!',
+      '🚀 Odlično! Danas si dao sve od sebe!'
+    ];
+    var msg=msgs[Math.floor(Math.random()*msgs.length)];
+    showToast(msg,'success');
+    haptic();
+  }
+  renderDashboard._wasReached=pGoalReached;
 }
 function renderChart(){
   var el=document.getElementById('chartBars');el.innerHTML='';
   var dn=['Ned','Pon','Uto','Sre','Čet','Pet','Sub'];
   var today=new Date(),days=[];
   for(var x=6;x>=0;x--){var dd=new Date(today);dd.setDate(today.getDate()-x);days.push(dd);}
-  var vals=days.map(function(d){var ds=d.toISOString().slice(0,10);return ds===todayStr()?foodLog.reduce(function(s,it){return s+it.protein;},0):(history[ds]||0);});
+  var vals=days.map(function(d){
+    var ds=d.toISOString().slice(0,10);
+    if(ds===todayStr()) return foodLog.reduce(function(s,it){return s+it.protein;},0);
+    var ph=JSON.parse(localStorage.getItem(sk('fithistory'))||'{}');
+    return ph[ds]||0;
+  });
   var maxVal=Math.max.apply(null,vals.concat([GOAL_PROT*1.1,1]));
   var goalPct=Math.round(GOAL_PROT/maxVal*100);
 
@@ -1282,7 +1322,7 @@ function renderKcalChart(){
   var vals=days.map(function(d){
     var ds=d.toISOString().slice(0,10);
     if(ds===todayStr()) return foodLog.reduce(function(s,it){return s+it.kcal;},0);
-    var hl=localStorage.getItem(currentUser+'_fitkcalhistory');
+    var hl=localStorage.getItem(sk('fitkcalhistory'));
     var kh=hl?JSON.parse(hl):{};
     return kh[ds]||0;
   });
@@ -1396,7 +1436,7 @@ function renderMetrics(){
     progressWrap.style.display='none'; renderMetricsHistory(); return;
   }
 
-  var W=320, H=80, pad=14;
+  var W=320, H=100, pad=18;
   var maxV=Math.max.apply(null,hasVals), minV=Math.min.apply(null,hasVals);
   var range=maxV-minV||1;
   var isWeight=metricView==='w';
@@ -1450,10 +1490,10 @@ function renderMetrics(){
     var isLast=i===validPts.length-1;
     svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(isLast?5:4)+'" fill="'+(isLast?color:'var(--surface2)')+'" stroke="'+color+'" stroke-width="2" style="cursor:pointer" onclick="showMetricTooltip(this,\''+p.v+'\',\''+p.date+'\',\''+color+'\')" />';
     if(isLast){
-      var tx=p.x>W-40?p.x-10:p.x+10;
-      var ty=p.y>H-20?p.y-14:p.y-10;
-      var anchor=p.x>W-40?'end':'start';
-      svg+='<text x="'+tx+'" y="'+ty+'" text-anchor="'+anchor+'" font-size="13" fill="'+color+'" font-weight="900" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6))">'+p.v+'</text>';
+      var tx=p.x>W-50?p.x-12:p.x+12;
+      var ty=p.y-16;
+      var anchor=p.x>W-50?'end':'start';
+      svg+='<text x="'+tx+'" y="'+ty+'" text-anchor="'+anchor+'" font-size="15" fill="'+color+'" font-weight="900" style="filter:drop-shadow(0 1px 4px rgba(0,0,0,0.7))">'+p.v+'</text>';
     }
   });
   svg+='</svg>';
@@ -1524,16 +1564,16 @@ function deleteMetric(i){
   });
 }
 function loadNotifSettings(){
-  var s=JSON.parse(localStorage.getItem('fitnotif')||'{}');
+  var s=JSON.parse(localStorage.getItem(sk('fitnotif'))||'{}');
   document.getElementById('notifToggle').checked=s.enabled||false;
   document.getElementById('notifTime').value=s.time||'21:00';
   if(s.enabled) scheduleNotif(s.time||'21:00');
-  updateNotifStatus(s.enabled);
+  updateNotifStatus(s.enabled||false);
 }
 function saveNotifSettings(){
   var enabled=document.getElementById('notifToggle').checked;
   var time=document.getElementById('notifTime').value;
-  localStorage.setItem('fitnotif',JSON.stringify({enabled:enabled,time:time}));
+  localStorage.setItem(sk('fitnotif'),JSON.stringify({enabled:enabled,time:time}));
   if(enabled) scheduleNotif(time); else clearNotifTimer();
   updateNotifStatus(enabled);
 }
@@ -1608,6 +1648,61 @@ function fireNotif(){
 
 // ===== FOOD GRID =====
 function getPortions(name){return foodLog.filter(function(it){return it.name===name&&it._db;}).reduce(function(s,it){return s+it.qty;},0);}
+function openHistoryOverlay(type){
+  var isProt=type==='prot';
+  var goal=isProt?GOAL_PROT:GOAL_KCAL;
+  var unit=isProt?'g':'kcal';
+  var color=isProt?'var(--purple)':'var(--orange)';
+  document.getElementById('historyOverlayTitle').textContent=isProt?'Istorija proteina':'Istorija kalorija';
+
+  // Combine history + today
+  var ph=JSON.parse(localStorage.getItem(sk(isProt?'fithistory':'fitkcalhistory'))||'{}');
+  var todayVal=isProt
+    ?foodLog.reduce(function(s,it){return s+it.protein;},0)
+    :foodLog.reduce(function(s,it){return s+it.kcal;},0);
+  var allDays=Object.keys(ph).sort().reverse();
+  // Prepend today if not already there
+  var ts=todayStr();
+  if(allDays[0]!==ts) allDays.unshift(ts);
+
+  var list=document.getElementById('historyOverlayList');
+  list.innerHTML='';
+
+  if(!allDays.length){
+    list.innerHTML='<div style="text-align:center;color:var(--muted2);padding:40px 0;font-size:14px">Nema podataka</div>';
+  } else {
+    allDays.forEach(function(ds){
+      var v=ds===ts?Math.round(todayVal):(ph[ds]||0);
+      if(v===0 && ds!==ts) return; // preskoči prazne dane
+      var pct=Math.min(100,Math.round(v/goal*100));
+      var over=v>goal;
+      var isToday=ds===ts;
+      var parts=ds.split('-');
+      var dateLabel=parts[2]+'.'+parts[1]+'.'+parts[0].slice(2)+'.';
+      var row=document.createElement('div');
+      row.style.cssText='margin-bottom:10px;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px 16px;'+(over?'border-color:rgba(248,113,113,0.3)':'');
+      row.innerHTML=
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+          +'<span style="font-size:13px;font-weight:600;color:var(--muted)'+(isToday?';color:'+color:'')+'">'+dateLabel+(isToday?' — danas':'')+'</span>'
+          +'<div style="display:flex;align-items:center;gap:8px">'
+            +'<span style="font-size:16px;font-weight:800;color:'+(over?'var(--red)':color)+'">'+v+'</span>'
+            +'<span style="font-size:11px;color:var(--muted)">'+unit+'</span>'
+            +'<span style="font-size:11px;font-weight:600;color:'+(pct>=100?'var(--green)':'var(--muted2)')+'">'+pct+'%</span>'
+          +'</div>'
+        +'</div>'
+        +'<div style="background:var(--surface3);border-radius:99px;height:5px;overflow:hidden">'
+          +'<div style="height:100%;border-radius:99px;width:'+pct+'%;background:'+(over?'var(--red)':isProt?'linear-gradient(90deg,#a78bfa,#60a5fa)':'linear-gradient(90deg,#c2410c,#f97316)')+'"></div>'
+        +'</div>';
+      list.appendChild(row);
+    });
+  }
+  document.getElementById('historyOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeHistoryOverlay(){
+  document.getElementById('historyOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 function filterGrid(){
   renderGrid(document.getElementById('searchInput').value);
 }
