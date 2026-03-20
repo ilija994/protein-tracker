@@ -833,6 +833,23 @@ body::-webkit-scrollbar{display:none}
     </div>
 
     <div class="sec-title" style="margin-bottom:12px;margin-top:8px;color:var(--red)">Opasna zona</div>
+    <div class="notif-card" style="margin-bottom:12px">
+      <div class="notif-row" style="margin-bottom:0">
+        <div>
+          <div class="ni-title">Memorija</div>
+          <div class="ni-sub" id="storageInfo">Računam...</div>
+        </div>
+      </div>
+    </div>
+    <div class="notif-card" style="border-color:rgba(167,139,250,0.2);margin-bottom:12px">
+      <div class="notif-row" style="margin-bottom:0">
+        <div>
+          <div class="ni-title">Rekonstruiši protein istoriju</div>
+          <div class="ni-sub">Popuni prazne dane iz sačuvanih logova</div>
+        </div>
+        <button onclick="rebuildHistory()" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:8px 14px;color:var(--purple);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Popravi</button>
+      </div>
+    </div>
     <div class="notif-card" style="border-color:rgba(248,113,113,0.2);margin-bottom:20px">
       <div class="notif-row" style="margin-bottom:0">
         <div>
@@ -1205,6 +1222,14 @@ function showPage(name){
   document.getElementById('page-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
   window.scrollTo(0,0);
+  if(name==='settings'){
+    var total=0;
+    for(var k in localStorage){if(localStorage.hasOwnProperty(k)){total+=((localStorage[k].length+k.length)*2);}}
+    var kb=Math.round(total/1024);
+    var pct=Math.round(total/(5*1024*1024)*100);
+    var el=document.getElementById('storageInfo');
+    if(el) el.textContent=kb+' KB od ~5000 KB ('+pct+'% popunjeno)';
+  }
 }
 
 // ===== TOAST =====
@@ -1296,6 +1321,14 @@ function doImport(){
   }
   // Reload history iz localStorage nakon arhiviranja
   history=JSON.parse(localStorage.getItem(sk('fithistory'))||'{}');
+  // Automatski rekonstruiši proteine iz logHistory
+  var lh=JSON.parse(localStorage.getItem(sk('fitloghistory'))||'{}');
+  Object.keys(lh).forEach(function(ds){
+    var log=lh[ds];
+    if(!log||!log.length) return;
+    if(!history[ds]) history[ds]=Math.round(log.reduce(function(s,it){return s+(it.protein||0);},0));
+  });
+  localStorage.setItem(sk('fithistory'),JSON.stringify(history));
   closeImportOverlay();
   updateGoalDisplays();
   renderDashboard();renderChart();renderKcalChart();renderMetrics();renderLog();renderGrid();
@@ -2063,6 +2096,26 @@ function showCatPicker(e, i){
   });
   document.body.appendChild(picker);
   setTimeout(function(){document.addEventListener('click',function h(){picker.remove();document.removeEventListener('click',h);});},10);
+}
+function rebuildHistory(){
+  var lh=JSON.parse(localStorage.getItem(sk('fitloghistory'))||'{}');
+  var kh=JSON.parse(localStorage.getItem(sk('fitkcalhistory'))||'{}');
+  var rebuilt=0;
+  Object.keys(lh).forEach(function(ds){
+    var log=lh[ds];
+    if(!log||!log.length) return;
+    var prot=Math.round(log.reduce(function(s,it){return s+(it.protein||0);},0));
+    var kcal=Math.round(log.reduce(function(s,it){return s+(it.kcal||0);},0));
+    if(!history[ds]||history[ds]!==prot){
+      history[ds]=prot;
+      rebuilt++;
+    }
+    if(!kh[ds]) kh[ds]=kcal;
+  });
+  localStorage.setItem(sk('fithistory'),JSON.stringify(history));
+  localStorage.setItem(sk('fitkcalhistory'),JSON.stringify(kh));
+  renderChart();renderKcalChart();
+  showToast('✅ Rekonstruisano '+rebuilt+' dana','success');
 }
 function filterGrid(){
   renderGrid(document.getElementById('searchInput').value);
