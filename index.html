@@ -1818,6 +1818,7 @@ function renderCalendar(){
   var today=new Date();
   var todayDS=todayStr();
   var ph=JSON.parse(localStorage.getItem(sk('fithistory'))||'{}');
+  var lh=JSON.parse(localStorage.getItem(sk('fitloghistory'))||'{}');
   var days=[];
   for(var x=13;x>=-7;x--){
     var d=new Date(today);
@@ -1831,7 +1832,11 @@ function renderCalendar(){
     var prot=isToday
       ?foodLog.reduce(function(s,it){return s+it.protein;},0)
       :(ph[ds]||0);
-    var hasData=prot>0;
+    // Ako nema u history ali ima u logHistory, računaj iz loga
+    if(!prot&&!isToday&&lh[ds]&&lh[ds].length){
+      prot=lh[ds].reduce(function(s,it){return s+(it.protein||0);},0);
+    }
+    var hasData=prot>0||(lh[ds]&&lh[ds].length>0);
     var goalReached=prot>=GOAL_PROT;
     var el=document.createElement('div');
     el.className='cal-day'+(isToday?' today':'')+(goalReached?' goal-reached':hasData?' has-data':'');
@@ -1862,11 +1867,11 @@ function openDayLog(ds, isToday){
 
   var prot=isToday
     ?foodLog.reduce(function(s,it){return s+it.protein;},0)
-    :(JSON.parse(localStorage.getItem(sk('fithistory'))||'{}')[ds]||0);
+    :(log.length?log.reduce(function(s,it){return s+(it.protein||0);},0):(JSON.parse(localStorage.getItem(sk('fithistory'))||'{}')[ds]||0));
   var kcalH=JSON.parse(localStorage.getItem(sk('fitkcalhistory'))||'{}');
   var kcal=isToday
     ?foodLog.reduce(function(s,it){return s+it.kcal;},0)
-    :(kcalH[ds]||0);
+    :(log.length?log.reduce(function(s,it){return s+(it.kcal||0);},0):(kcalH[ds]||0));
 
   var content=document.getElementById('dayLogContent');
   content.innerHTML='';
